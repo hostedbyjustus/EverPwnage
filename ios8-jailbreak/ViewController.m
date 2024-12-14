@@ -2,7 +2,7 @@
 //  ViewController.m
 //  ios8-jailbreak
 //
-//  Created by imac on 12/14/24.
+//  Created by lukezgd on 12/14/24.
 //  Copyright © 2024 lukezgd. All rights reserved.
 //
 
@@ -13,6 +13,9 @@
 #include <sys/types.h>
 #include <time.h>
 
+#import "jailbreak.h"
+#import "sockpuppet.h"
+
 @interface ViewController ()
 
 @property (weak, nonatomic) IBOutlet UIButton *jailbreak_button;
@@ -22,6 +25,7 @@
 @implementation ViewController
 
 char *newkernv;
+addr_t self_port_address = 0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -80,17 +84,17 @@ char *newkernv;
     uint32_t kernel_base;
     tfp0 = exploit(&kernel_base);
     if (kernel_base == 0) {
-        olog("failed to get tfp0 :(\n");
+        printf("failed to get tfp0 :(\n");
         exit(42);
     }
     printf("[*]kbase=0x%08lx\n", kernel_base);
 
     if (is_pmap_patch_success(tfp0, kernel_base)) {
-        olog("pmap patch success!\n");
+        printf("pmap patch success!\n");
     } else {
-        olog("pmap patch no success :(\n");
+        printf("pmap patch no success :(\n");
     }
-    olog("time for unsandbox...\n");
+    printf("time for unsandbox...\n");
     unsandbox8(tfp0, kernel_base);
 }
 

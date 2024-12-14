@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		880F0C3F2D0D4C8F00598FA3 /* IOKit in Resources */ = {isa = PBXBuildFile; fileRef = 880F0C2E2D0D4C8D00598FA3 /* IOKit */; };
+		880F0C402D0D4C8F00598FA3 /* tar in Resources */ = {isa = PBXBuildFile; fileRef = 880F0C2F2D0D4C8D00598FA3 /* tar */; };
+		880F0C412D0D4C8F00598FA3 /* kernel_sp.c in Sources */ = {isa = PBXBuildFile; fileRef = 880F0C322D0D4C8E00598FA3 /* kernel_sp.c */; };
+		880F0C422D0D4C8F00598FA3 /* patchfinder8.c in Sources */ = {isa = PBXBuildFile; fileRef = 880F0C332D0D4C8E00598FA3 /* patchfinder8.c */; };
+		880F0C432D0D4C8F00598FA3 /* io_sp.c in Sources */ = {isa = PBXBuildFile; fileRef = 880F0C352D0D4C8E00598FA3 /* io_sp.c */; };
+		880F0C442D0D4C8F00598FA3 /* jailbreak.m in Sources */ = {isa = PBXBuildFile; fileRef = 880F0C382D0D4C8E00598FA3 /* jailbreak.m */; };
+		880F0C452D0D4C8F00598FA3 /* launchctl in Resources */ = {isa = PBXBuildFile; fileRef = 880F0C3B2D0D4C8F00598FA3 /* launchctl */; };
+		880F0C462D0D4C8F00598FA3 /* sockpuppet.c in Sources */ = {isa = PBXBuildFile; fileRef = 880F0C3C2D0D4C8F00598FA3 /* sockpuppet.c */; };
+		880F0C492D0D4CAF00598FA3 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 880F0C482D0D4CAF00598FA3 /* IOKit.framework */; };
 		886668972D0D2C6100C3F554 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 886668962D0D2C6100C3F554 /* AppDelegate.m */; };
 		8866689A2D0D2C6100C3F554 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 886668992D0D2C6100C3F554 /* ViewController.m */; };
 		8866689D2D0D2C6200C3F554 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8866689B2D0D2C6200C3F554 /* Main.storyboard */; };
@@ -16,6 +25,24 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		880F0C2E2D0D4C8D00598FA3 /* IOKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = IOKit; sourceTree = "<group>"; };
+		880F0C2F2D0D4C8D00598FA3 /* tar */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = tar; sourceTree = "<group>"; };
+		880F0C302D0D4C8D00598FA3 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		880F0C312D0D4C8D00598FA3 /* jailbreak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jailbreak.h; sourceTree = "<group>"; };
+		880F0C322D0D4C8E00598FA3 /* kernel_sp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kernel_sp.c; sourceTree = "<group>"; };
+		880F0C332D0D4C8E00598FA3 /* patchfinder8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = patchfinder8.c; sourceTree = "<group>"; };
+		880F0C342D0D4C8E00598FA3 /* plog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plog.h; sourceTree = "<group>"; };
+		880F0C352D0D4C8E00598FA3 /* io_sp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = io_sp.c; sourceTree = "<group>"; };
+		880F0C362D0D4C8E00598FA3 /* mac_policy_ops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mac_policy_ops.h; sourceTree = "<group>"; };
+		880F0C372D0D4C8E00598FA3 /* sockpuppet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sockpuppet.h; sourceTree = "<group>"; };
+		880F0C382D0D4C8E00598FA3 /* jailbreak.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = jailbreak.m; sourceTree = "<group>"; };
+		880F0C392D0D4C8E00598FA3 /* kernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel.h; sourceTree = "<group>"; };
+		880F0C3A2D0D4C8E00598FA3 /* offsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = offsets.h; sourceTree = "<group>"; };
+		880F0C3B2D0D4C8F00598FA3 /* launchctl */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = launchctl; sourceTree = "<group>"; };
+		880F0C3C2D0D4C8F00598FA3 /* sockpuppet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sockpuppet.c; sourceTree = "<group>"; };
+		880F0C3D2D0D4C8F00598FA3 /* io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = io.h; sourceTree = "<group>"; };
+		880F0C3E2D0D4C8F00598FA3 /* patchfinder8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = patchfinder8.h; sourceTree = "<group>"; };
+		880F0C482D0D4CAF00598FA3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
 		886668922D0D2C6100C3F554 /* ios8-jailbreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios8-jailbreak.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		886668952D0D2C6100C3F554 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		886668962D0D2C6100C3F554 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -33,17 +60,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				880F0C492D0D4CAF00598FA3 /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		880F0C472D0D4CAE00598FA3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				880F0C482D0D4CAF00598FA3 /* IOKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		886668892D0D2C6100C3F554 = {
 			isa = PBXGroup;
 			children = (
 				886668942D0D2C6100C3F554 /* ios8-jailbreak */,
 				886668932D0D2C6100C3F554 /* Products */,
+				880F0C472D0D4CAE00598FA3 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,13 +97,30 @@
 			children = (
 				886668952D0D2C6100C3F554 /* AppDelegate.h */,
 				886668962D0D2C6100C3F554 /* AppDelegate.m */,
+				8866689E2D0D2C6300C3F554 /* Assets.xcassets */,
+				880F0C302D0D4C8D00598FA3 /* common.h */,
+				886668A32D0D2C6300C3F554 /* Info.plist */,
+				880F0C352D0D4C8E00598FA3 /* io_sp.c */,
+				880F0C3D2D0D4C8F00598FA3 /* io.h */,
+				880F0C2E2D0D4C8D00598FA3 /* IOKit */,
+				880F0C312D0D4C8D00598FA3 /* jailbreak.h */,
+				880F0C382D0D4C8E00598FA3 /* jailbreak.m */,
+				880F0C322D0D4C8E00598FA3 /* kernel_sp.c */,
+				880F0C392D0D4C8E00598FA3 /* kernel.h */,
+				880F0C3B2D0D4C8F00598FA3 /* launchctl */,
+				886668A02D0D2C6300C3F554 /* LaunchScreen.storyboard */,
+				880F0C362D0D4C8E00598FA3 /* mac_policy_ops.h */,
+				886668A42D0D2C6300C3F554 /* main.m */,
+				8866689B2D0D2C6200C3F554 /* Main.storyboard */,
+				880F0C3A2D0D4C8E00598FA3 /* offsets.h */,
+				880F0C332D0D4C8E00598FA3 /* patchfinder8.c */,
+				880F0C3E2D0D4C8F00598FA3 /* patchfinder8.h */,
+				880F0C342D0D4C8E00598FA3 /* plog.h */,
+				880F0C3C2D0D4C8F00598FA3 /* sockpuppet.c */,
+				880F0C372D0D4C8E00598FA3 /* sockpuppet.h */,
+				880F0C2F2D0D4C8D00598FA3 /* tar */,
 				886668982D0D2C6100C3F554 /* ViewController.h */,
 				886668992D0D2C6100C3F554 /* ViewController.m */,
-				8866689B2D0D2C6200C3F554 /* Main.storyboard */,
-				8866689E2D0D2C6300C3F554 /* Assets.xcassets */,
-				886668A02D0D2C6300C3F554 /* LaunchScreen.storyboard */,
-				886668A32D0D2C6300C3F554 /* Info.plist */,
-				886668A42D0D2C6300C3F554 /* main.m */,
 			);
 			path = "ios8-jailbreak";
 			sourceTree = "<group>";
@@ -129,8 +183,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				886668A22D0D2C6300C3F554 /* LaunchScreen.storyboard in Resources */,
+				880F0C3F2D0D4C8F00598FA3 /* IOKit in Resources */,
 				8866689F2D0D2C6300C3F554 /* Assets.xcassets in Resources */,
 				8866689D2D0D2C6200C3F554 /* Main.storyboard in Resources */,
+				880F0C402D0D4C8F00598FA3 /* tar in Resources */,
+				880F0C452D0D4C8F00598FA3 /* launchctl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,9 +198,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				880F0C432D0D4C8F00598FA3 /* io_sp.c in Sources */,
 				8866689A2D0D2C6100C3F554 /* ViewController.m in Sources */,
 				886668A52D0D2C6300C3F554 /* main.m in Sources */,
+				880F0C462D0D4C8F00598FA3 /* sockpuppet.c in Sources */,
 				886668972D0D2C6100C3F554 /* AppDelegate.m in Sources */,
+				880F0C412D0D4C8F00598FA3 /* kernel_sp.c in Sources */,
+				880F0C422D0D4C8F00598FA3 /* patchfinder8.c in Sources */,
+				880F0C442D0D4C8F00598FA3 /* jailbreak.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,31 +11,21 @@
 #include <sys/stat.h>
 #include <copyfile.h>
 
+#include "jailbreak.h"
 #include "mac_policy_ops.h"
 
 #import "ViewController.h"
 
 #define UNSLID_BASE 0x80001000
 
-void flush_all_the_streams(void) {
-    fflush(stdout);
-    fflush(stderr);
-}
-
 void olog(char *format, ...) {
-    //flush_all_the_streams();
-    char msg[1000];//this can overflow, but eh don't care
+    char msg[1000];
     va_list aptr;
 
     va_start(aptr, format);
     vsprintf(msg, format, aptr);
     va_end(aptr);
-    //printf("%s",msg);
-
-    NSString *logTxt = [NSString stringWithUTF8String:msg];
-    //NSLog(@"%@",logTxt);
-    openpwnageCLog(logTxt);
-    //flush_all_the_streams();
+    printf("%s",msg);
 }
 
 NSString *KernelVersion(void) {
@@ -486,7 +476,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base) {
         chmod("/private/var/mobile/Library/Preferences", 0755);
         mkdir("/Library/LaunchDaemons", 0755);
         FILE* fp = fopen("/.installed-openpwnage", "w");
-        fprintf(fp, "do **NOT** delete this file, it's important. it's how we detect if the bootstrap was installed. thanks for using openpwnage! ♡zachary7829\n");
+        fprintf(fp, "do **NOT** delete this file, it's important. it's how we detect if the bootstrap was installed.\n");
         fclose(fp);
         
         sync();
