@@ -1,9 +1,4 @@
-//
-//  jailbreak.h
-//  openpwnage
-//
-//  Created by Zachary Keffaber on 4/24/22.
-//
+// jailbreak.h from openpwnage
 
 #ifndef jailbreak_h
 #define jailbreak_h

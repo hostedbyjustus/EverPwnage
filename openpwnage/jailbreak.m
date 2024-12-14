@@ -1,11 +1,4 @@
-//
-//  jailbreak.m
-//  openpwnage
-//
-//  Created by Zachary Keffaber on 4/24/22.
-//
-
-//big thanks to (jk maybe?) for kpmap patch, and thanks to spv for misc stuff
+// jailbreak.m from openpwnage
 
 #import <Foundation/Foundation.h>
 #include <mach/mach.h>
