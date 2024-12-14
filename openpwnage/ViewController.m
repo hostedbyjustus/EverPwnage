@@ -11,9 +11,7 @@
 #include <sys/types.h>
 
 #import "jailbreak.h"
-#import "sock_port/exploit.h"
 #include <time.h>
-#include "sock_port/pf10.h"
 
 #define UNSLID_BASE 0x80001000
 
@@ -47,86 +45,6 @@ static id static_consoleView = nil;
     consoleView.layer.cornerRadius = 10.0;
     struct utsname systemInfo;
     uname(&systemInfo);
-    NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"MM-dd"];
-    if ([[dateFormatter stringFromDate:[NSDate date]]isEqualToString:@"04-01"]){
-        srand(time(0));
-        int randjokenameid = (rand() % 17) + 1;
-        if (randjokenameid == 1) {
-            _openpwnLabel.text = @"mompwnage"; //zachary7829#9778 (me) (what i do to capt's mom each night)
-        } else if (randjokenameid == 2) {
-            _openpwnLabel.text = @"bozopwnage"; //hydrate#9351
-        } else if (randjokenameid == 3) {
-            _openpwnLabel.text = @"Manticore"; //Orangera1n#9957 holy shit it's reel
-        } else if (randjokenameid == 4) {
-            _openpwnLabel.text = @"nJailbreak"; //flower#1116
-        } else if (randjokenameid == 5) {
-            _openpwnLabel.text = @"Serenajb"; //Billie#0303
-        } else if (randjokenameid == 6) {
-            _openpwnLabel.text = @"flowerbreak"; //flower#1116
-        } else if (randjokenameid == 7) {
-            _openpwnLabel.text = @"Stendra"; //Dan(infinity synbol that i can't type)#9999 coolstar trol
-        } else if (randjokenameid == 8) {
-            _openpwnLabel.text = @"ligmabreak"; //Neptune#6866
-        } else if (randjokenameid == 9) {
-            _openpwnLabel.text = @"MokitoCoreJB"; //Billie#0303
-        } else if (randjokenameid == 10) {
-            _openpwnLabel.text = @"Zer0Tw0Pwn"; //Neptune#6866
-        } else if (randjokenameid == 11) {
-            _openpwnLabel.text = @"pastcutsJB"; //flower#1116 (no way!!,,)
-        } else if (randjokenameid == 12) {
-            _openpwnLabel.text = @"BallsInYoJaws"; //Neptune#6866 erhoihgioer stop
-        } else if (randjokenameid == 13) {
-            _openpwnLabel.text = @"c0met14"; //Neptune#6866 holy shit iOS 14 jailbreak for iOS 8/9 I can't believe this
-        } else if (randjokenameid == 14) {
-            _openpwnLabel.text = @"CookieMonster"; //WhitetailAni#1287 holy shit iOS 14 jailbreak for iOS 8/9 I can't believe this
-        } else if (randjokenameid == 15) {
-            _openpwnLabel.text = @"im gay"; //not me i swear guys im not gay ,, but ,,,,
-        } else if (randjokenameid == 16) {
-            _openpwnLabel.text = @"FurryJB"; //furr rrr aw so cute rrr
-        } else if (randjokenameid == 17) {
-            _openpwnLabel.text = @"Estrogen"; // AWSOM!!
-        }
-    } else if ([[dateFormatter stringFromDate:[NSDate date]]isEqualToString:@"05-19"]){
-        //when the first build of openpwnage was released. you get a ton of names i considered for a jailbreak, and i didn't want to waste them so I'm throwing them here
-        srand(time(0));
-        int randjokenameid = (rand() % 17) + 1;
-        if (randjokenameid == 1) {
-            _openpwnLabel.text = @"Bonobo"; //coming to a iPhone 2G 1.0-1.0.2 near you!
-        } else if (randjokenameid == 2) {
-            _openpwnLabel.text = @"Malaria"; //coming to a iPhone 4 near you!
-        } else if (randjokenameid == 3) {
-            _openpwnLabel.text = @"WinterSn0w"; //coming to a iPod Touch 1 iOS 1 near you!
-        } else if (randjokenameid == 4) {
-            _openpwnLabel.text = @"FurryJB"; //suck my cock
-        } else if (randjokenameid == 5) {
-            _openpwnLabel.text = @"BigshotJB"; //pretty cool jailbreak name tbh
-        } else if (randjokenameid == 6) {
-            _openpwnLabel.text = @"Vader"; //y'know, from like... star wars?
-        } else if (randjokenameid == 7) {
-            _openpwnLabel.text = @"EasyPwnage"; //the actual name sounds like so much better imo
-        } else if (randjokenameid == 8) {
-            _openpwnLabel.text = @"p0wdersn0w"; //huh this actually sounds like it could be the name of some old tethered/untethered jailbreak lol
-        } else if (randjokenameid == 9) {
-            _openpwnLabel.text = @"richman"; //i don't have anything to comment on this one sorry
-        } else if (randjokenameid == 10) {
-            _openpwnLabel.text = @"evil_jellyfish"; //used to really like this name, now, tbh sounds stupid
-        } else if (randjokenameid == 11) {
-            _openpwnLabel.text = @"Pepper"; //if i ever make a iOS 11 untether i'll call it Pepper. but I won't because who tf uses iOS 11 and it's not like i have any devices for it anyway
-        } else if (randjokenameid == 12) {
-            _openpwnLabel.text = @"milkman"; // MAN
-        } else if (randjokenameid == 13) {
-            _openpwnLabel.text = @"meguh4x"; // MEGUMIN MEGUMIN MEGYMIN MEGUMIN MEGUMININNNNNNNN (worship)
-        } else if (randjokenameid == 14) {
-            _openpwnLabel.text = @"Cherry"; // i don't even like cherries tbh not sure why i loved this name for so long
-        } else if (randjokenameid == 15) {
-            _openpwnLabel.text = @"newsc00by"; // scooby dooby doo where are you. maybe i got this name from listening to the WHAT'S NEW SCOOBY DOO theme some a million times as a kid. i don't remember anything from that show but that theme song slapped hard and still slaps hard now
-        } else if (randjokenameid == 16) {
-            _openpwnLabel.text = @"sn0wra1n"; // like WinterSn0w but less cool
-        } else if (randjokenameid == 17) {
-            _openpwnLabel.text = @"PonyJB"; // i am a brony
-        }
-    }
     _settingsButton.hidden = 1;
     
     consoleView.text = [NSString stringWithFormat:@"[*]openpwnage running on %@ with iOS %@\n", [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding], [[UIDevice currentDevice] systemVersion]];
@@ -171,12 +89,6 @@ static id static_consoleView = nil;
             consoleView.backgroundColor = UIColorFromRGB(0xF9c9c9);
         } else {
             _notSupportedLabel.hidden = 1;
-            if ([@"3789.70.16~4" isEqualToString:kver]) {
-                olog("openpwnage support on 10.3.3b6/10.3.3 is not complete\n");
-            }
-            if ([[NSArray arrayWithObjects:@"2784.40.6~1",@"2784.30.7~3",@"2784.30.7~1",@"2784.20.34~2",@"2783.5.38~5",@"2783.3.26~3",@"2783.3.22~1",@"2783.3.13~4",@"2783.1.72~23",@"2783.1.72~8",nil] containsObject:kver]) {
-                //olog("openpwnage support on 8.X is not complete\n");
-            }
         }
     } else {
         [self openpwnageConsoleLog:@"[*]your device is not supported by openpwnage\n"];
@@ -219,34 +131,7 @@ static id static_consoleView = nil;
         
     olog("Kernel Version: %s\n",newkernv);
     NSString *kver = [NSString stringWithCString:newkernv encoding:NSUTF8StringEncoding];
-    if ([@"3789.70.16~4" isEqualToString:kver]) { //iOS 10
-        [self openpwnageConsoleLog:@"[*]starting jailbreak...\n"];
-        task_t tfp0 = sock_port_tfp0();
-        if (tfp0 == 0) {
-            olog("failed to get tfp0 :(\n");
-            exit(42);
-        }
-        [self openpwnageConsoleLog:@"[*]we tried getting tfp0, and holy shit it actually worked\n"];
-        [self openpwnageConsoleLog:[NSString stringWithFormat: @"[*]tfp0=0x%x\n", tfp0]];
-        [self openpwnageConsoleLog:@"[*]we should try getting kbase now, hold on...\n"];
-        uintptr_t kernel_base = get_kernel_base(tfp0);
-        [self openpwnageConsoleLog:@"[*]ayo, yet another success!\n"];
-        [self openpwnageConsoleLog:[NSString stringWithFormat: @"[*]huzzah, kbase=0x%08lx\n", kernel_base]];
-        [self openpwnageConsoleLog:@"[*]one more thing we need to get before patching: kaslr slide.\n"];
-        uintptr_t kaslr_slide = kernel_base - UNSLID_BASE;
-        [self openpwnageConsoleLog:@"[*]WOOO! Now we talkin'!\n"];
-        [self openpwnageConsoleLog:[NSString stringWithFormat: @"[*]slide=0x%08lx\n", kaslr_slide]];
-        [self openpwnageConsoleLog:@"[*]obtaining root...\n"];
-        
-        if (rootify(tfp0, kernel_base, kaslr_slide)) {
-            [self openpwnageConsoleLog:@"[*]we root baby\n"];
-        }
-        if (is_pmap_patch_success(tfp0, kernel_base, kaslr_slide)) {
-            olog("pmap patch success!\n");
-        } else {
-            olog("pmap patch no success :(\n");
-        }
-    } else if ([[NSArray arrayWithObjects:@"2784.40.6~1",@"2784.30.7~3",@"2784.30.7~1",@"2784.20.34~2",@"2783.5.38~5",@"2783.3.26~3",@"2783.3.22~1",@"2783.3.13~4",@"2783.1.72~23",@"2783.1.72~8",nil] containsObject:kver]) { //iOS 8.3-8.4.1
+    if ([[NSArray arrayWithObjects:@"2784.40.6~1",@"2784.30.7~3",@"2784.30.7~1",@"2784.20.34~2",@"2783.5.38~5",@"2783.3.26~3",@"2783.3.22~1",@"2783.3.13~4",@"2783.1.72~23",@"2783.1.72~8",nil] containsObject:kver]) { //iOS 8.0-8.4.1
         olog("starting jb\n");
         //[self openpwnageConsoleLog:@"[*]aw yeah da hot sauce\n"];
         //consoleView.text = [[NSString alloc]initWithString:[consoleView.text stringByAppendingString:@"fill me with cum already\n"]];
@@ -282,44 +167,12 @@ static id static_consoleView = nil;
         } else {
             [self openpwnageConsoleLog:@"[*]root failed :(\n"];
         }
-    } else { //iOS 9
-    [self openpwnageConsoleLog:@"[*]starting jailbreak...\n"];
-    task_t tfp0 = get_kernel_task();
-    [self openpwnageConsoleLog:@"[*]we tried getting tfp0, and holy shit it actually worked\n"];
-    [self openpwnageConsoleLog:[NSString stringWithFormat: @"[*]tfp0=0x%x\n", tfp0]];
-    [self openpwnageConsoleLog:@"[*]we should try getting kbase now, hold on...\n"];
-    uintptr_t kernel_base = kbase();
-    [self openpwnageConsoleLog:@"[*]ayo, yet another success!\n"];
-    [self openpwnageConsoleLog:[NSString stringWithFormat: @"[*]huzzah, kbase=0x%08lx\n", kernel_base]];
-    [self openpwnageConsoleLog:@"[*]one more thing we need to get before patching: kaslr slide.\n"];
-    uintptr_t kaslr_slide = kernel_base - UNSLID_BASE;
-    [self openpwnageConsoleLog:@"[*]WOOO! Now we talkin'!\n"];
-    [self openpwnageConsoleLog:[NSString stringWithFormat: @"[*]slide=0x%08lx\n", kaslr_slide]];
-    [self openpwnageConsoleLog:@"[*]cleaning up exploit...\n"];
-    exploit_cleanup(tfp0);
-    [self openpwnageConsoleLog:@"[*]nice and tidy\n"];
-    [self openpwnageConsoleLog:@"[*]this is great and all, but now time for actual shit\n"];
-    //patch kernel pmap
-    [self openpwnageConsoleLog:@"[*]obtaining root...\n"];
-    if (rootify(tfp0, kernel_base, kaslr_slide)) {
-        [self openpwnageConsoleLog:@"[*]we root baby\n"];
-        [self openpwnageConsoleLog:@"[*]now, time to nuke sandbox\n"];
-        if (unsandbox(tfp0, kernel_base, kaslr_slide)) {
-            [self openpwnageConsoleLog:@"[*]no need to worry about sandbox anymore\n"];
-            [self openpwnageConsoleLog:@"[*]attempting remounting...\n"];
-            if (remount()) {
-                olog("remount success!");
-            }
-        } else {
-            [self openpwnageConsoleLog:@"[*]failed to nuke sandbox\n"];
-        }
     } else {
         [self openpwnageConsoleLog:@"[*]failed to get root :(\n"];
     }
     //unpatch pmap
     [self openpwnageConsoleLog:@"[*]that's all for know. more soon (hopefully)\n"];
     //go();
-    }
 }
 
 -(void)openpwnageConsoleLog: (NSString*)textToLog {

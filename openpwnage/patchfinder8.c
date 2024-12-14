@@ -1068,3 +1068,47 @@ uint32_t find_csops2(uint32_t region, uint8_t* kdata, size_t ksize)
 
     return ((uintptr_t)insn) - ((uintptr_t)kdata);
 }
+
+uint32_t find_mapForIO(uint32_t region, uint8_t* kdata, size_t ksize) {
+    for (uint32_t i = 0; i < ksize; i++) {
+        if (*(uint64_t*)&kdata[i] == 0xf010798044406da0 && *(uint32_t*)&kdata[i+0x8] == 0xd0060f01 && *(uint16_t*)&kdata[i+0xC] == 0x4620) {
+            uint32_t mapForIO = i - 4;
+            olog("[*] found mapForIO: 0x%08x\n", mapForIO);
+            return mapForIO;
+        }
+    }
+    return -1;
+}
+
+uint32_t find_sbops(uint32_t region, uint8_t* kdata, size_t ksize) {
+    char* seatbelt_sandbox_policy = memmem(kdata,
+                                           ksize,
+                                           "Seatbelt sandbox policy",
+                                           strlen("Seatbelt sandbox policy"));
+    olog("[*] seatbelt_sandbox_policy 0x%08lx\n",
+         (uintptr_t)seatbelt_sandbox_policy);
+    if (!seatbelt_sandbox_policy)
+        return -1;
+
+    uint32_t seatbelt =   (uintptr_t)seatbelt_sandbox_policy
+    - (uintptr_t)kdata
+    + region;
+    olog("[*] seatbelt: 0x%08x\n", seatbelt);
+
+    char* seatbelt_sandbox_policy_ptr = memmem(kdata,
+                                               ksize,
+                                               (char*)&seatbelt,
+                                               sizeof(seatbelt));
+
+    olog("[*] seatbelt_sandbox_policy_ptr 0x%08lx\n",
+         (uintptr_t)seatbelt_sandbox_policy_ptr);
+    if (!seatbelt_sandbox_policy_ptr)
+        return -1;
+
+    uint32_t ptr_to_seatbelt =   (uintptr_t)seatbelt_sandbox_policy_ptr
+    - (uintptr_t)kdata;
+    uint32_t sbops = ptr_to_seatbelt + 0x24;
+    olog("[*] found sbops: 0x%08x\n", sbops);
+
+    return sbops;
+}
