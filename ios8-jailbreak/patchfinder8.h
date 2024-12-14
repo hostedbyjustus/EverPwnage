@@ -11,4 +11,11 @@ uint32_t find_vn_getpath8(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_memcmp8(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_sb_patch8(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_p_bootargs8(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_sbops(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_proc_enforce8(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_mapForIO(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_vm_map_enter_patch8(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_csops8(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_csops2(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_vm_map_enter_patch8(uint32_t region, uint8_t* kdata, size_t ksize);
 #endif /* patchfinder8_h */

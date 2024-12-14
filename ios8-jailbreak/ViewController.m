@@ -72,9 +72,8 @@ addr_t self_port_address = 0;
     NSArray *supportedKernVers2 = [NSArray arrayWithObjects:@"2784.40.6~1",@"2784.30.7~3",@"2784.30.7~1",@"2784.20.34~2", nil];
     if (isA5orA5X() && !([supportedKernVers2 containsObject:kver])) {
         [_untether_toggle setOn:NO];
+        _untether_toggle.enabled = NO;
     }
-    
-    _untether_toggle.enabled = NO;
 }
 
 - (IBAction)jailbreak_pressed:(id)sender {
