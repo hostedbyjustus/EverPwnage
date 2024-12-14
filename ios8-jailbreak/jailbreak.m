@@ -28,6 +28,16 @@ void olog(char *format, ...) {
     printf("%s",msg);
 }
 
+bool isA5orA5X(void) {
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    NSArray *A5orA5X = [NSArray arrayWithObjects:@"iPad2,1",@"iPad2,2",@"iPad2,3",@"iPad2,4",@"iPad2,5",@"iPad2,6",@"iPad2,7",@"iPad3,1",@"iPad3,2",@"iPad3,3",@"iPhone4,1",@"iPod5,1", nil];
+    if([A5orA5X containsObject:[NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding]]) {
+        return true;
+    }
+    return false;
+}
+
 NSString *KernelVersion(void) {
     size_t size;
     sysctlbyname("kern.version", NULL, &size, NULL, 0);
@@ -92,10 +102,7 @@ uint32_t find_mount_common(uint32_t region, uint8_t* kdata, size_t ksize) {
 
 uint32_t find_PE_i_can_has_debugger_1(uint32_t region, uint8_t* kdata, size_t ksize) {
     uint32_t PE_i_can_has_debugger_1;
-    struct utsname systemInfo;
-    uname(&systemInfo);
-    NSArray *isA5orA5X = [NSArray arrayWithObjects:@"iPad2,1",@"iPad2,2",@"iPad2,3",@"iPad2,4",@"iPad2,5",@"iPad2,6",@"iPad2,7",@"iPad3,1",@"iPad3,2",@"iPad3,3",@"iPhone4,1",@"iPod5,1", nil];
-    if([isA5orA5X containsObject:[NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding]]) {
+    if (isA5orA5X()) {
         //A5 or A5X
         PE_i_can_has_debugger_1 = 0x3f4dc0;
         olog("using 0x3f4dc0\n");
@@ -110,10 +117,7 @@ uint32_t find_PE_i_can_has_debugger_1(uint32_t region, uint8_t* kdata, size_t ks
 
 uint32_t find_PE_i_can_has_debugger_2(uint32_t region, uint8_t* kdata, size_t ksize) {
     uint32_t PE_i_can_has_debugger_2;
-    struct utsname systemInfo;
-    uname(&systemInfo);
-    NSArray *isA5orA5X = [NSArray arrayWithObjects:@"iPad2,1",@"iPad2,2",@"iPad2,3",@"iPad2,4",@"iPad2,5",@"iPad2,6",@"iPad2,7",@"iPad3,1",@"iPad3,2",@"iPad3,3",@"iPhone4,1",@"iPod5,1", nil];
-    if([isA5orA5X containsObject:[NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding]]) {
+    if(isA5orA5X()) {
         //A5 or A5X
         PE_i_can_has_debugger_2 = 0x3f2dc0;
         olog("using 0x3f2dc0\n");
@@ -128,10 +132,7 @@ uint32_t find_PE_i_can_has_debugger_2(uint32_t region, uint8_t* kdata, size_t ks
 
 uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     uint32_t pmap_addr;
-    struct utsname systemInfo;
-    uname(&systemInfo);
-    NSArray *isA5orA5X = [NSArray arrayWithObjects:@"iPad2,1",@"iPad2,2",@"iPad2,3",@"iPad2,4",@"iPad2,5",@"iPad2,6",@"iPad2,7",@"iPad3,1",@"iPad3,2",@"iPad3,3",@"iPhone4,1",@"iPod5,1", nil];
-    if([isA5orA5X containsObject:[NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding]]) {
+    if(isA5orA5X()) {
         //A5 or A5X
         if ([[NSArray arrayWithObjects:@"2783.5.38~5", nil] containsObject:KernelVersion()]){ //8.2
             pmap_addr = 0x39411c;
@@ -267,19 +268,19 @@ void run_cmd(char *cmd, ...) {
     char *argv[] = {"sh", "-c", cmd_, NULL};
 
     int status;
-    olog("Run command: %s", cmd_);
+    olog("Run command: %s\n", cmd_);
     status = posix_spawn(&pid, "/bin/sh", NULL, NULL, argv, environ);
     if (status == 0) {
-        olog("Child pid: %i", pid);
+        olog("Child pid: %i\n", pid);
         do {
             if (waitpid(pid, &status, 0) != -1) {
-                olog("Child status %d", WEXITSTATUS(status));
+                olog("Child status %d\n", WEXITSTATUS(status));
             } else {
                 perror("waitpid");
             }
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     } else {
-        olog("posix_spawn: %s", strerror(status));
+        olog("posix_spawn: %s\n", strerror(status));
     }
 }
 
@@ -294,19 +295,19 @@ void run_tar(char *cmd, ...) {
     char *argv[] = {"/bin/tar", "-xf", cmd_, "-C", "/", "--preserve-permissions", NULL};
 
     int status;
-    olog("Run command: %s", cmd_);
+    olog("Run command: %s\n", cmd_);
     status = posix_spawn(&pid, "/bin/tar", NULL, NULL, argv, environ);
     if (status == 0) {
-        olog("Child pid: %i", pid);
+        olog("Child pid: %i\n", pid);
         do {
             if (waitpid(pid, &status, 0) != -1) {
-                olog("Child status %d", WEXITSTATUS(status));
+                olog("Child status %d\n", WEXITSTATUS(status));
             } else {
                 perror("waitpid");
             }
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     } else {
-        olog("posix_spawn: %s", strerror(status));
+        olog("posix_spawn: %s\n", strerror(status));
     }
 }
 
@@ -323,7 +324,7 @@ void dump_kernel_8(mach_port_t tfp0, vm_address_t kernel_base, uint8_t *dest, si
     }
 }
 
-bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base) {
+bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     olog("unsandboxing...\n");
     
     uint8_t* kdata = NULL;
@@ -434,6 +435,10 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base) {
     olog("remount = %d\n",mntr);
     
     sync();
+
+    NSString *untetherPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/untether.tar"];
+    char *untether_path = [untetherPathObj UTF8String];
+    olog("untether path: %s\n",untether_path);
     
     bool InstallBootstrap = false;
     if (!((access("/.installed-openpwnage", F_OK) != -1) || (access("/.installed_daibutsu", F_OK) != -1) || (access("/.installed_home_depot", F_OK) != -1))) {
@@ -452,10 +457,9 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base) {
         olog("copying tar\n");
         copyfile([[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/tar"].UTF8String, "/bin/tar", NULL, COPYFILE_ALL);
         
-        olog("extracting bootstrap\n");
-        olog("prepare to wait a long time. this should be obvious imo, but don't turn off your device.\n");
         chmod("/bin/tar", 0755);
         olog("chmod'd tar_path\n");
+        olog("extracting bootstrap\n");
         run_tar("%s", basebins_path);
         
         olog("disabling stashing\n");
@@ -467,11 +471,11 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base) {
         olog("fixing perms...\n");
         chmod("/bin/tar", 0755);
         chmod("/bin/launchctl", 0755);
-        chmod("/private", 0755);
-        chmod("/private/var", 0755);
-        chmod("/private/var/mobile", 0711);
-        chmod("/private/var/mobile/Library", 0711);
-        chmod("/private/var/mobile/Library/Preferences", 0755);
+        chmod("/private", 0777);
+        chmod("/private/var", 0777);
+        chmod("/private/var/mobile", 0777);
+        chmod("/private/var/mobile/Library", 0777);
+        chmod("/private/var/mobile/Library/Preferences", 0777);
         mkdir("/Library/LaunchDaemons", 0755);
         FILE* fp = fopen("/.installed-openpwnage", "w");
         fprintf(fp, "do **NOT** delete this file, it's important. it's how we detect if the bootstrap was installed.\n");
@@ -502,6 +506,14 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base) {
     if (InstallBootstrap){
         olog("running uicache\n");
         run_cmd("su -c uicache mobile &");
+    }
+
+    if (untether_on) {
+        olog("extracting untether\n");
+        run_tar("%s", untether_path);
+
+        olog("running postinst\n");
+        run_cmd("/bin/bash /private/var/tmp/postinst configure");
     }
     
     olog("loading launch daemons\n");

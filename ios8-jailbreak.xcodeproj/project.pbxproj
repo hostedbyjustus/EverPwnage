@@ -22,6 +22,8 @@
 		8866689F2D0D2C6300C3F554 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8866689E2D0D2C6300C3F554 /* Assets.xcassets */; };
 		886668A22D0D2C6300C3F554 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 886668A02D0D2C6300C3F554 /* LaunchScreen.storyboard */; };
 		886668A52D0D2C6300C3F554 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 886668A42D0D2C6300C3F554 /* main.m */; };
+		8876A19F2D0D72E90087BA13 /* untether.tar in Resources */ = {isa = PBXBuildFile; fileRef = 8876A19D2D0D72E90087BA13 /* untether.tar */; };
+		8876A1A02D0D72E90087BA13 /* bootstrap.tar in Resources */ = {isa = PBXBuildFile; fileRef = 8876A19E2D0D72E90087BA13 /* bootstrap.tar */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +55,8 @@
 		886668A12D0D2C6300C3F554 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		886668A32D0D2C6300C3F554 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		886668A42D0D2C6300C3F554 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8876A19D2D0D72E90087BA13 /* untether.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = untether.tar; sourceTree = "<group>"; };
+		8876A19E2D0D72E90087BA13 /* bootstrap.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = bootstrap.tar; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +102,7 @@
 				886668952D0D2C6100C3F554 /* AppDelegate.h */,
 				886668962D0D2C6100C3F554 /* AppDelegate.m */,
 				8866689E2D0D2C6300C3F554 /* Assets.xcassets */,
+				8876A19E2D0D72E90087BA13 /* bootstrap.tar */,
 				880F0C302D0D4C8D00598FA3 /* common.h */,
 				886668A32D0D2C6300C3F554 /* Info.plist */,
 				880F0C352D0D4C8E00598FA3 /* io_sp.c */,
@@ -119,6 +124,7 @@
 				880F0C3C2D0D4C8F00598FA3 /* sockpuppet.c */,
 				880F0C372D0D4C8E00598FA3 /* sockpuppet.h */,
 				880F0C2F2D0D4C8D00598FA3 /* tar */,
+				8876A19D2D0D72E90087BA13 /* untether.tar */,
 				886668982D0D2C6100C3F554 /* ViewController.h */,
 				886668992D0D2C6100C3F554 /* ViewController.m */,
 			);
@@ -182,10 +188,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8876A1A02D0D72E90087BA13 /* bootstrap.tar in Resources */,
 				886668A22D0D2C6300C3F554 /* LaunchScreen.storyboard in Resources */,
 				880F0C3F2D0D4C8F00598FA3 /* IOKit in Resources */,
 				8866689F2D0D2C6300C3F554 /* Assets.xcassets in Resources */,
 				8866689D2D0D2C6200C3F554 /* Main.storyboard in Resources */,
+				8876A19F2D0D72E90087BA13 /* untether.tar in Resources */,
 				880F0C402D0D4C8F00598FA3 /* tar in Resources */,
 				880F0C452D0D4C8F00598FA3 /* launchctl in Resources */,
 			);

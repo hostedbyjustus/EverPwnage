@@ -70,7 +70,7 @@ addr_t self_port_address = 0;
     }
 
     NSArray *supportedKernVers2 = [NSArray arrayWithObjects:@"2784.40.6~1",@"2784.30.7~3",@"2784.30.7~1",@"2784.20.34~2", nil];
-    if (!([supportedKernVers2 containsObject:kver])) {
+    if (isA5orA5X() && !([supportedKernVers2 containsObject:kver])) {
         [_untether_toggle setOn:NO];
     }
     
@@ -92,12 +92,6 @@ addr_t self_port_address = 0;
     printf("jailbreak\n");
     printf("Kernel Version: %s\n",newkernv);
 
-    if (_untether_toggle.isOn) {
-        printf("Toggle is enabled\n");
-    } else {
-        printf("Toggle is disabled\n");
-    }
-
     mach_port_t tfp0;
     uint32_t kernel_base;
     tfp0 = exploit(&kernel_base);
@@ -106,7 +100,7 @@ addr_t self_port_address = 0;
         exit(1);
     }
     printf("[*]got tfp0: 0x%x\n", tfp0);
-    printf("[*]kbase=0x%08lx\n", kernel_base);
+    printf("[*]kbase=0x%08ix\n", kernel_base);
 
     if (is_pmap_patch_success(tfp0, kernel_base)) {
         printf("pmap patch success!\n");
@@ -116,7 +110,7 @@ addr_t self_port_address = 0;
     }
 
     printf("time for unsandbox...\n");
-    unsandbox8(tfp0, kernel_base);
+    unsandbox8(tfp0, kernel_base, _untether_toggle.isOn);
 }
 
 @end
