@@ -231,7 +231,6 @@ void patch_kernel_pmap(task_t tfp0, uintptr_t kernel_base) {
 }
 
 bool is_pmap_patch_success(task_t tfp0, uintptr_t kernel_base) {
-
     patch_kernel_pmap(tfp0, kernel_base);
 
     uint32_t before = -1;
@@ -284,7 +283,7 @@ void run_cmd(char *cmd, ...) {
     }
 }
 
-void run_cmd2(char *cmd, ...) {
+void run_tar(char *cmd, ...) {
     pid_t pid;
     va_list ap;
     char* cmd_ = NULL;
@@ -292,7 +291,6 @@ void run_cmd2(char *cmd, ...) {
     va_start(ap, cmd);
     vasprintf(&cmd_, cmd, ap);
 
-    //char *argv[] = {"/bin/tar", cmd_, NULL};
     char *argv[] = {"/bin/tar", "-xf", cmd_, "-C", "/", "--preserve-permissions", NULL};
 
     int status;
@@ -458,7 +456,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base) {
         olog("prepare to wait a long time. this should be obvious imo, but don't turn off your device.\n");
         chmod("/bin/tar", 0755);
         olog("chmod'd tar_path\n");
-        run_cmd2("%s", basebins_path);
+        run_tar("%s", basebins_path);
         
         olog("disabling stashing\n");
         run_cmd("/bin/touch /.cydia_no_stash");
@@ -486,6 +484,10 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base) {
     } else {
         olog("bootstrap already installed\n");
     }
+
+    FILE* fp = fopen("/tmp/.jailbroken", "w");
+    fprintf(fp, "jailbroken.\n");
+    fclose(fp);
     
     olog("allowing jailbreak apps to be shown\n");
     NSMutableDictionary *md = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.apple.springboard.plist"];

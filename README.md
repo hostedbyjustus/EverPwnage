@@ -16,8 +16,8 @@
 - iPad 2
 - iPad 3
 - iPad 4
-- iPad Mini
-- iPod Touch 5
+- iPad mini 1
+- iPod touch 5
 
 ## Supported Firmwares
 

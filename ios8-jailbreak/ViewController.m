@@ -19,6 +19,7 @@
 @interface ViewController ()
 
 @property (weak, nonatomic) IBOutlet UIButton *jailbreak_button;
+@property (weak, nonatomic) IBOutlet UISwitch *untether_toggle;
 
 @end
 
@@ -63,6 +64,17 @@ addr_t self_port_address = 0;
         [_jailbreak_button setTitle:@"not supported" forState:UIControlStateDisabled];
     }
 
+    if (access("/.installed_daibutsu", F_OK) != -1 || access("/tmp/.jailbroken", F_OK) != -1) {
+        _jailbreak_button.enabled = NO;
+        [_jailbreak_button setTitle:@"jailbroken" forState:UIControlStateDisabled];
+    }
+
+    NSArray *supportedKernVers2 = [NSArray arrayWithObjects:@"2784.40.6~1",@"2784.30.7~3",@"2784.30.7~1",@"2784.20.34~2", nil];
+    if (!([supportedKernVers2 containsObject:kver])) {
+        [_untether_toggle setOn:NO];
+    }
+    
+    _untether_toggle.enabled = NO;
 }
 
 - (IBAction)jailbreak_pressed:(id)sender {
@@ -80,20 +92,29 @@ addr_t self_port_address = 0;
     printf("jailbreak\n");
     printf("Kernel Version: %s\n",newkernv);
 
+    if (_untether_toggle.isOn) {
+        printf("Toggle is enabled\n");
+    } else {
+        printf("Toggle is disabled\n");
+    }
+
     mach_port_t tfp0;
     uint32_t kernel_base;
     tfp0 = exploit(&kernel_base);
     if (kernel_base == 0) {
         printf("failed to get tfp0 :(\n");
-        exit(42);
+        exit(1);
     }
+    printf("[*]got tfp0: 0x%x\n", tfp0);
     printf("[*]kbase=0x%08lx\n", kernel_base);
 
     if (is_pmap_patch_success(tfp0, kernel_base)) {
         printf("pmap patch success!\n");
     } else {
-        printf("pmap patch no success :(\n");
+        printf("pmap patch failed :(\n");
+        exit(1);
     }
+
     printf("time for unsandbox...\n");
     unsandbox8(tfp0, kernel_base);
 }
