@@ -1,0 +1,97 @@
+//
+//  ViewController.m
+//  ios8-jailbreak
+//
+//  Created by imac on 12/14/24.
+//  Copyright © 2024 lukezgd. All rights reserved.
+//
+
+#import "ViewController.h"
+
+#import <sys/utsname.h>
+#include <sys/sysctl.h>
+#include <sys/types.h>
+#include <time.h>
+
+@interface ViewController ()
+
+@property (weak, nonatomic) IBOutlet UIButton *jailbreak_button;
+
+@end
+
+@implementation ViewController
+
+char *newkernv;
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view, typically from a nib.
+
+    struct utsname systemInfo;
+    uname(&systemInfo);
+
+    NSString *system_machine = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
+    NSString *system_version = [[UIDevice currentDevice] systemVersion];
+
+    NSLog(@"Running on %@ with iOS %@", system_machine, system_version);
+
+    size_t size;
+    sysctlbyname("kern.version", NULL, &size, NULL, 0);
+    char *kernelVersion = malloc(size);
+    sysctlbyname("kern.version", kernelVersion, &size, NULL, 0);
+    printf("%s\n",kernelVersion);
+
+    newkernv = malloc(size - 44);
+    char *semicolon = strchr(kernelVersion, '~');
+    int indexofsemi = (int)(semicolon - kernelVersion);
+    int indexofrootxnu = indexofsemi;
+    while (kernelVersion[indexofrootxnu - 1] != '-') {
+        indexofrootxnu -= 1;
+    }
+    memcpy(newkernv, &kernelVersion[indexofrootxnu], indexofsemi - indexofrootxnu + 2);
+    newkernv[indexofsemi - indexofrootxnu + 2] = '\0';
+    printf("Kernel Version: %s\n",newkernv);
+
+    NSString *kver = [NSString stringWithCString:newkernv encoding:NSUTF8StringEncoding];
+    NSArray *supportedKernVers = [NSArray arrayWithObjects:@"2784.40.6~1",@"2784.30.7~3",@"2784.30.7~1",@"2784.20.34~2",@"2783.5.38~5",@"2783.3.26~3",@"2783.3.22~1",@"2783.3.13~4",@"2783.1.72~23",@"2783.1.72~8", nil];
+    if (!([supportedKernVers containsObject:kver])) {
+        _jailbreak_button.enabled = NO;
+        [_jailbreak_button setTitle:@"not supported" forState:UIControlStateDisabled];
+    }
+
+}
+
+- (IBAction)jailbreak_pressed:(id)sender {
+    printf("button pressed\n");
+
+    _jailbreak_button.enabled = NO;
+    [sender setTitle:@"jailbreaking" forState:UIControlStateDisabled];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self performSelector:@selector(jailbreak) withObject:self];
+    });
+}
+
+- (void)jailbreak {
+    printf("jailbreak\n");
+    printf("Kernel Version: %s\n",newkernv);
+
+    mach_port_t tfp0;
+    uint32_t kernel_base;
+    tfp0 = exploit(&kernel_base);
+    if (kernel_base == 0) {
+        olog("failed to get tfp0 :(\n");
+        exit(42);
+    }
+    printf("[*]kbase=0x%08lx\n", kernel_base);
+
+    if (is_pmap_patch_success(tfp0, kernel_base)) {
+        olog("pmap patch success!\n");
+    } else {
+        olog("pmap patch no success :(\n");
+    }
+    olog("time for unsandbox...\n");
+    unsandbox8(tfp0, kernel_base);
+}
+
+@end
