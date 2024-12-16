@@ -308,7 +308,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     uint32_t cs_enforcement_disable_amfi = find_cs_enforcement_disable_amfi8(kernel_base, kdata, ksize);
     uint32_t PE_i_can_has_debugger_1 = find_i_can_has_debugger_1(kernel_base, kdata, ksize);
     uint32_t PE_i_can_has_debugger_2 = find_i_can_has_debugger_2(kernel_base, kdata, ksize);
-    uint32_t vm_fault_enter = find_vm_fault_enter_patch_84(kernel_base, kdata, ksize);
+    //uint32_t vm_fault_enter = find_vm_fault_enter_patch_84(kernel_base, kdata, ksize);
     uint32_t vm_map_enter8 = find_vm_map_enter_patch8(kernel_base, kdata, ksize);
     uint32_t vm_map_protect8 = find_vm_map_protect_patch8(kernel_base, kdata, ksize);
     uint32_t mount_common = find_mount8(kernel_base, kdata, ksize);
@@ -333,8 +333,8 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     olog("patching PE_i_can_has_debugger_2 at 0x%08x\n",PE_i_can_has_debugger_2);
     kwrite_uint32(kernel_base + PE_i_can_has_debugger_2, 1, tfp0);
 
-    olog("patching vm_fault_enter at 0x%08x\n", kernel_base + vm_fault_enter);
-    kwrite_uint32(kernel_base + vm_fault_enter, 0x2201bf00, tfp0);
+    //olog("patching vm_fault_enter at 0x%08x\n", kernel_base + vm_fault_enter);
+    //kwrite_uint32(kernel_base + vm_fault_enter, 0x2201bf00, tfp0);
 
     olog("patching vm_map_enter at 0x%08x\n", kernel_base + vm_map_enter8);
     kwrite_uint32(kernel_base + vm_map_enter8, 0x4280bf00, tfp0);
@@ -361,8 +361,12 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     char* nmr = strdup("/dev/disk0s1s1");
     int mntr = mount("hfs", "/", MNT_UPDATE, &nmr);
     olog("remount = %d\n",mntr);
-    if (mntr != 0) {
-        exit(1);
+    while (mntr != 0) {
+        //olog("patching mount at 0x%08x\n", kernel_base + mount_common);
+        //kwrite_uint8(kernel_base + mount_common + 1, 0xe0, tfp0);
+        mntr = mount("hfs", "/", MNT_UPDATE, &nmr);
+        olog("remount = %d\n",mntr);
+        sleep(1);
     }
 
     sync();
