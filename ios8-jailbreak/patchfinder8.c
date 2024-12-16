@@ -1159,3 +1159,76 @@ uint32_t find_tfp0_patch(uint32_t region, uint8_t* kdata, size_t ksize)
 
     return ((uintptr_t)fn_start) + 6 - ((uintptr_t)kdata);
 }
+
+// from daibutsu
+uint16_t* find_PE_reboot_on_panic(uint32_t region, uint8_t* kdata, size_t ksize)
+{
+    // Find function referencing i_can_has_debugger_1: PE_reboot_on_panic
+    const struct find_search_mask search_masks[] =
+    {
+        {0xFBF0, 0xF240},
+        {0x8F00, 0x0000},
+        {0xFBF0, 0xF2C0},
+        {0xFF00, 0x0000},
+        {0xFFFF, 0x4478},
+        {0xFFFF, 0xF8D0},
+        {0xF000, 0x0000},
+        {0xFD07, 0xB100},
+        {0xFBF0, 0xF240},
+        {0x8F00, 0x0000},
+        {0xFBF0, 0xF2C0},
+        {0xFF00, 0x0000},
+        {0xFFFF, 0x4478},
+        {0xFFFF, 0xF890},
+        {0xF000, 0x0000},
+        {0xFFFF, 0xF010},
+        {0xFFFF, 0x0F04},
+        {0xFF00, 0xBF00}
+    };
+
+    uint16_t* insn = find_with_search_mask(region, kdata, ksize, sizeof(search_masks) / sizeof(*search_masks), search_masks);
+    if(!insn)
+        return 0;
+
+    return insn;
+}
+
+// Change this to non-zero.
+uint32_t find_i_can_has_debugger_1(uint32_t region, uint8_t* kdata, size_t ksize)
+{
+    // Find function referencing i_can_has_debugger_1: PE_reboot_on_panic
+    uint16_t* insn = find_PE_reboot_on_panic(region, kdata, ksize);
+    if(!insn)
+        return 0;
+
+    insn += 5;
+
+    uint32_t value = find_pc_rel_value(region, kdata, ksize, insn, insn_ldrb_imm_rt(insn));
+    if(!value)
+        return 0;
+
+    if ( (*insn & 0xFFF0) != 0xF8D0 )
+        return 0;
+
+    return (insn[1] & 0xFFF) + value;
+}
+
+// Change this to what you want the value to be (non-zero appears to work).
+uint32_t find_i_can_has_debugger_2(uint32_t region, uint8_t* kdata, size_t ksize)
+{
+    // Find function referencing i_can_has_debugger_1: PE_reboot_on_panic
+    uint16_t* insn = find_PE_reboot_on_panic(region, kdata, ksize);
+    if(!insn)
+        return 0;
+
+    uint16_t* insn2 = insn + 13;
+
+    uint32_t value = find_pc_rel_value(region, kdata, ksize, insn2, insn_ldrb_imm_rt(insn2));
+    if(!value)
+        return 0;
+
+    if ( (*insn2 & 0xFFF0) != 0xF890 )
+        return 0;
+
+    return (insn[14] & 0xFFF) + value;
+}

@@ -19,4 +19,7 @@ uint32_t find_csops8(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_csops2(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_vm_map_protect_patch8(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_tfp0_patch(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_vm_fault_enter_patch_84(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_i_can_has_debugger_1(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_i_can_has_debugger_2(uint32_t region, uint8_t* kdata, size_t ksize);
 #endif /* patchfinder8_h */

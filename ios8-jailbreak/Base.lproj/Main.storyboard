@@ -50,6 +50,13 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sNt-JJ-Iw8">
+                                <rect key="frame" x="139" y="128" width="38" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -69,6 +76,7 @@
                         <outlet property="jailbreak_button" destination="Pcp-A4-uVQ" id="LrV-A8-9ms"/>
                         <outlet property="title_label" destination="tuK-1B-Ke5" id="rfm-se-hRL"/>
                         <outlet property="untether_toggle" destination="vLV-AI-LSZ" id="c0U-Cm-chd"/>
+                        <outlet property="version_label" destination="sNt-JJ-Iw8" id="Jlt-Uc-lQX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
