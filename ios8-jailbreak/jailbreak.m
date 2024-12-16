@@ -361,7 +361,10 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     char* nmr = strdup("/dev/disk0s1s1");
     int mntr = mount("hfs", "/", MNT_UPDATE, &nmr);
     olog("remount = %d\n",mntr);
-    
+    if (mntr != 0) {
+        exit(1);
+    }
+
     sync();
 
     NSString *untetherPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/untether.tar"];
