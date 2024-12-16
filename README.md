@@ -44,6 +44,5 @@ This project is built using Xcode 10.1 and macOS High Sierra 10.13.6.
 ## Credits
 
 - [sock_port_2_legacy](https://github.com/kok3shidoll/sock_port_2_legacy/tree/ios8)
-- [libkok3shi](https://github.com/kok3shidoll/libkok3shi)
-- [daibutsu untether](https://kok3shidoll.github.io/info/jp.daibutsu.untether841/indexv2.html)
+- [daibutsu untether](https://kok3shidoll.github.io/info/jp.daibutsu.untether841/indexv2.html) ([GitHub repo](https://github.com/kok3shidoll/daibutsu))
 - [openpwnage](https://github.com/0xilis/openpwnage) is used as the base for this jailbreak
