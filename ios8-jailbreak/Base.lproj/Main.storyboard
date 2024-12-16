@@ -30,7 +30,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jailbreak for iOS 8.x 32-bit" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vb3-L8-LJK">
-                                <rect key="frame" x="43.5" y="164.5" width="233.5" height="24"/>
+                                <rect key="frame" x="43.5" y="164" width="233.5" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -42,17 +42,16 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vLV-AI-LSZ">
-                                <rect key="frame" x="135.5" y="335" width="51" height="31"/>
+                                <rect key="frame" x="135.5" y="334.5" width="51" height="31"/>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Install Untether" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DV8-Y7-VK4">
-                                <rect key="frame" x="101.5" y="306" width="117" height="21"/>
+                                <rect key="frame" x="101.5" y="304.5" width="117" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sNt-JJ-Iw8">
-                                <rect key="frame" x="139" y="128" width="38" height="18"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sNt-JJ-Iw8">
+                                <rect key="frame" x="141" y="131" width="38" height="18"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -60,16 +59,18 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="vb3-L8-LJK" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-63.5" id="4CW-ED-wRO"/>
+                            <constraint firstItem="vb3-L8-LJK" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-64" id="4CW-ED-wRO"/>
                             <constraint firstItem="Pcp-A4-uVQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7UM-yc-lIW"/>
                             <constraint firstItem="Pcp-A4-uVQ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="DLB-Ja-mxz"/>
                             <constraint firstItem="tuK-1B-Ke5" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-130" id="GaX-1l-BKm"/>
-                            <constraint firstItem="DV8-Y7-VK4" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="76.5" id="UgM-YZ-sch"/>
+                            <constraint firstItem="DV8-Y7-VK4" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="75" id="UgM-YZ-sch"/>
                             <constraint firstItem="tuK-1B-Ke5" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="XLG-oM-ISQ"/>
-                            <constraint firstItem="vLV-AI-LSZ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="110.5" id="b71-bT-P9o"/>
+                            <constraint firstItem="vLV-AI-LSZ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="110" id="b71-bT-P9o"/>
                             <constraint firstItem="DV8-Y7-VK4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="frZ-kd-9fQ"/>
                             <constraint firstItem="vLV-AI-LSZ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="gnh-GM-lLW"/>
+                            <constraint firstItem="sNt-JJ-Iw8" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-100" id="iTO-Ax-XDK"/>
                             <constraint firstItem="vb3-L8-LJK" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="tgS-lh-gKp"/>
+                            <constraint firstItem="sNt-JJ-Iw8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="yit-QW-tUc"/>
                         </constraints>
                     </view>
                     <connections>

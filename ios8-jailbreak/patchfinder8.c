@@ -1069,17 +1069,6 @@ uint32_t find_csops2(uint32_t region, uint8_t* kdata, size_t ksize)
     return ((uintptr_t)insn) - ((uintptr_t)kdata);
 }
 
-uint32_t find_mapForIO(uint32_t region, uint8_t* kdata, size_t ksize) {
-    for (uint32_t i = 0; i < ksize; i++) {
-        if (*(uint64_t*)&kdata[i] == 0xf010798044406da0 && *(uint32_t*)&kdata[i+0x8] == 0xd0060f01 && *(uint16_t*)&kdata[i+0xC] == 0x4620) {
-            uint32_t mapForIO = i - 4;
-            printf("[*] found mapForIO: 0x%08x\n", mapForIO);
-            return mapForIO;
-        }
-    }
-    return -1;
-}
-
 uint32_t find_sbops(uint32_t region, uint8_t* kdata, size_t ksize) {
     char* seatbelt_sandbox_policy = memmem(kdata,
                                            ksize,
@@ -1161,6 +1150,45 @@ uint32_t find_tfp0_patch(uint32_t region, uint8_t* kdata, size_t ksize)
 }
 
 // from daibutsu
+// NOP out the conditional branch here (prevent kIOReturnLockedWrite error).
+uint32_t find_mapForIO(uint32_t region, uint8_t* kdata, size_t ksize)
+{
+    // checked on iPhone5,2 8.2 and iPhone5,1 8.4
+    const struct find_search_mask search_masks_84[] =
+    {
+        {0xFFF0, 0xF8D0},
+        {0x0000, 0x0000},
+        {0xFFF0, 0xF890},
+        {0x0000, 0x0000},
+        {0xFF00, 0x4800},
+        {0xFFFF, 0x2900},
+        {0xFBC0, 0xF040},
+        {0xD000, 0x8000}
+    };
+
+    const struct find_search_mask search_masks[] =
+    {
+        {0xFFF0, 0xF8D0},
+        {0x0000, 0x0000},
+        {0xFF00, 0x4800},
+        {0xFFF0, 0xF890},
+        {0x0000, 0x0000},
+        {0xFFFF, 0x2900},
+        {0xFBC0, 0xF040},
+        {0xD000, 0x8000}
+    };
+
+    uint16_t* insn = find_with_search_mask(region, kdata, ksize, sizeof(search_masks_84) / sizeof(*search_masks_84), search_masks_84);
+    if(!insn)
+        insn = find_with_search_mask(region, kdata, ksize, sizeof(search_masks) / sizeof(*search_masks), search_masks);
+    if(!insn)
+        return 0;
+
+    insn += 6;
+
+    return ((uintptr_t)insn) - ((uintptr_t)kdata);
+}
+
 uint16_t* find_PE_reboot_on_panic(uint32_t region, uint8_t* kdata, size_t ksize)
 {
     // Find function referencing i_can_has_debugger_1: PE_reboot_on_panic

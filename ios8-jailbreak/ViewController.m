@@ -62,22 +62,21 @@ addr_t self_port_address = 0;
     newkernv[indexofsemi - indexofrootxnu + 2] = '\0';
     printf("Kernel Version: %s\n",newkernv);
 
-    NSString *kver = [NSString stringWithCString:newkernv encoding:NSUTF8StringEncoding];
-    NSArray *supportedKernVers = [NSArray arrayWithObjects:@"2784.40.6~1",@"2784.30.7~3",@"2784.30.7~1",@"2784.20.34~2",@"2783.5.38~5",@"2783.3.26~3",@"2783.3.22~1",@"2783.3.13~4",@"2783.1.72~23",@"2783.1.72~8", nil];
-    if (!([supportedKernVers containsObject:kver])) {
+    if (![system_version hasPrefix:@"8"]) {
         _jailbreak_button.enabled = NO;
-        [_jailbreak_button setTitle:@"not supported" forState:UIControlStateDisabled];
+        [_jailbreak_button setTitle:@"version not supported" forState:UIControlStateDisabled];
     }
-
+    if (UINTPTR_MAX == 0xffffffffffffffff) {
+        _jailbreak_button.enabled = NO;
+        [_jailbreak_button setTitle:@"64-bit not supported" forState:UIControlStateDisabled];
+    }
     if (access("/.installed_daibutsu", F_OK) != -1 || access("/tmp/.jailbroken", F_OK) != -1) {
         _jailbreak_button.enabled = NO;
         [_jailbreak_button setTitle:@"jailbroken" forState:UIControlStateDisabled];
     }
-
-    NSArray *supportedKernVers2 = [NSArray arrayWithObjects:@"2784.40.6~1",@"2784.30.7~3",@"2784.30.7~1",@"2784.20.34~2", nil];
-    if (isA5orA5X() && !([supportedKernVers2 containsObject:kver])) {
-        [_untether_toggle setOn:NO];
+    if (isA5orA5X() && ([system_version hasPrefix:@"8.0"] || [system_version hasPrefix:@"8.1"] || [system_version hasPrefix:@"8.2"])) {
         _untether_toggle.enabled = NO;
+        [_untether_toggle setOn:NO];
     }
 }
 

@@ -39,22 +39,7 @@ bool isA5orA5X(void) {
 }
 
 NSString *KernelVersion(void) {
-    size_t size;
-    sysctlbyname("kern.version", NULL, &size, NULL, 0);
-    char *kernelVersion = malloc(size);
-    sysctlbyname("kern.version", kernelVersion, &size, NULL, 0);
-    olog("%s\n",kernelVersion);
-    
-    char *newkernv = malloc(size - 44);
-    char *semicolon = strchr(kernelVersion, '~');
-    int indexofsemi = (int)(semicolon - kernelVersion);
-    int indexofrootxnu = indexofsemi;
-    while (kernelVersion[indexofrootxnu - 1] != '-') {
-        indexofrootxnu -= 1;
-    }
-    memcpy(newkernv, &kernelVersion[indexofrootxnu], indexofsemi - indexofrootxnu + 2);
-    newkernv[indexofsemi - indexofrootxnu + 2] = '\0';
-    
+    olog("%s\n", newkernv);
     return [NSString stringWithUTF8String:newkernv];
 }
 
