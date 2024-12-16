@@ -20,6 +20,8 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *jailbreak_button;
 @property (weak, nonatomic) IBOutlet UISwitch *untether_toggle;
+@property (weak, nonatomic) IBOutlet UILabel *title_label;
+@property (weak, nonatomic) IBOutlet UILabel *version_label;
 
 @end
 
@@ -31,6 +33,9 @@ addr_t self_port_address = 0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    _title_label.text = @"EverPwnage";
+    _version_label.text = @"v1.0";
 
     struct utsname systemInfo;
     uname(&systemInfo);
@@ -99,7 +104,7 @@ addr_t self_port_address = 0;
         exit(1);
     }
     printf("[*]got tfp0: 0x%x\n", tfp0);
-    printf("[*]kbase=0x%08ix\n", kernel_base);
+    printf("[*]kbase=0x%08lx\n", kernel_base);
 
     if (is_pmap_patch_success(tfp0, kernel_base)) {
         printf("pmap patch success!\n");

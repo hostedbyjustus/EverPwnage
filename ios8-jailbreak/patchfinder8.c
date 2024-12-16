@@ -1112,3 +1112,50 @@ uint32_t find_sbops(uint32_t region, uint8_t* kdata, size_t ksize) {
 
     return sbops;
 }
+
+// from libkok3shi
+// NOP out the conditional branch here.
+uint32_t find_tfp0_patch(uint32_t region, uint8_t* kdata, size_t ksize)
+{
+    // Find the beginning of task_for_pid function
+    const struct find_search_mask search_masks[] =
+    {
+        {0xF8FF, 0x9003}, // str rx, [sp, #0xc]
+        {0xF8FF, 0x9002}, // str rx, [sp, #0x8]
+        {0xF800, 0x2800}, // cmp rx, #0
+        {0xFBC0, 0xF000}, // beq  <-- NOP
+        {0xD000, 0x8000},
+        {0xF800, 0xF000}, // bl _port_name_to_task
+        {0xF800, 0xF800},
+        {0xF8FF, 0x9003}, // str rx, [sp, #0xc]
+        {0xF800, 0x2800}, // cmp rx, #0
+        {0xFBC0, 0xF000}, // beq
+        {0xD000, 0x8000}
+    };
+
+    const struct find_search_mask search_masks_A5[] =
+    {
+        {0xF8FF, 0x9003}, // str rx, [sp, #0xc]
+        {0xF800, 0x2800}, // cmp rx, #0         // why?!
+        {0xF8FF, 0x9002}, // str rx, [sp, #0x8]
+        {0xFBC0, 0xF000}, // beq  <-- NOP
+        {0xD000, 0x8000},
+        {0xF800, 0xF000}, // bl _port_name_to_task
+        {0xF800, 0xF800},
+        {0xF8FF, 0x9003}, // str rx, [sp, #0xc]
+        {0xF800, 0x2800}, // cmp rx, #0
+        {0xFBC0, 0xF000}, // beq
+        {0xD000, 0x8000}
+    };
+
+    uint16_t* fn_start = find_with_search_mask(region, kdata, ksize, sizeof(search_masks) / sizeof(*search_masks), search_masks);
+
+    if(!fn_start) {
+        fn_start = find_with_search_mask(region, kdata, ksize, sizeof(search_masks_A5) / sizeof(*search_masks_A5), search_masks_A5);
+        if(!fn_start) {
+            return 0;
+        }
+    }
+
+    return ((uintptr_t)fn_start) + 6 - ((uintptr_t)kdata);
+}

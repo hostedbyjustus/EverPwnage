@@ -67,6 +67,7 @@
                     </view>
                     <connections>
                         <outlet property="jailbreak_button" destination="Pcp-A4-uVQ" id="LrV-A8-9ms"/>
+                        <outlet property="title_label" destination="tuK-1B-Ke5" id="rfm-se-hRL"/>
                         <outlet property="untether_toggle" destination="vLV-AI-LSZ" id="c0U-Cm-chd"/>
                     </connections>
                 </viewController>

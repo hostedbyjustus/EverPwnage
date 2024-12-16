@@ -17,5 +17,6 @@ uint32_t find_mapForIO(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_vm_map_enter_patch8(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_csops8(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_csops2(uint32_t region, uint8_t* kdata, size_t ksize);
-uint32_t find_vm_map_enter_patch8(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_vm_map_protect_patch8(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_tfp0_patch(uint32_t region, uint8_t* kdata, size_t ksize);
 #endif /* patchfinder8_h */

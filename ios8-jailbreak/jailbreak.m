@@ -333,7 +333,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     dump_kernel_8(tfp0, kernel_base, kdata, ksize);
     if (!kdata) {
         olog("fuck\n");
-        exit(42);
+        exit(1);
     }
     olog("now...\n");
     
@@ -424,6 +424,11 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
          kernel_base + vm_map_enter8);
     kwrite_uint32(kernel_base + vm_map_enter8, 0x4280bf00, tfp0);
 
+    uint32_t tfp0_patch = find_tfp0_patch(kernel_base, kdata, 32 * 1024 * 1024);
+    olog("patching tfp0 at 0x%08x\n",
+         kernel_base + tfp0_patch);
+    kwrite_uint32(kernel_base + tfp0_patch, 0xbf00bf00, tfp0);
+
     uint32_t mount_common = 1 + find_mount8(kernel_base, kdata, 32 * 1024 * 1024);
     olog("patching mount_common at 0x%08x\n",
          kernel_base + mount_common);
@@ -441,7 +446,8 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     olog("untether path: %s\n",untether_path);
     
     bool InstallBootstrap = false;
-    if (!((access("/.installed-openpwnage", F_OK) != -1) || (access("/.installed_daibutsu", F_OK) != -1) || (access("/.installed_home_depot", F_OK) != -1))) {
+    if (!((access("/.installed-openpwnage", F_OK) != -1) || (access("/.installed_everpwnage", F_OK) != -1) ||
+          (access("/.installed_home_depot", F_OK) != -1) || (access("/untether", F_OK) != -1) )) {
         olog("installing bootstrap...\n");
         
         NSString *tarPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/tar"];
@@ -477,7 +483,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
         chmod("/private/var/mobile/Library", 0777);
         chmod("/private/var/mobile/Library/Preferences", 0777);
         mkdir("/Library/LaunchDaemons", 0755);
-        FILE* fp = fopen("/.installed-openpwnage", "w");
+        FILE* fp = fopen("/.installed_everpwnage", "w");
         fprintf(fp, "do **NOT** delete this file, it's important. it's how we detect if the bootstrap was installed.\n");
         fclose(fp);
         

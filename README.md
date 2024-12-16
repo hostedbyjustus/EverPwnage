@@ -1,13 +1,10 @@
-# Jailbreak Name
+# EverPwnage
 
-## Credits
+iOS 8.0-8.4.1 32-bit Jailbreak.
 
-- [sock_port_2_legacy](https://github.com/kok3shidoll/sock_port_2_legacy/tree/ios8)
-- [daibutsu untether](https://kok3shidoll.github.io/info/jp.daibutsu.untether841/indexv2.html)
-- [openpwnage](https://github.com/0xilis/openpwnage) base
-- (jk?) kpmap patch
-- spv/p0laris for patchfinder (based off of planetbeing pf)
-- dora2ios for part of patchfinder (based off of planetbeing pf)
+## Usage
+
+Sideload the IPA from the [latest release](https://github.com/LukeZGD/EverPwnage/releases/latest).
 
 ## Supported Devices
 
@@ -20,6 +17,25 @@
 - iPad mini 1
 - iPod touch 5
 
-## Supported Firmwares
+## Untether
 
-- iOS 8.0 to 8.4.1
+The jailbreak offers two modes: semi-untethered or fully untethered, depending on the state of the Install Untether toggle.
+
+Enabling the Install Untether toggle installs daibutsu untether on the device. This is compatible with iOS versions 8.0–8.4.1 for A6(X) devices, and iOS 8.3–8.4.1 for A5(X) devices.
+
+For A5(X) devices running iOS 8.0–8.2, the Install Untether toggle cannot be enabled, limiting these devices to a semi-untethered jailbreak.
+
+## Other Jailbreaks
+
+Users of other iOS 8 jailbreaks, including EtasonJB, can also use EverPwnage. By jailbreaking with EverPwnage and enabling the Install Untether toggle, their device will switched to daibutsu untether.
+
+## Building
+
+This project is built using Xcode 10.1 and macOS High Sierra 10.13.6.
+
+## Credits
+
+- [sock_port_2_legacy](https://github.com/kok3shidoll/sock_port_2_legacy/tree/ios8)
+- [libkok3shi](https://github.com/kok3shidoll/libkok3shi)
+- [daibutsu untether](https://kok3shidoll.github.io/info/jp.daibutsu.untether841/indexv2.html)
+- [openpwnage](https://github.com/0xilis/openpwnage) is used as the base for this jailbreak
