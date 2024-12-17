@@ -27,7 +27,9 @@ For A5(X) devices running iOS 8.0–8.2, the Install Untether toggle cannot be e
 
 ## Other Jailbreaks
 
-Users of other iOS 8 jailbreaks, including EtasonJB, can also use EverPwnage. By jailbreaking with EverPwnage and enabling the Install Untether toggle, their device will switched to daibutsu untether.
+Users of other iOS 8 jailbreaks, such as EtasonJB, HomeDepot, and openpwnage, can also switch to EverPwnage. By jailbreaking with EverPwnage and enabling the Install Untether toggle, their device will switched to daibutsu untether.
+
+Note: This does not apply to the following iOS 8 jailbreaks: Pangu8, TaiG, PPJailbreak, and wtfis.
 
 ## Building
 
