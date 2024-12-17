@@ -11,7 +11,6 @@
 #import <sys/utsname.h>
 #include <sys/sysctl.h>
 #include <sys/types.h>
-#include <time.h>
 
 #import "jailbreak.h"
 #import "sockpuppet.h"
@@ -29,6 +28,9 @@
 
 NSString *system_machine;
 NSString *system_version;
+bool install_openssh = true;
+bool reinstall_strap = false;
+
 addr_t self_port_address = 0;
 
 - (void)viewDidLoad {
@@ -46,18 +48,16 @@ addr_t self_port_address = 0;
 
     NSLog(@"Running on %@ with iOS %@", system_machine, system_version);
 
-    if (UINTPTR_MAX == 0xffffffffffffffff) {
-        _jailbreak_button.enabled = NO;
-        [_jailbreak_button setTitle:@"64-bit not supported" forState:UIControlStateDisabled];
-    }
     if (![system_version hasPrefix:@"8"]) {
         _jailbreak_button.enabled = NO;
         [_jailbreak_button setTitle:@"version not supported" forState:UIControlStateDisabled];
     }
+
     if (access("/.installed_daibutsu", F_OK) != -1 || access("/tmp/.jailbroken", F_OK) != -1) {
         _jailbreak_button.enabled = NO;
         [_jailbreak_button setTitle:@"jailbroken" forState:UIControlStateDisabled];
     }
+
     if (isA5orA5X() && ([system_version hasPrefix:@"8.0"] || [system_version hasPrefix:@"8.1"] || [system_version hasPrefix:@"8.2"])) {
         _untether_toggle.enabled = NO;
         [_untether_toggle setOn:NO];
@@ -97,6 +97,43 @@ addr_t self_port_address = 0;
 
     printf("time for unsandbox...\n");
     unsandbox8(tfp0, kernel_base, _untether_toggle.isOn);
+}
+
+
+- (IBAction)showSettingsViewController:(id)sender {
+    // Initialize the SettingsViewController
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    SettingsViewController *secondVC = [storyboard instantiateViewControllerWithIdentifier:@"SettingsViewController"];
+    secondVC.delegate = self;
+
+    // Check for iPad or iPhone
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        // iPad: Show as popover
+        secondVC.modalPresentationStyle = UIModalPresentationPopover;
+
+        UIPopoverPresentationController *popover = secondVC.popoverPresentationController;
+        if (popover) {
+            popover.sourceView = sender;
+            popover.sourceRect = [sender bounds];
+            popover.permittedArrowDirections = UIPopoverArrowDirectionAny;
+            popover.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
+        }
+        [self presentViewController:secondVC animated:YES completion:nil];
+    } else {
+        // iPhone: Present modally
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:secondVC];
+        [self presentViewController:navController animated:YES completion:nil];
+    }
+}
+
+#pragma mark - SettingsViewControllerDelegate
+- (void)didUpdateTogglesWithFirstToggle:(BOOL)firstToggle secondToggle:(BOOL)secondToggle {
+    // Update label with toggle values
+    install_openssh = firstToggle;
+    reinstall_strap = secondToggle;
+    NSLog([NSString stringWithFormat:@"Toggle 1: %@, Toggle 2: %@",
+           firstToggle ? @"ON" : @"OFF",
+           secondToggle ? @"ON" : @"OFF"]);
 }
 
 @end

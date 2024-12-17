@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SettingsViewController.h"
 #include <mach/mach.h>
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <SettingsViewControllerDelegate>
 
 - (IBAction)jailbreak_pressed:(id)sender;
 
