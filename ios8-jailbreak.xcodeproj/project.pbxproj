@@ -25,6 +25,7 @@
 		886668A52D0D2C6300C3F554 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 886668A42D0D2C6300C3F554 /* main.m */; };
 		8876A19F2D0D72E90087BA13 /* untether.tar in Resources */ = {isa = PBXBuildFile; fileRef = 8876A19D2D0D72E90087BA13 /* untether.tar */; };
 		8876A1A02D0D72E90087BA13 /* bootstrap.tar in Resources */ = {isa = PBXBuildFile; fileRef = 8876A19E2D0D72E90087BA13 /* bootstrap.tar */; };
+		88EF89AF2D11717200AC09EE /* openssh.tar in Resources */ = {isa = PBXBuildFile; fileRef = 88EF89AE2D11717200AC09EE /* openssh.tar */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		886668A42D0D2C6300C3F554 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8876A19D2D0D72E90087BA13 /* untether.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = untether.tar; sourceTree = "<group>"; };
 		8876A19E2D0D72E90087BA13 /* bootstrap.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = bootstrap.tar; sourceTree = "<group>"; };
+		88EF89AE2D11717200AC09EE /* openssh.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = openssh.tar; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +123,7 @@
 				886668A42D0D2C6300C3F554 /* main.m */,
 				8866689B2D0D2C6200C3F554 /* Main.storyboard */,
 				880F0C3A2D0D4C8E00598FA3 /* offsets.h */,
+				88EF89AE2D11717200AC09EE /* openssh.tar */,
 				880F0C332D0D4C8E00598FA3 /* patchfinder8.c */,
 				880F0C3E2D0D4C8F00598FA3 /* patchfinder8.h */,
 				880F0C342D0D4C8E00598FA3 /* plog.h */,
@@ -193,6 +196,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88EF89AF2D11717200AC09EE /* openssh.tar in Resources */,
 				8876A1A02D0D72E90087BA13 /* bootstrap.tar in Resources */,
 				886668A22D0D2C6300C3F554 /* LaunchScreen.storyboard in Resources */,
 				880F0C3F2D0D4C8F00598FA3 /* IOKit in Resources */,

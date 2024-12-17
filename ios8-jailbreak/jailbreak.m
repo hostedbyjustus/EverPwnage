@@ -370,9 +370,13 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     char *untether_path = [untetherPathObj UTF8String];
     olog("untether path: %s\n",untether_path);
     
+    NSString *opensshPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/openssh.tar"];
+    char *openssh_path = [opensshPathObj UTF8String];
+    olog("openssh path: %s\n",openssh_path);
+    
     bool InstallBootstrap = false;
     if (!((access("/.installed-openpwnage", F_OK) != -1) || (access("/.installed_everpwnage", F_OK) != -1) ||
-          (access("/.installed_home_depot", F_OK) != -1) || (access("/untether", F_OK) != -1) )) {
+          (access("/.installed_home_depot", F_OK) != -1) || (access("/untether", F_OK) != -1) ) || reinstall_strap) {
         olog("installing bootstrap...\n");
         
         NSString *tarPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/tar"];
@@ -419,10 +423,6 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     } else {
         olog("bootstrap already installed\n");
     }
-
-    FILE* fp = fopen("/tmp/.jailbroken", "w");
-    fprintf(fp, "jailbroken.\n");
-    fclose(fp);
     
     olog("allowing jailbreak apps to be shown\n");
     NSMutableDictionary *md = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.apple.springboard.plist"];
@@ -437,6 +437,11 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     if (InstallBootstrap){
         olog("running uicache\n");
         run_cmd("su -c uicache mobile &");
+    }
+    
+    if (install_openssh) {
+        olog("extracting openssh\n");
+        run_tar("%s", openssh_path);
     }
 
     if (untether_on) {

@@ -28,7 +28,7 @@
 
 NSString *system_machine;
 NSString *system_version;
-bool install_openssh = true;
+bool install_openssh = false;
 bool reinstall_strap = false;
 
 addr_t self_port_address = 0;
@@ -51,11 +51,6 @@ addr_t self_port_address = 0;
     if (![system_version hasPrefix:@"8"]) {
         _jailbreak_button.enabled = NO;
         [_jailbreak_button setTitle:@"version not supported" forState:UIControlStateDisabled];
-    }
-
-    if (access("/.installed_daibutsu", F_OK) != -1 || access("/tmp/.jailbroken", F_OK) != -1) {
-        _jailbreak_button.enabled = NO;
-        [_jailbreak_button setTitle:@"jailbroken" forState:UIControlStateDisabled];
     }
 
     if (isA5orA5X() && ([system_version hasPrefix:@"8.0"] || [system_version hasPrefix:@"8.1"] || [system_version hasPrefix:@"8.2"])) {

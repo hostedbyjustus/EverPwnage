@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "SettingsViewController.h"
-#include <mach/mach.h>
 
 @interface ViewController : UIViewController <SettingsViewControllerDelegate>
 

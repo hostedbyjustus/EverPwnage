@@ -7,6 +7,7 @@
 //
 
 #import "SettingsViewController.h"
+#import "jailbreak.h"
 
 @interface SettingsViewController ()
 
@@ -26,6 +27,9 @@
                                                                       action:@selector(dismissView)];
         self.navigationItem.rightBarButtonItem = doneButton;
     }
+    
+    [_firstToggleSwitch setOn:install_openssh];
+    [_secondToggleSwitch setOn:reinstall_strap];
 }
 
 - (IBAction)toggleValueChanged:(id)sender {
