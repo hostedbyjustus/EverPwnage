@@ -53,6 +53,11 @@ addr_t self_port_address = 0;
         [_jailbreak_button setTitle:@"version not supported" forState:UIControlStateDisabled];
     }
 
+    if (access("/.installed_daibutsu", F_OK) != -1) {
+        _untether_toggle.enabled = NO;
+        [_untether_toggle setOn:NO];
+    }
+
     if (isA5orA5X() && ([system_version hasPrefix:@"8.0"] || [system_version hasPrefix:@"8.1"] || [system_version hasPrefix:@"8.2"])) {
         _untether_toggle.enabled = NO;
         [_untether_toggle setOn:NO];
