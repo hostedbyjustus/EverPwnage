@@ -27,7 +27,8 @@
 
 @implementation ViewController
 
-char *newkernv;
+NSString *system_machine;
+NSString *system_version;
 addr_t self_port_address = 0;
 
 - (void)viewDidLoad {
@@ -40,35 +41,18 @@ addr_t self_port_address = 0;
     struct utsname systemInfo;
     uname(&systemInfo);
 
-    NSString *system_machine = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
-    NSString *system_version = [[UIDevice currentDevice] systemVersion];
+    system_machine = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
+    system_version = [[UIDevice currentDevice] systemVersion];
 
     NSLog(@"Running on %@ with iOS %@", system_machine, system_version);
 
-    size_t size;
-    sysctlbyname("kern.version", NULL, &size, NULL, 0);
-    char *kernelVersion = malloc(size);
-    sysctlbyname("kern.version", kernelVersion, &size, NULL, 0);
-    printf("%s\n",kernelVersion);
-
-    newkernv = malloc(size - 44);
-    char *semicolon = strchr(kernelVersion, '~');
-    int indexofsemi = (int)(semicolon - kernelVersion);
-    int indexofrootxnu = indexofsemi;
-    while (kernelVersion[indexofrootxnu - 1] != '-') {
-        indexofrootxnu -= 1;
-    }
-    memcpy(newkernv, &kernelVersion[indexofrootxnu], indexofsemi - indexofrootxnu + 2);
-    newkernv[indexofsemi - indexofrootxnu + 2] = '\0';
-    printf("Kernel Version: %s\n",newkernv);
-
-    if (![system_version hasPrefix:@"8"]) {
-        _jailbreak_button.enabled = NO;
-        [_jailbreak_button setTitle:@"version not supported" forState:UIControlStateDisabled];
-    }
     if (UINTPTR_MAX == 0xffffffffffffffff) {
         _jailbreak_button.enabled = NO;
         [_jailbreak_button setTitle:@"64-bit not supported" forState:UIControlStateDisabled];
+    }
+    if (![system_version hasPrefix:@"8"]) {
+        _jailbreak_button.enabled = NO;
+        [_jailbreak_button setTitle:@"version not supported" forState:UIControlStateDisabled];
     }
     if (access("/.installed_daibutsu", F_OK) != -1 || access("/tmp/.jailbroken", F_OK) != -1) {
         _jailbreak_button.enabled = NO;
@@ -93,7 +77,6 @@ addr_t self_port_address = 0;
 
 - (void)jailbreak {
     printf("jailbreak\n");
-    printf("Kernel Version: %s\n",newkernv);
 
     mach_port_t tfp0;
     uint32_t kernel_base;

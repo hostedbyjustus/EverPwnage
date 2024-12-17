@@ -38,11 +38,6 @@ bool isA5orA5X(void) {
     return false;
 }
 
-NSString *KernelVersion(void) {
-    olog("%s\n", newkernv);
-    return [NSString stringWithUTF8String:newkernv];
-}
-
 uint32_t kread_uint32(uint32_t addr, task_t tfp0) {
     vm_size_t bytesRead=0;
     uint32_t ret = 0;
@@ -62,20 +57,20 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     uint32_t pmap_addr;
     if(isA5orA5X()) {
         //A5 or A5X
-        if ([[NSArray arrayWithObjects:@"2783.5.38~5", nil] containsObject:KernelVersion()]){ //8.2
+        if ([system_version hasPrefix:@"8.2"]){ //8.2
             pmap_addr = 0x39411c;
-        } else if ([[NSArray arrayWithObjects:@"2783.5.26~3", nil] containsObject:KernelVersion()]){ //8.1.3
+        } else if ([system_version hasPrefix:@"8.1.3"]){ //8.1.3
             pmap_addr = 0x39211c;
-        } else if ([[NSArray arrayWithObjects:@"2783.3.22~1",@"2783.3.13~4",@"2783.1.72~23",@"2783.1.72~8", nil] containsObject:KernelVersion()]){ //8.0-8.1.2
+        } else if ([system_version hasPrefix:@"8.1"] || [system_version hasPrefix:@"8.0"]){ //8.0-8.1.2
             pmap_addr = 0x39111c;
         } else { //8.3-8.4.1
             pmap_addr = 0x3a211c;
         }
     } else {
         //A6 or A6X
-        if ([[NSArray arrayWithObjects:@"2783.5.38~5", nil] containsObject:KernelVersion()]){ //8.2
+        if ([system_version hasPrefix:@"8.2"]){ //8.2
             pmap_addr = 0x39a11c; //for A5. For A6 offset is 0x003F6444
-        } else if ([[NSArray arrayWithObjects:@"2783.5.26~3",@"2783.3.22~1",@"2783.3.13~4",@"2783.1.72~23",@"2783.1.72~8", nil] containsObject:KernelVersion()]){ //8.0-8.1.2
+        } else if ([system_version hasPrefix:@"8.1"] || [system_version hasPrefix:@"8.0"]){ //8.0-8.1.3
             pmap_addr = 0x39711c;
         } else { //8.3-8.4.1
             pmap_addr = 0x3a711c;
