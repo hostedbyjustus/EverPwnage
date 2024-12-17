@@ -15,7 +15,7 @@
 
 @end
 
-@interface SettingsViewController : UIViewController
+@interface SettingsViewController : UIViewController <UIPopoverPresentationControllerDelegate>
 
 @property (nonatomic, weak) id<SettingsViewControllerDelegate> delegate;
 

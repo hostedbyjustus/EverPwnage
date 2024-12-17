@@ -103,25 +103,23 @@ addr_t self_port_address = 0;
 - (IBAction)showSettingsViewController:(id)sender {
     // Initialize the SettingsViewController
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    SettingsViewController *secondVC = [storyboard instantiateViewControllerWithIdentifier:@"SettingsViewController"];
-    secondVC.delegate = self;
+    SettingsViewController *settingsVC = [storyboard instantiateViewControllerWithIdentifier:@"SettingsViewController"];
+    settingsVC.delegate = self;
 
     // Check for iPad or iPhone
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         // iPad: Show as popover
-        secondVC.modalPresentationStyle = UIModalPresentationPopover;
-
-        UIPopoverPresentationController *popover = secondVC.popoverPresentationController;
+        settingsVC.modalPresentationStyle = UIModalPresentationPopover;
+        UIPopoverPresentationController *popover = settingsVC.popoverPresentationController;
         if (popover) {
             popover.sourceView = sender;
             popover.sourceRect = [sender bounds];
             popover.permittedArrowDirections = UIPopoverArrowDirectionAny;
-            popover.delegate = (id<UIPopoverPresentationControllerDelegate>)self;
+            popover.delegate = settingsVC; // Assign popover delegate
         }
-        [self presentViewController:secondVC animated:YES completion:nil];
+        [self presentViewController:settingsVC animated:YES completion:nil];
     } else {
-        // iPhone: Present modally
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:secondVC];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
         [self presentViewController:navController animated:YES completion:nil];
     }
 }

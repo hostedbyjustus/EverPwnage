@@ -32,7 +32,8 @@
     // Optional: Do something when toggles change
 }
 
-- (void)dismissView {
+#pragma mark - Shared Dismiss Logic
+- (void)dismissAction {
     // Notify the delegate with the toggle values
     if ([self.delegate respondsToSelector:@selector(didUpdateTogglesWithFirstToggle:secondToggle:)]) {
         [self.delegate didUpdateTogglesWithFirstToggle:self.firstToggleSwitch.isOn
@@ -43,10 +44,14 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-#pragma mark - Popover Style
-- (UIModalPresentationStyle)modalPresentationStyle {
-    // Explicitly set to popover for iPad
-    return UIModalPresentationPopover;
+#pragma mark - Done Button Action (for iPhones)
+- (void)dismissView {
+    [self dismissAction];
+}
+
+#pragma mark - UIPopoverPresentationControllerDelegate (for iPads)
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController {
+    [self dismissAction];
 }
 
 @end
