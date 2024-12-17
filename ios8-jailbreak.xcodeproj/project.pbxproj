@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		880614512D113F7F00798E6F /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 880614502D113F7F00798E6F /* SettingsViewController.m */; };
 		880F0C3F2D0D4C8F00598FA3 /* IOKit in Resources */ = {isa = PBXBuildFile; fileRef = 880F0C2E2D0D4C8D00598FA3 /* IOKit */; };
 		880F0C402D0D4C8F00598FA3 /* tar in Resources */ = {isa = PBXBuildFile; fileRef = 880F0C2F2D0D4C8D00598FA3 /* tar */; };
 		880F0C412D0D4C8F00598FA3 /* kernel_sp.c in Sources */ = {isa = PBXBuildFile; fileRef = 880F0C322D0D4C8E00598FA3 /* kernel_sp.c */; };
@@ -27,6 +28,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8806144F2D113F7F00798E6F /* SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		880614502D113F7F00798E6F /* SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		880F0C2E2D0D4C8D00598FA3 /* IOKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = IOKit; sourceTree = "<group>"; };
 		880F0C2F2D0D4C8D00598FA3 /* tar */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = tar; sourceTree = "<group>"; };
 		880F0C302D0D4C8D00598FA3 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
@@ -127,6 +130,8 @@
 				8876A19D2D0D72E90087BA13 /* untether.tar */,
 				886668982D0D2C6100C3F554 /* ViewController.h */,
 				886668992D0D2C6100C3F554 /* ViewController.m */,
+				8806144F2D113F7F00798E6F /* SettingsViewController.h */,
+				880614502D113F7F00798E6F /* SettingsViewController.m */,
 			);
 			path = "ios8-jailbreak";
 			sourceTree = "<group>";
@@ -209,6 +214,7 @@
 				880F0C432D0D4C8F00598FA3 /* io_sp.c in Sources */,
 				8866689A2D0D2C6100C3F554 /* ViewController.m in Sources */,
 				886668A52D0D2C6300C3F554 /* main.m in Sources */,
+				880614512D113F7F00798E6F /* SettingsViewController.m in Sources */,
 				880F0C462D0D4C8F00598FA3 /* sockpuppet.c in Sources */,
 				886668972D0D2C6100C3F554 /* AppDelegate.m in Sources */,
 				880F0C412D0D4C8F00598FA3 /* kernel_sp.c in Sources */,

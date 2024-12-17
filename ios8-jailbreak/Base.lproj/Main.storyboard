@@ -42,10 +42,10 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vLV-AI-LSZ">
-                                <rect key="frame" x="135.5" y="334.5" width="51" height="31"/>
+                                <rect key="frame" x="245.5" y="324.5" width="51" height="31"/>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Install Untether" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DV8-Y7-VK4">
-                                <rect key="frame" x="101.5" y="304.5" width="117" height="21"/>
+                                <rect key="frame" x="26.5" y="329.5" width="117" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -56,18 +56,27 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WKS-Zu-g2z">
+                                <rect key="frame" x="112" y="375" width="96" height="30"/>
+                                <state key="normal" title="More Settings"/>
+                                <connections>
+                                    <action selector="showSettingsViewController:" destination="BYZ-38-t0r" eventType="touchUpInside" id="sod-Tf-aoa"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="WKS-Zu-g2z" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="150" id="0yf-9o-Ogk"/>
                             <constraint firstItem="vb3-L8-LJK" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-64" id="4CW-ED-wRO"/>
                             <constraint firstItem="Pcp-A4-uVQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7UM-yc-lIW"/>
                             <constraint firstItem="Pcp-A4-uVQ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="DLB-Ja-mxz"/>
                             <constraint firstItem="tuK-1B-Ke5" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-130" id="GaX-1l-BKm"/>
-                            <constraint firstItem="DV8-Y7-VK4" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="75" id="UgM-YZ-sch"/>
+                            <constraint firstItem="DV8-Y7-VK4" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="100" id="UgM-YZ-sch"/>
                             <constraint firstItem="tuK-1B-Ke5" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="XLG-oM-ISQ"/>
-                            <constraint firstItem="vLV-AI-LSZ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="110" id="b71-bT-P9o"/>
-                            <constraint firstItem="DV8-Y7-VK4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="frZ-kd-9fQ"/>
-                            <constraint firstItem="vLV-AI-LSZ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="gnh-GM-lLW"/>
+                            <constraint firstItem="WKS-Zu-g2z" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Z7S-Mw-MGt"/>
+                            <constraint firstItem="vLV-AI-LSZ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="100" id="b71-bT-P9o"/>
+                            <constraint firstItem="DV8-Y7-VK4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="-75" id="frZ-kd-9fQ"/>
+                            <constraint firstItem="vLV-AI-LSZ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="110" id="gnh-GM-lLW"/>
                             <constraint firstItem="sNt-JJ-Iw8" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-100" id="iTO-Ax-XDK"/>
                             <constraint firstItem="vb3-L8-LJK" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="tgS-lh-gKp"/>
                             <constraint firstItem="sNt-JJ-Iw8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="yit-QW-tUc"/>
@@ -82,6 +91,60 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+        </scene>
+        <!--Settings View Controller-->
+        <scene sceneID="3K5-dE-adR">
+            <objects>
+                <viewController storyboardIdentifier="SettingsViewController" id="sgi-TW-fCE" customClass="SettingsViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="dR0-O0-P01"/>
+                        <viewControllerLayoutGuide type="bottom" id="kcZ-BF-PjL"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="CtU-sb-swt">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Install OpenSSH" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cmx-Ew-PzR">
+                                <rect key="frame" x="23" y="199.5" width="124" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reinstall Bootstrap" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4wc-eh-QoA">
+                                <rect key="frame" x="21" y="249.5" width="144" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zeT-jN-nbW">
+                                <rect key="frame" x="245.5" y="194.5" width="51" height="31"/>
+                            </switch>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="LUE-f1-NdO">
+                                <rect key="frame" x="245.5" y="244.5" width="51" height="31"/>
+                            </switch>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Cmx-Ew-PzR" firstAttribute="centerY" secondItem="CtU-sb-swt" secondAttribute="centerY" constant="-30" id="AST-WN-uEv"/>
+                            <constraint firstItem="Cmx-Ew-PzR" firstAttribute="centerX" secondItem="CtU-sb-swt" secondAttribute="centerX" constant="-75" id="Qw1-EM-D9x"/>
+                            <constraint firstItem="zeT-jN-nbW" firstAttribute="centerY" secondItem="CtU-sb-swt" secondAttribute="centerY" constant="-30" id="WzG-Lm-oZu"/>
+                            <constraint firstItem="4wc-eh-QoA" firstAttribute="centerY" secondItem="CtU-sb-swt" secondAttribute="centerY" constant="20" id="f0g-aZ-hOu"/>
+                            <constraint firstItem="LUE-f1-NdO" firstAttribute="centerX" secondItem="CtU-sb-swt" secondAttribute="centerX" constant="110" id="lHV-5r-ZFe"/>
+                            <constraint firstItem="4wc-eh-QoA" firstAttribute="centerX" secondItem="CtU-sb-swt" secondAttribute="centerX" constant="-67" id="nSR-Do-p5B"/>
+                            <constraint firstItem="LUE-f1-NdO" firstAttribute="centerY" secondItem="CtU-sb-swt" secondAttribute="centerY" constant="20" id="wNG-TZ-Jce"/>
+                            <constraint firstItem="zeT-jN-nbW" firstAttribute="centerX" secondItem="CtU-sb-swt" secondAttribute="centerX" constant="110" id="wTm-aW-Vrd"/>
+                        </constraints>
+                    </view>
+                    <value key="contentSizeForViewInPopover" type="size" width="300" height="134"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <connections>
+                        <outlet property="firstToggleSwitch" destination="zeT-jN-nbW" id="sEh-KB-ByU"/>
+                        <outlet property="secondToggleSwitch" destination="LUE-f1-NdO" id="49r-MP-1fL"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="c2f-Q9-lwZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="848" y="125"/>
         </scene>
     </scenes>
 </document>
