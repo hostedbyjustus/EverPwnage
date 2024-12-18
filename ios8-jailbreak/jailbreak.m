@@ -359,7 +359,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     while (mntr != 0) {
         mntr = mount("hfs", "/", MNT_UPDATE, &nmr);
         olog("remount = %d\n",mntr);
-        sleep(1);
+        usleep(100000);
     }
 
     sync();
