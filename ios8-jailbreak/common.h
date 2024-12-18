@@ -25,69 +25,6 @@ typedef struct
     } lock; // mutex lock
     uint32_t ref_count;
     int active;
-    char pad[0x2f0 /* TASK_BSDINFO */ - sizeof(int) - sizeof(uint32_t) - (3 * sizeof(uintptr_t))];
-    uintptr_t bsd_info;
-} ktask64_t;
-
-typedef struct __attribute__((__packed__))
-{
-    uint32_t ip_bits;
-    uint32_t ip_references;
-    struct __attribute__((__packed__))
-    {
-        uintptr_t data;
-        uint32_t pad;
-        uint32_t type;
-    } ip_lock; // spinlock
-    struct __attribute__((__packed__))
-    {
-        struct __attribute__((__packed__))
-        {
-            struct __attribute__((__packed__))
-            {
-                uint32_t flags;
-                uintptr_t waitq_interlock;
-                uint32_t pad;
-                struct __attribute__((__packed__))
-                {
-                    uintptr_t next;
-                    uintptr_t prev;
-                } waitq_queue;
-            } waitq;
-            uintptr_t messages;
-            natural_t msgcount;
-            natural_t qlimit;
-            natural_t seqno;
-            natural_t receiver_name;
-            uint32_t  fullwaiters;
-            natural_t pset_count;
-            uint32_t pad1;
-            uint32_t pad2;
-        } port;
-    } ip_messages;
-    uintptr_t ip_receiver;
-    uintptr_t ip_kobject;
-    uintptr_t ip_nsrequest;
-    uintptr_t ip_pdrequest;
-    uintptr_t ip_requests;
-    uintptr_t ip_premsg;
-    natural_t ip_mscount;
-    natural_t ip_srights;
-    natural_t ip_sorights;
-    natural_t ip_sprequests;
-    uint64_t  ip_context;
-} kport64_t;
-
-typedef struct
-{
-    struct
-    {
-        uintptr_t data;
-        uintptr_t pad;
-        uintptr_t type;
-    } lock; // mutex lock
-    uint32_t ref_count;
-    int active;
     char pad[0x1f0 /* TASK_BSDINFO */ - sizeof(int) - sizeof(uint32_t) - (3 * sizeof(uintptr_t))];
     uintptr_t bsd_info;
 } ktask32_t;

@@ -2,7 +2,7 @@
 //  SettingsViewController.h
 //  TestEx
 //
-//  Created by imac on 12/17/24.
+//  Created by lukezgd on 12/17/24.
 //  Copyright © 2024 lukezgd. All rights reserved.
 //
 

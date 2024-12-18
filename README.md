@@ -29,7 +29,7 @@ For A5(X) devices running iOS 8.0–8.2, the Install Untether toggle cannot be e
 
 Users of other iOS 8 jailbreaks, such as EtasonJB, HomeDepot, and openpwnage, can also switch to EverPwnage. By jailbreaking with EverPwnage and enabling the Install Untether toggle, their device will switched to daibutsu untether.
 
-Note: This does not apply to the following iOS 8 jailbreaks: Pangu8, TaiG, PPJailbreak, and wtfis.
+This does not apply to the following iOS 8 jailbreaks: Pangu8, TaiG, PPJailbreak, and wtfis. Do not use EverPwnage if you are on one of these jailbreaks, as they are already untethered and/or not for 32-bit devices in the case of wtfis.
 
 ## Building
 
@@ -37,7 +37,8 @@ This project is built using Xcode 10.1 and macOS High Sierra 10.13.6.
 
 ## Credits
 
-- [sock_port_2_legacy](https://github.com/kok3shidoll/sock_port_2_legacy/tree/ios8)
-- [daibutsu untether](https://kok3shidoll.github.io/info/jp.daibutsu.untether841/indexv2.html) ([GitHub repo](https://github.com/kok3shidoll/daibutsu))
-- got the IOKit stuff from [wtfis](https://github.com/TheRealClarity/wtfis)
-- [openpwnage](https://github.com/0xilis/openpwnage) is used as the base for this jailbreak
+- Thanks to [Merculous](https://github.com/Merculous) for testing and feedback
+- exploit: [sock_port_2_legacy](https://github.com/kok3shidoll/sock_port_2_legacy/tree/ios8)
+- untether and patches: [daibutsu untether](https://kok3shidoll.github.io/info/jp.daibutsu.untether841/indexv2.html) ([GitHub repo](https://github.com/kok3shidoll/daibutsu))
+- got the IOKit stuff from: [wtfis](https://github.com/TheRealClarity/wtfis)
+- base of this jailbreak: [openpwnage](https://github.com/0xilis/openpwnage)

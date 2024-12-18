@@ -81,7 +81,7 @@ addr_t self_port_address = 0;
     mach_port_t tfp0;
     uint32_t kernel_base;
     tfp0 = exploit(&kernel_base);
-    if (kernel_base == 0) {
+    if (tfp0 == 0) {
         printf("failed to get tfp0 :(\n");
         exit(1);
     }
@@ -98,7 +98,6 @@ addr_t self_port_address = 0;
     printf("time for unsandbox...\n");
     unsandbox8(tfp0, kernel_base, _untether_toggle.isOn);
 }
-
 
 - (IBAction)showSettingsViewController:(id)sender {
     // Initialize the SettingsViewController

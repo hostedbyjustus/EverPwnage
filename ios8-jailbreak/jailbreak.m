@@ -69,7 +69,7 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     } else {
         //A6 or A6X
         if ([system_version hasPrefix:@"8.2"]){ //8.2
-            pmap_addr = 0x39a11c; //for A5. For A6 offset is 0x003F6444
+            pmap_addr = 0x39a11c;
         } else if ([system_version hasPrefix:@"8.1"] || [system_version hasPrefix:@"8.0"]){ //8.0-8.1.3
             pmap_addr = 0x39711c;
         } else { //8.3-8.4.1
@@ -357,8 +357,6 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     int mntr = mount("hfs", "/", MNT_UPDATE, &nmr);
     olog("remount = %d\n",mntr);
     while (mntr != 0) {
-        //olog("patching mount at 0x%08x\n", kernel_base + mount_common);
-        //kwrite_uint8(kernel_base + mount_common + 1, 0xe0, tfp0);
         mntr = mount("hfs", "/", MNT_UPDATE, &nmr);
         olog("remount = %d\n",mntr);
         sleep(1);
@@ -415,6 +413,9 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
         FILE* fp = fopen("/.installed_everpwnage", "w");
         fprintf(fp, "do **NOT** delete this file, it's important. it's how we detect if the bootstrap was installed.\n");
         fclose(fp);
+        fp = fopen("/private/etc/apt/sources.list.d/LukeZGD.list", "w");
+        fprintf(fp, "deb https://lukezgd.github.io/repo ./\n");
+        fclose(fp);
         
         sync();
         
@@ -426,9 +427,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     
     olog("allowing jailbreak apps to be shown\n");
     NSMutableDictionary *md = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.apple.springboard.plist"];
-        
     [md setObject:[NSNumber numberWithBool:YES] forKey:@"SBShowNonDefaultSystemApps"];
-        
     [md writeToFile:@"/var/mobile/Library/Preferences/com.apple.springboard.plist" atomically:YES];
         
     olog("restarting cfprefs\n");
