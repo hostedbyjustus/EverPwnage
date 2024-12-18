@@ -235,6 +235,7 @@ void run_tar(char *cmd, ...) {
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     } else {
         olog("posix_spawn: %s\n", strerror(status));
+        exit(1);
     }
 }
 
@@ -257,7 +258,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     uint8_t* kdata = NULL;
     size_t ksize = 0xFFE000;
     if ([system_version hasPrefix:@"9.0"])
-        ksize = 32*1024*1024;
+        ksize = 0xF00000;
     kdata = malloc(ksize);
     dump_kernel_8(tfp0, kernel_base, kdata, ksize);
     if (!kdata) {
@@ -324,34 +325,15 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
         PE_i_can_has_debugger_2 = find_i_can_has_debugger_2_90(kernel_base, kdata, ksize);
 
         uint32_t amfi_file_check_mmap = find_amfi_file_check_mmap(kernel_base, kdata, ksize);
-        uint32_t lwvm_call = find_lwvm_call(kernel_base, kdata, ksize);
-        uint32_t lwvm_call_offset = find_lwvm_call_offset(kernel_base, kdata, ksize);
 
         olog("patching mount_common at 0x%08x\n", kernel_base + mount_common);
         kwrite_uint8(kernel_base + mount_common + 1, 0xe7, tfp0);
         
-        olog("patching cs_enforcement - 1\n");
+        olog("patching cs_enforcement_disable_amfi - 1\n");
         kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 1, 1, tfp0);
 
-
-        if (amfi_file_check_mmap != 0) {
-            olog("patching amfi_file_check_mmap at 0x%08x\n", kernel_base + amfi_file_check_mmap);
-            kwrite_uint32(kernel_base + amfi_file_check_mmap, 0xbf00bf00, tfp0);
-        } else {
-            olog("find_amfi_file_check_mmap unsuccessful, continuing anyway\n");
-        }
-
-        if (lwvm_call == 0) {
-            olog("find_lwvm_call unsuccessful, continuing anyway\n");
-        }
-        if (lwvm_call_offset == 0) {
-            olog("find_lwvm_call_offset unsuccessful, continuing anyway\n");
-        }
-        olog("unslid lwvm_call at 0x%08x\n", UNSLID_BASE + lwvm_call);
-        olog("unslid lwvm_call_off at 0x%08x\n", UNSLID_BASE + lwvm_call_offset);
-        olog("patching lwvm_call at 0x%08x\n", kernel_base + lwvm_call);
-        olog("patching lwvm_call_off at 0x%08x\n", kernel_base + lwvm_call_offset);
-        kwrite_uint32(kernel_base + lwvm_call, kernel_base + lwvm_call_offset, tfp0);
+        olog("patching amfi_file_check_mmap at 0x%08x\n", kernel_base + amfi_file_check_mmap);
+        kwrite_uint32(kernel_base + amfi_file_check_mmap, 0xbf00bf00, tfp0);
 
     } else {
         mount_common = find_mount8(kernel_base, kdata, ksize);
@@ -363,7 +345,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
         olog("patching mount_common at 0x%08x\n", kernel_base + mount_common);
         kwrite_uint8(kernel_base + mount_common + 1, 0xe0, tfp0);
         
-        olog("patching cs_enforcement - 4\n");
+        olog("patching cs_enforcement_disable_amfi - 4\n");
         kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 4, 1, tfp0);
 
         olog("patching csops2 at 0x%08x\n", kernel_base + csops2);
@@ -461,11 +443,11 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
         chmod("/private/var/mobile/Library", 0777);
         chmod("/private/var/mobile/Library/Preferences", 0777);
         mkdir("/Library/LaunchDaemons", 0755);
-        FILE* fp = fopen("/.installed_everpwnage", "w");
-        fprintf(fp, "do **NOT** delete this file, it's important. it's how we detect if the bootstrap was installed.\n");
-        fclose(fp);
-        fp = fopen("/private/etc/apt/sources.list.d/LukeZGD.list", "w");
+        FILE* fp = fopen("/private/etc/apt/sources.list.d/LukeZGD.list", "w");
         fprintf(fp, "deb https://lukezgd.github.io/repo ./\n");
+        fclose(fp);
+        fp = fopen("/.installed_everpwnage", "w");
+        fprintf(fp, "do **NOT** delete this file, it's important. it's how we detect if the bootstrap was installed.\n");
         fclose(fp);
         
         sync();

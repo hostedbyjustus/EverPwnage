@@ -48,6 +48,32 @@ static int insn_is_ldr_literal(uint16_t* i)
     return (*i & 0xF800) == 0x4800 || (*i & 0xFF7F) == 0xF85F;
 }
 
+static int insn_is_bl(uint16_t* i)
+{
+    if((*i & 0xf800) == 0xf000 && (*(i + 1) & 0xd000) == 0xd000)
+        return 1;
+    else if((*i & 0xf800) == 0xf000 && (*(i + 1) & 0xd001) == 0xc000)
+        return 1;
+    else
+        return 0;
+}
+
+static uint32_t insn_bl_imm32(uint16_t* i)
+{
+    uint16_t insn0 = *i;
+    uint16_t insn1 = *(i + 1);
+    uint32_t s = (insn0 >> 10) & 1;
+    uint32_t j1 = (insn1 >> 13) & 1;
+    uint32_t j2 = (insn1 >> 11) & 1;
+    uint32_t i1 = ~(j1 ^ s) & 1;
+    uint32_t i2 = ~(j2 ^ s) & 1;
+    uint32_t imm10 = insn0 & 0x3ff;
+    uint32_t imm11 = insn1 & 0x7ff;
+    uint32_t imm32 = (imm11 << 1) | (imm10 << 12) | (i2 << 22) | (i1 << 23) | (s ? 0xff000000 : 0);
+    return imm32;
+}
+
+
 static int insn_ldr_literal_rt(uint16_t* i)
 {
     if((*i & 0xF800) == 0x4800)
@@ -1375,26 +1401,4 @@ uint32_t find_amfi_file_check_mmap(uint32_t region, uint8_t* kdata, size_t ksize
     ref += (i-1);
 
     return (uintptr_t)ref - (uintptr_t)kdata;
-}
-
-// from openpwnage, 9.0.x only
-uint32_t find_lwvm_call(uint32_t region, uint8_t* kdata, size_t ksize) {
-    char* faceable = memmem(kdata, ksize, "\xce\xab\x1e\xef\xfa\xce\xab\x1e", 8);
-    if (!faceable)
-        return 0;
-    char* lwvm_call_pointer = faceable + 0x78;
-    uint32_t lwvm_call = (uintptr_t)lwvm_call_pointer - (uintptr_t)kdata;
-    printf("[*] found lwvm_call: 0x%08x\n", lwvm_call);
-    return lwvm_call;
-}
-
-uint32_t find_lwvm_call_offset(uint32_t region, uint8_t* kdata, size_t ksize) {
-    for (uint32_t i = 0; i < ksize; i += 2) {
-        if (*(uint64_t*)&kdata[i] == 0xf010798044406da0 && *(uint32_t*)&kdata[i+0x8] == 0xd0060f01 && *(uint16_t*)&kdata[i+0xC] == 0x4620) {
-            uint32_t lwvm_call_offset = i + 1;
-            printf("[*] found lwvm_call_offset: 0x%08x\n", lwvm_call_offset);
-            return lwvm_call_offset;
-        }
-    }
-    return 0;
 }
