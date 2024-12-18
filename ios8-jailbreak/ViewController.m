@@ -70,10 +70,17 @@ addr_t self_port_address = 0;
     printf("button pressed\n");
 
     _jailbreak_button.enabled = NO;
-    [sender setTitle:@"jailbreaking" forState:UIControlStateDisabled];
+    [sender setTitle:@"Jailbreaking" forState:UIControlStateDisabled];
 
+    // Ensure UI updates are applied
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self performSelector:@selector(jailbreak) withObject:self];
+        [self performSelector:@selector(jailbreak_begin) withObject:self];
+    });
+}
+
+- (void)jailbreak_begin {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self jailbreak];
     });
 }
 

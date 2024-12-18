@@ -698,12 +698,10 @@ uint32_t find_sandbox_call_i_can_has_debugger8(uint32_t region, uint8_t* kdata, 
         {0xFD07, 0xB100}  // CBZ  R0, loc_xxx
     };
 
-    uint16_t* ptr = find_with_search_mask8(region, kdata, ksize, sizeof(search_masks_90) / sizeof(*search_masks_90), search_masks_90);
-    if (!ptr) {
-        printf("[*] not 90...\n");
-        ptr = find_with_search_mask8(region, kdata, ksize, sizeof(search_masks) / sizeof(*search_masks), search_masks);
-    }
-    if (!ptr)
+    uint16_t* ptr = find_with_search_mask8(region, kdata, ksize, sizeof(search_masks) / sizeof(*search_masks), search_masks);
+    if(!ptr)
+        ptr = find_with_search_mask8(region, kdata, ksize, sizeof(search_masks_90) / sizeof(*search_masks_90), search_masks_90);
+    if(!ptr)
         return 0;
 
     return (uintptr_t)ptr + 8 - ((uintptr_t)kdata);
@@ -1265,58 +1263,121 @@ uint32_t find_mount_90(uint32_t region, uint8_t* kdata, size_t ksize)
     return ((uintptr_t)insn) - ((uintptr_t)kdata);
 }
 
-// from openpwnage, 9.0.x only
-uint32_t find_amfi_file_check_mmap(uint32_t region, uint8_t* kdata, size_t ksize) {
+// Change this to non-zero.
+uint32_t find_i_can_has_debugger_1_90(uint32_t region, uint8_t* kdata, size_t ksize)
+{
+    // find PE_i_can_has_debugger
+    const struct find_search_mask search_masks[] =
+    {
+        {0xFD07, 0xB100},  // CBZ  R0, loc_xxx
+        {0xFBF0, 0xF240},
+        {0x8F00, 0x0100},
+        {0xFBF0, 0xF2C0},
+        {0xFF00, 0x0100},
+        {0xFFFF, 0x4479},
+        {0xF807, 0x6801},  // LDR  R1, [Ry,#X]
+        {0xFD07, 0xB101}   // CBZ  R1, loc_xxx
+
+    };
+
+    uint16_t* insn = find_with_search_mask(region, kdata, ksize, sizeof(search_masks) / sizeof(*search_masks), search_masks);
+    if(!insn)
+        return 0;
+
+    insn += 5;
+    uint32_t value = find_pc_rel_value(region, kdata, ksize, insn, insn_ldrb_imm_rt(insn));
+    if(!value)
+        return 0;
+
+    value +=4;
+
+    return value + ((uintptr_t)insn) - ((uintptr_t)kdata);
+}
+
+// Change this to what you want the value to be (non-zero appears to work).
+uint32_t find_i_can_has_debugger_2_90(uint32_t region, uint8_t* kdata, size_t ksize)
+{
+    // find PE_i_can_has_debugger
+    const struct find_search_mask search_masks[] =
+    {
+        {0xFD07, 0xB101},  // CBZ  R1, loc_xxx
+        {0xFBF0, 0xF240},
+        {0x8F00, 0x0100},
+        {0xFBF0, 0xF2C0},
+        {0xFF00, 0x0100},
+        {0xFFFF, 0x4479},
+        {0xF807, 0x6801},  // LDR  R1, [Ry,#X]
+        {0xFF00, 0xE000}   // B  x
+
+    };
+
+    uint16_t* insn = find_with_search_mask(region, kdata, ksize, sizeof(search_masks) / sizeof(*search_masks), search_masks);
+    if(!insn)
+        return 0;
+
+    insn += 5;
+    uint32_t value = find_pc_rel_value(region, kdata, ksize, insn, insn_ldrb_imm_rt(insn));
+    if(!value)
+        return 0;
+
+    value +=4;
+
+    return value + ((uintptr_t)insn) - ((uintptr_t)kdata);
+}
+
+// get-task-allow
+uint32_t find_amfi_file_check_mmap(uint32_t region, uint8_t* kdata, size_t ksize)
+{
+    uint8_t* hook_execve = memmem(kdata, ksize, "AMFI: hook..execve() killing pid %u: %s\n", sizeof("AMFI: hook..execve() killing pid %u: %s\n"));
+    if(!hook_execve)
+        return 0;
+
+    // Find a reference to the "AMFI: hook..execve() killing pid ..." string.
+    uint16_t* ref = find_literal_ref(region, kdata, ksize, (uint16_t*) kdata, (uintptr_t)hook_execve - (uintptr_t)kdata);
+    if(!ref)
+        return 0;
+
+    uint32_t amfi_off = (uintptr_t)ref - (uintptr_t)kdata;
+
     uint8_t* rootless = memmem(kdata, ksize, "com.apple.rootless.install", sizeof("com.apple.rootless.install"));
-    //printf("%x\n", (uint8_t*)rootless - kdata);
-    if (!rootless)
+    if(!rootless)
         return 0;
 
     // Find a reference to the "com.apple.rootless.install" string.
-    uint16_t* ref = find_literal_ref(region, kdata, ksize, (uint16_t*) kdata, (uintptr_t)rootless - (uintptr_t)kdata);
-    //printf("%x\n", (uint8_t*)ref - kdata);
-    if (!ref)
+    ref = find_literal_ref(region, kdata, ksize, (uint16_t*) kdata, (uintptr_t)rootless - (uintptr_t)kdata);
+    if(!ref)
         return 0;
 
-    int i=0;
-    while (1){
-        if (i>16)
+    uint32_t rootless_off = (uintptr_t)ref - (uintptr_t)kdata;
+    if(amfi_off > rootless_off ||
+        (amfi_off + 0x800) < rootless_off)
+    {
+        rootless = memmem(kdata+rootless_off, ksize-rootless_off, "com.apple.rootless.install", sizeof("com.apple.rootless.install"));
+        if(!rootless)
             return 0;
-        if ((ref[i] & 0xfff0) == 0xbf10) // it ne
+
+        // Re-Find a reference to the "com.apple.rootless.install" string.
+        ref = find_literal_ref(region, kdata, ksize, (uint16_t*) kdata, (uintptr_t)rootless - (uintptr_t)kdata);
+        if(!ref)
+            return 0;
+        rootless_off = (uintptr_t)ref - (uintptr_t)kdata;
+    }
+
+    int i=0;
+    while(1){
+        if(i>16)
+            return 0;
+        if((ref[i] & 0xfff0) == 0xbf10) // it ne
             break;
         i++;
     }
 
     ref += (i-1);
 
-    uint32_t amfi_file_check_mmap = (uintptr_t)ref - (uintptr_t)kdata;
-    olog("[*] found amfi_file_check_mmap: 0x%08x\n", amfi_file_check_mmap);
-
-    return amfi_file_check_mmap;
+    return (uintptr_t)ref - (uintptr_t)kdata;
 }
 
-uint32_t find_PE_i_can_has_debugger_1(void) {
-    uint32_t PE_i_can_has_debugger_1;
-    if (isA5orA5X()) {
-        PE_i_can_has_debugger_1 = 0x3a8fc4;
-    } else {
-        PE_i_can_has_debugger_1 = 0x3af014;
-    }
-    printf("[*] found PE_i_can_has_debugger_1 at 0x%08x\n", PE_i_can_has_debugger_1);
-    return PE_i_can_has_debugger_1;
-}
-
-uint32_t find_PE_i_can_has_debugger_2(void) {
-    uint32_t PE_i_can_has_debugger_2;
-    if (isA5orA5X()) {
-        PE_i_can_has_debugger_2 = 0x4567d0;
-    } else {
-        PE_i_can_has_debugger_2 = 0x45c8f0;
-    }
-    printf("[*] found PE_i_can_has_debugger_2 at 0x%08x\n", PE_i_can_has_debugger_2);
-    return PE_i_can_has_debugger_2;
-}
-
+// from openpwnage, 9.0.x only
 uint32_t find_lwvm_call(uint32_t region, uint8_t* kdata, size_t ksize) {
     char* faceable = memmem(kdata, ksize, "\xce\xab\x1e\xef\xfa\xce\xab\x1e", 8);
     if (!faceable)
@@ -1336,11 +1397,4 @@ uint32_t find_lwvm_call_offset(uint32_t region, uint8_t* kdata, size_t ksize) {
         }
     }
     return 0;
-}
-
-uint32_t find_cs_enforcement_disable_amfi(uint32_t region, uint8_t* kdata, size_t ksize) {
-    char* amfi = memmem(kdata, ksize, "com.apple.driver.AppleMobileFileIntegrity", strlen("com.apple.driver.AppleMobileFileIntegrity"));
-    uint32_t cs_enforcement_disable_amfi = (uintptr_t)amfi - (uintptr_t)kdata + 0xb1;
-    printf("[*] cs_enforcement_disable_amfi: 0x%08x\n", cs_enforcement_disable_amfi);
-    return cs_enforcement_disable_amfi;
 }
