@@ -48,12 +48,12 @@ addr_t self_port_address = 0;
 
     NSLog(@"Running on %@ with iOS %@", system_machine, system_version);
 
-    if (![system_version hasPrefix:@"8"]) {
+    if (!([system_version hasPrefix:@"9.0"] || [system_version hasPrefix:@"8"])) {
         _jailbreak_button.enabled = NO;
         [_jailbreak_button setTitle:@"version not supported" forState:UIControlStateDisabled];
     }
 
-    if (access("/.installed_daibutsu", F_OK) != -1) {
+    if (access("/.installed_daibutsu", F_OK) != -1 || [system_version hasPrefix:@"9.0"]) {
         _untether_toggle.enabled = NO;
         [_untether_toggle setOn:NO];
     }

@@ -57,7 +57,9 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     uint32_t pmap_addr;
     if(isA5orA5X()) {
         //A5 or A5X
-        if ([system_version hasPrefix:@"8.2"]){ //8.2
+        if ([system_version hasPrefix:@"9.0"]) { //9.0-9.0.2
+            pmap_addr = 0x3f7444;
+        } else if ([system_version hasPrefix:@"8.2"]){ //8.2
             pmap_addr = 0x39411c;
         } else if ([system_version hasPrefix:@"8.1.3"]){ //8.1.3
             pmap_addr = 0x39211c;
@@ -68,7 +70,9 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
         }
     } else {
         //A6 or A6X
-        if ([system_version hasPrefix:@"8.2"]){ //8.2
+        if ([system_version hasPrefix:@"9.0"]) { //9.0-9.0.2
+            pmap_addr = 0x3fd444;
+        } else if ([system_version hasPrefix:@"8.2"]){ //8.2
             pmap_addr = 0x39a11c;
         } else if ([system_version hasPrefix:@"8.1"] || [system_version hasPrefix:@"8.0"]){ //8.0-8.1.3
             pmap_addr = 0x39711c;
