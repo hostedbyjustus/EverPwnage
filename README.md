@@ -23,7 +23,7 @@ The jailbreak offers two modes: semi-untethered or fully untethered, depending o
 
 Enabling the Install Untether toggle installs daibutsu untether on the device. This is compatible with iOS versions 8.0–8.4.1 for A6(X) devices, and iOS 8.3–8.4.1 for A5(X) devices.
 
-For A5(X) devices running iOS 8.0–8.2, the Install Untether toggle cannot be enabled, limiting these devices to a semi-untethered jailbreak.
+For iOS 9.0.x devices and A5(X) devices running iOS 8.0–8.2, the Install Untether toggle cannot be enabled, limiting these devices to a semi-untethered jailbreak.
 
 ## Other Jailbreaks
 

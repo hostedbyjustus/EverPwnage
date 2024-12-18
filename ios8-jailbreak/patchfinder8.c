@@ -1239,3 +1239,88 @@ uint32_t find_i_can_has_debugger_2(uint32_t region, uint8_t* kdata, size_t ksize
 
     return (insn[14] & 0xFFF) + value;
 }
+
+// from openpwnage from p0laris, 9.0.x only
+uint32_t find_mount_common(uint32_t region, uint8_t* kdata, size_t ksize) {
+    for (uint32_t i = 0; i < ksize; i++) {
+        if ((*(uint64_t*)&kdata[i] & 0x00ffffffffffffff) == 0xd4d0060f01f010) {
+            uint32_t mount_common = i + 0x5;
+            printf("[*] found mount_common: 0x%08x\n", mount_common);
+            return mount_common;
+        }
+    }
+    return -1;
+}
+
+uint32_t find_amfi_file_check_mmap(uint32_t region, uint8_t* kdata, size_t ksize) {
+    uint8_t* rootless = memmem(kdata, ksize, "com.apple.rootless.install", sizeof("com.apple.rootless.install"));
+    //printf("%x\n", (uint8_t*)rootless - kdata);
+    if (!rootless)
+        return 0;
+
+    // Find a reference to the "com.apple.rootless.install" string.
+    uint16_t* ref = find_literal_ref(region, kdata, ksize, (uint16_t*) kdata, (uintptr_t)rootless - (uintptr_t)kdata);
+    //printf("%x\n", (uint8_t*)ref - kdata);
+    if (!ref)
+        return 0;
+
+    int i=0;
+    while (1){
+        if (i>16)
+            return 0;
+        if ((ref[i] & 0xfff0) == 0xbf10) // it ne
+            break;
+        i++;
+    }
+
+    ref += (i-1);
+
+    uint32_t amfi_file_check_mmap = (uintptr_t)ref - (uintptr_t)kdata;
+    olog("[*] found amfi_file_check_mmap: 0x%08x\n", amfi_file_check_mmap);
+
+    return amfi_file_check_mmap;
+}
+
+// from openpwnage, 9.0.x only
+uint32_t find_PE_i_can_has_debugger_1(void) {
+    uint32_t PE_i_can_has_debugger_1;
+    if (isA5orA5X()) {
+        PE_i_can_has_debugger_1 = 0x3a8fc4;
+    } else {
+        PE_i_can_has_debugger_1 = 0x3af014;
+    }
+    printf("[*] found PE_i_can_has_debugger_1 at 0x%08x\n", PE_i_can_has_debugger_1);
+    return PE_i_can_has_debugger_1;
+}
+
+uint32_t find_PE_i_can_has_debugger_2(void) {
+    uint32_t PE_i_can_has_debugger_2;
+    if (isA5orA5X()) {
+        PE_i_can_has_debugger_2 = 0x4567d0;
+    } else {
+        PE_i_can_has_debugger_2 = 0x45c8f0;
+    }
+    printf("[*] found PE_i_can_has_debugger_2 at 0x%08x\n", PE_i_can_has_debugger_2);
+    return PE_i_can_has_debugger_2;
+}
+
+uint32_t find_lwvm_call(uint32_t region, uint8_t* kdata, size_t ksize) {
+    char* faceable = memmem(kdata, ksize, "\xce\xab\x1e\xef\xfa\xce\xab\x1e", 8);
+    if (!faceable)
+        return 0;
+    char* lwvm_call_pointer = faceable + 0x78;
+    uint32_t lwvm_call = (uintptr_t)lwvm_call_pointer - (uintptr_t)kdata;
+    printf("[*] found lwvm_call: 0x%08x\n", lwvm_call);
+    return lwvm_call;
+}
+
+uint32_t find_lwvm_call_offset(uint32_t region, uint8_t* kdata, size_t ksize) {
+    for (uint32_t i = 0; i < ksize; i += 2) {
+        if (*(uint64_t*)&kdata[i] == 0xf010798044406da0 && *(uint32_t*)&kdata[i+0x8] == 0xd0060f01 && *(uint16_t*)&kdata[i+0xC] == 0x4620) {
+            uint32_t lwvm_call_offset = i + 1;
+            printf("[*] found lwvm_call_offset: 0x%08x\n", lwvm_call_offset);
+            return lwvm_call_offset;
+        }
+    }
+    return 0;
+}
