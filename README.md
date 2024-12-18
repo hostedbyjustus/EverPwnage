@@ -1,6 +1,6 @@
 # EverPwnage
 
-iOS 8.0-8.4.1 32-bit Jailbreak.
+iOS 8.0-9.0.2 32-bit Jailbreak.
 
 ## Usage
 
@@ -29,7 +29,7 @@ For iOS 9.0.x devices and A5(X) devices running iOS 8.0–8.2, the Install Untet
 
 Users of other iOS 8 jailbreaks, such as EtasonJB, HomeDepot, and openpwnage, can also switch to EverPwnage. By jailbreaking with EverPwnage and enabling the Install Untether toggle, their device will switched to daibutsu untether.
 
-This does not apply to the following iOS 8 jailbreaks: Pangu8, TaiG, PPJailbreak, and wtfis. Do not use EverPwnage if you are on one of these jailbreaks, as they are already untethered and/or not for 32-bit devices in the case of wtfis.
+This does not apply to the following jailbreaks: Pangu8, Pangu9, TaiG, PPJailbreak, and wtfis. Do not use EverPwnage if you are on one of these jailbreaks, as they are already untethered and/or not for 32-bit devices in the case of wtfis.
 
 ## Building
 

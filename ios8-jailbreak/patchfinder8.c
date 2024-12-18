@@ -676,7 +676,6 @@ uint32_t find_mount8(uint32_t region, uint8_t* kdata, size_t ksize)
 // NOP out the BL call here.
 uint32_t find_sandbox_call_i_can_has_debugger8(uint32_t region, uint8_t* kdata, size_t ksize)
 {
-    
     const struct find_search_mask search_masks_90[] =
     {
         {0xFFFF, 0xB590}, // PUSH {R4,R7,LR}
@@ -687,7 +686,7 @@ uint32_t find_sandbox_call_i_can_has_debugger8(uint32_t region, uint8_t* kdata, 
         {0xD000, 0xD000},
         {0xFD07, 0xB100}  // CBZ  R0, loc_xxx
     };
-    
+
     const struct find_search_mask search_masks[] =
     {
         {0xFFFF, 0xB590}, // PUSH {R4,R7,LR}
@@ -699,10 +698,12 @@ uint32_t find_sandbox_call_i_can_has_debugger8(uint32_t region, uint8_t* kdata, 
         {0xFD07, 0xB100}  // CBZ  R0, loc_xxx
     };
 
-    uint16_t* ptr = find_with_search_mask8(region, kdata, ksize, sizeof(search_masks) / sizeof(*search_masks), search_masks);
-    if(!ptr)
-        ptr = find_with_search_mask8(region, kdata, ksize, sizeof(search_masks_90) / sizeof(*search_masks_90), search_masks_90);
-    if(!ptr)
+    uint16_t* ptr = find_with_search_mask8(region, kdata, ksize, sizeof(search_masks_90) / sizeof(*search_masks_90), search_masks_90);
+    if (!ptr) {
+        printf("[*] not 90...\n");
+        ptr = find_with_search_mask8(region, kdata, ksize, sizeof(search_masks) / sizeof(*search_masks), search_masks);
+    }
+    if (!ptr)
         return 0;
 
     return (uintptr_t)ptr + 8 - ((uintptr_t)kdata);
@@ -1240,18 +1241,31 @@ uint32_t find_i_can_has_debugger_2(uint32_t region, uint8_t* kdata, size_t ksize
     return (insn[14] & 0xFFF) + value;
 }
 
-// from openpwnage from p0laris, 9.0.x only
-uint32_t find_mount_common(uint32_t region, uint8_t* kdata, size_t ksize) {
-    for (uint32_t i = 0; i < ksize; i++) {
-        if ((*(uint64_t*)&kdata[i] & 0x00ffffffffffffff) == 0xd4d0060f01f010) {
-            uint32_t mount_common = i + 0x5;
-            printf("[*] found mount_common: 0x%08x\n", mount_common);
-            return mount_common;
-        }
-    }
-    return -1;
+uint32_t find_mount_90(uint32_t region, uint8_t* kdata, size_t ksize)
+{
+    const struct find_search_mask search_masks[] =
+    {
+        {0xFFF0, 0xF420},
+        {0xF0FF, 0x3080},
+        {0xFFF0, 0xF010},
+        {0xFFFF, 0x0F20},
+        {0xFFFF, 0xBF08},
+        {0xFFF0, 0xF440},
+        {0xF0FF, 0x3080},
+        {0xFFF0, 0xF010},
+        {0xFFFF, 0x0F01}
+    };
+
+    uint16_t* insn = find_with_search_mask(region, kdata, ksize, sizeof(search_masks) / sizeof(*search_masks), search_masks);
+    if(!insn)
+        return 0;
+
+    insn += 9;
+
+    return ((uintptr_t)insn) - ((uintptr_t)kdata);
 }
 
+// from openpwnage, 9.0.x only
 uint32_t find_amfi_file_check_mmap(uint32_t region, uint8_t* kdata, size_t ksize) {
     uint8_t* rootless = memmem(kdata, ksize, "com.apple.rootless.install", sizeof("com.apple.rootless.install"));
     //printf("%x\n", (uint8_t*)rootless - kdata);
@@ -1281,7 +1295,6 @@ uint32_t find_amfi_file_check_mmap(uint32_t region, uint8_t* kdata, size_t ksize
     return amfi_file_check_mmap;
 }
 
-// from openpwnage, 9.0.x only
 uint32_t find_PE_i_can_has_debugger_1(void) {
     uint32_t PE_i_can_has_debugger_1;
     if (isA5orA5X()) {
@@ -1323,4 +1336,11 @@ uint32_t find_lwvm_call_offset(uint32_t region, uint8_t* kdata, size_t ksize) {
         }
     }
     return 0;
+}
+
+uint32_t find_cs_enforcement_disable_amfi(uint32_t region, uint8_t* kdata, size_t ksize) {
+    char* amfi = memmem(kdata, ksize, "com.apple.driver.AppleMobileFileIntegrity", strlen("com.apple.driver.AppleMobileFileIntegrity"));
+    uint32_t cs_enforcement_disable_amfi = (uintptr_t)amfi - (uintptr_t)kdata + 0xb1;
+    printf("[*] cs_enforcement_disable_amfi: 0x%08x\n", cs_enforcement_disable_amfi);
+    return cs_enforcement_disable_amfi;
 }

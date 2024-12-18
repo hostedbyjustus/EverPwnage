@@ -340,70 +340,35 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     olog("let's go for code exec...\n");
     
     uint32_t tfp0_patch = find_tfp0_patch(kernel_base, kdata, ksize);
+    uint32_t mapForIO = find_mapForIO(kernel_base, kdata, ksize);
+    uint32_t sandbox_call_i_can_has_debugger = find_sandbox_call_i_can_has_debugger8(kernel_base, kdata, ksize);
     uint32_t proc_enforce8 = find_proc_enforce8(kernel_base, kdata, ksize);
-    uint32_t cs_enforcement_disable_amfi = find_cs_enforcement_disable_amfi8(kernel_base, kdata, ksize);
     //uint32_t vm_fault_enter = find_vm_fault_enter_patch_84(kernel_base, kdata, ksize);
     uint32_t vm_map_enter8 = find_vm_map_enter_patch8(kernel_base, kdata, ksize);
     uint32_t vm_map_protect8 = find_vm_map_protect_patch8(kernel_base, kdata, ksize);
-    uint32_t mapForIO = find_mapForIO(kernel_base, kdata, ksize);
-    uint32_t sandbox_call_i_can_has_debugger = find_sandbox_call_i_can_has_debugger8(kernel_base, kdata, ksize);
     uint32_t csops8 = find_csops8(kernel_base, kdata, ksize);
-    uint32_t csops2 = find_csops2(kernel_base, kdata, ksize);
+
     uint32_t mount_common;
     uint32_t PE_i_can_has_debugger_1;
     uint32_t PE_i_can_has_debugger_2;
+    uint32_t cs_enforcement_disable_amfi;
+
     if ([system_version hasPrefix:@"9.0"]) {
-        mount_common = find_mount_common(kernel_base, kdata, ksize);
+        mount_common = find_mount_90(kernel_base, kdata, ksize);
         PE_i_can_has_debugger_1 = find_PE_i_can_has_debugger_1();
         PE_i_can_has_debugger_2 = find_PE_i_can_has_debugger_2();
-    } else {
-        mount_common = find_mount8(kernel_base, kdata, ksize);
-        PE_i_can_has_debugger_1 = find_i_can_has_debugger_1(kernel_base, kdata, ksize);
-        PE_i_can_has_debugger_2 = find_i_can_has_debugger_2(kernel_base, kdata, ksize);
-    }
+        cs_enforcement_disable_amfi = find_cs_enforcement_disable_amfi(kernel_base, kdata, ksize);
 
-    olog("patching tfp0 at 0x%08x\n", kernel_base + tfp0_patch);
-    kwrite_uint32(kernel_base + tfp0_patch, 0xbf00bf00, tfp0);
+        olog("patching mount_common at 0x%08x\n", kernel_base + mount_common);
+        kwrite_uint8(kernel_base + mount_common + 1, 0xe7, tfp0);
+        
+        olog("patching cs_enforcement - 1\n");
+        kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 1, 1, tfp0);
 
-    olog("patching proc_enforce at 0x%08x\n", kernel_base + proc_enforce8);
-    kwrite_uint8(kernel_base + proc_enforce8, 0, tfp0);
-    
-    olog("patching cs_enforcement_disable_amfi at 0x%08x\n", kernel_base + cs_enforcement_disable_amfi - 1);
-    kwrite_uint8(kernel_base + cs_enforcement_disable_amfi, 1, tfp0);
-    kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 4, 1, tfp0);
-    
-    olog("patching PE_i_can_has_debugger_1 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_1);
-    kwrite_uint32(kernel_base + PE_i_can_has_debugger_1, 1, tfp0);
-    
-    olog("patching PE_i_can_has_debugger_2 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_2);
-    kwrite_uint32(kernel_base + PE_i_can_has_debugger_2, 1, tfp0);
-
-    //olog("patching vm_fault_enter at 0x%08x\n", kernel_base + vm_fault_enter);
-    //kwrite_uint32(kernel_base + vm_fault_enter, 0x2201bf00, tfp0);
-
-    olog("patching vm_map_enter at 0x%08x\n", kernel_base + vm_map_enter8);
-    kwrite_uint32(kernel_base + vm_map_enter8, 0x4280bf00, tfp0);
-
-    olog("patching vm_map_protect at 0x%08x\n", kernel_base + vm_map_protect8);
-    kwrite_uint32(kernel_base + vm_map_protect8, 0xbf00bf00, tfp0);
-
-    olog("patching mount at 0x%08x\n", kernel_base + mount_common);
-    kwrite_uint8(kernel_base + mount_common + 1, 0xe0, tfp0);
-    
-    olog("patching mapForIO at 0x%08x\n", kernel_base + mapForIO);
-    kwrite_uint32(kernel_base + mapForIO, 0xbf00bf00,tfp0);
-
-    olog("patching csops at 0x%08x\n", kernel_base + csops8);
-    kwrite_uint32(kernel_base + csops8, 0xbf00bf00, tfp0);
-
-    olog("patching csops2 at 0x%08x\n", kernel_base + csops2);
-    kwrite_uint8(kernel_base + csops2, 0x20, tfp0);
-    
-    olog("patching sandbox_call_i_can_has_debugger at 0x%08x\n", kernel_base + sandbox_call_i_can_has_debugger);
-    kwrite_uint32(kernel_base + sandbox_call_i_can_has_debugger, 0xbf00bf00, tfp0);
-
-    if ([system_version hasPrefix:@"9.0"]) {
         uint32_t amfi_file_check_mmap = find_amfi_file_check_mmap(kernel_base, kdata, ksize);
+        uint32_t lwvm_call = find_lwvm_call(kernel_base, kdata, ksize);
+        uint32_t lwvm_call_offset = find_lwvm_call_offset(kernel_base, kdata, ksize);
+
         if (amfi_file_check_mmap != 0) {
             olog("patching amfi_file_check_mmap at 0x%08x\n", kernel_base + amfi_file_check_mmap);
             kwrite_uint32(kernel_base + amfi_file_check_mmap, 0xbf00bf00, tfp0);
@@ -411,8 +376,6 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
             olog("find_amfi_file_check_mmap unsuccessful, continuing anyway\n");
         }
 
-        uint32_t lwvm_call = find_lwvm_call(kernel_base, kdata, ksize);
-        uint32_t lwvm_call_offset = find_lwvm_call_offset(kernel_base, kdata, ksize);
         if (lwvm_call == 0) {
             olog("find_lwvm_call unsuccessful, continuing anyway\n");
         }
@@ -424,7 +387,57 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
         olog("patching lwvm_call at 0x%08x\n", kernel_base + lwvm_call);
         olog("patching lwvm_call_off at 0x%08x\n", kernel_base + lwvm_call_offset);
         kwrite_uint32(kernel_base + lwvm_call, kernel_base + lwvm_call_offset, tfp0);
+
+    } else {
+        mount_common = find_mount8(kernel_base, kdata, ksize);
+        PE_i_can_has_debugger_1 = find_i_can_has_debugger_1(kernel_base, kdata, ksize);
+        PE_i_can_has_debugger_2 = find_i_can_has_debugger_2(kernel_base, kdata, ksize);
+        cs_enforcement_disable_amfi = find_cs_enforcement_disable_amfi8(kernel_base, kdata, ksize);
+
+        uint32_t csops2 = find_csops2(kernel_base, kdata, ksize);
+
+        olog("patching mount_common at 0x%08x\n", kernel_base + mount_common);
+        kwrite_uint8(kernel_base + mount_common + 1, 0xe0, tfp0);
+        
+        olog("patching cs_enforcement - 4\n");
+        kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 4, 1, tfp0);
+
+        olog("patching csops2 at 0x%08x\n", kernel_base + csops2);
+        kwrite_uint8(kernel_base + csops2, 0x20, tfp0);
     }
+
+    olog("patching tfp0 at 0x%08x\n", kernel_base + tfp0_patch);
+    kwrite_uint32(kernel_base + tfp0_patch, 0xbf00bf00, tfp0);
+
+    olog("patching mapForIO at 0x%08x\n", kernel_base + mapForIO);
+    kwrite_uint32(kernel_base + mapForIO, 0xbf00bf00,tfp0);
+
+    olog("patching cs_enforcement_disable_amfi at 0x%08x\n", kernel_base + cs_enforcement_disable_amfi - 1);
+    kwrite_uint8(kernel_base + cs_enforcement_disable_amfi, 1, tfp0);
+    
+    olog("patching PE_i_can_has_debugger_1 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_1);
+    kwrite_uint32(kernel_base + PE_i_can_has_debugger_1, 1, tfp0);
+    
+    olog("patching PE_i_can_has_debugger_2 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_2);
+    kwrite_uint32(kernel_base + PE_i_can_has_debugger_2, 1, tfp0);
+    
+    olog("patching sandbox_call_i_can_has_debugger at 0x%08x\n", kernel_base + sandbox_call_i_can_has_debugger);
+    kwrite_uint32(kernel_base + sandbox_call_i_can_has_debugger, 0xbf00bf00, tfp0);
+
+    olog("patching proc_enforce at 0x%08x\n", kernel_base + proc_enforce8);
+    kwrite_uint8(kernel_base + proc_enforce8, 0, tfp0);
+
+    //olog("patching vm_fault_enter at 0x%08x\n", kernel_base + vm_fault_enter);
+    //kwrite_uint32(kernel_base + vm_fault_enter, 0x2201bf00, tfp0);
+
+    olog("patching vm_map_enter at 0x%08x\n", kernel_base + vm_map_enter8);
+    kwrite_uint32(kernel_base + vm_map_enter8, 0x4280bf00, tfp0);
+
+    olog("patching vm_map_protect at 0x%08x\n", kernel_base + vm_map_protect8);
+    kwrite_uint32(kernel_base + vm_map_protect8, 0xbf00bf00, tfp0);
+
+    olog("patching csops at 0x%08x\n", kernel_base + csops8);
+    kwrite_uint32(kernel_base + csops8, 0xbf00bf00, tfp0);
 
     olog("[*] remounting rootfs\n");
     char* nmr = strdup("/dev/disk0s1s1");
