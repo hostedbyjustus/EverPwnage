@@ -21,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *untether_toggle;
 @property (weak, nonatomic) IBOutlet UILabel *title_label;
 @property (weak, nonatomic) IBOutlet UILabel *version_label;
+@property (weak, nonatomic) IBOutlet UILabel *deviceinfo_label;
 
 @end
 
@@ -46,6 +47,7 @@ addr_t self_port_address = 0;
     system_machine = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
     system_version = [[UIDevice currentDevice] systemVersion];
 
+    _deviceinfo_label.text = [NSString stringWithFormat:@"%@ | iOS %@", system_machine, system_version];
     NSLog(@"Running on %@ with iOS %@", system_machine, system_version);
 
     if (!([system_version hasPrefix:@"9.0"] || [system_version hasPrefix:@"8"])) {

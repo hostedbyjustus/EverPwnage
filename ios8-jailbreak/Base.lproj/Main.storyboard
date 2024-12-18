@@ -22,16 +22,16 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pcp-A4-uVQ">
-                                <rect key="frame" x="142.5" y="216.5" width="35" height="47"/>
+                                <rect key="frame" x="99.5" y="216.5" width="121" height="47"/>
                                 <fontDescription key="fontDescription" name=".SFNSDisplay" family=".SF NS Display" pointSize="30"/>
-                                <state key="normal" title="go"/>
+                                <state key="normal" title="Jailbreak"/>
                                 <connections>
                                     <action selector="jailbreak_pressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3qP-j7-IeJ"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jailbreak for iOS 8.x 32-bit" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vb3-L8-LJK">
-                                <rect key="frame" x="43.5" y="164" width="233.5" height="24"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Jailbreak for iOS 8.0-9.0.2 32-bit" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vb3-L8-LJK">
+                                <rect key="frame" x="34.5" y="166" width="251.5" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -57,12 +57,25 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WKS-Zu-g2z">
-                                <rect key="frame" x="112" y="375" width="96" height="30"/>
+                                <rect key="frame" x="106.5" y="373.5" width="107" height="33"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="More Settings"/>
                                 <connections>
                                     <action selector="showSettingsViewController:" destination="BYZ-38-t0r" eventType="touchUpInside" id="sod-Tf-aoa"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n13-Fr-fxf">
+                                <rect key="frame" x="141.5" y="414.5" width="37.5" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="by LukeZGD" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jcb-bc-Il8">
+                                <rect key="frame" x="118" y="440.5" width="84.5" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -71,18 +84,23 @@
                             <constraint firstItem="Pcp-A4-uVQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7UM-yc-lIW"/>
                             <constraint firstItem="Pcp-A4-uVQ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="DLB-Ja-mxz"/>
                             <constraint firstItem="tuK-1B-Ke5" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-130" id="GaX-1l-BKm"/>
+                            <constraint firstItem="n13-Fr-fxf" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="SXm-QO-GD1"/>
                             <constraint firstItem="DV8-Y7-VK4" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="100" id="UgM-YZ-sch"/>
                             <constraint firstItem="tuK-1B-Ke5" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="XLG-oM-ISQ"/>
                             <constraint firstItem="WKS-Zu-g2z" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Z7S-Mw-MGt"/>
                             <constraint firstItem="vLV-AI-LSZ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="100" id="b71-bT-P9o"/>
                             <constraint firstItem="DV8-Y7-VK4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="-75" id="frZ-kd-9fQ"/>
                             <constraint firstItem="vLV-AI-LSZ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="110" id="gnh-GM-lLW"/>
+                            <constraint firstItem="jcb-bc-Il8" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="209.5" id="i0i-0I-AF8"/>
                             <constraint firstItem="sNt-JJ-Iw8" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-100" id="iTO-Ax-XDK"/>
+                            <constraint firstItem="jcb-bc-Il8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jQY-IG-W4r"/>
+                            <constraint firstItem="n13-Fr-fxf" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="183.5" id="l6z-LB-qrY"/>
                             <constraint firstItem="vb3-L8-LJK" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="tgS-lh-gKp"/>
                             <constraint firstItem="sNt-JJ-Iw8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="yit-QW-tUc"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="deviceinfo_label" destination="n13-Fr-fxf" id="ys4-Ha-OaB"/>
                         <outlet property="jailbreak_button" destination="Pcp-A4-uVQ" id="LrV-A8-9ms"/>
                         <outlet property="title_label" destination="tuK-1B-Ke5" id="rfm-se-hRL"/>
                         <outlet property="untether_toggle" destination="vLV-AI-LSZ" id="c0U-Cm-chd"/>
@@ -144,7 +162,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c2f-Q9-lwZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="848" y="125"/>
+            <point key="canvasLocation" x="1373" y="89"/>
         </scene>
     </scenes>
 </document>
