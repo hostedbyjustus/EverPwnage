@@ -25,7 +25,7 @@ typedef struct
     } lock; // mutex lock
     uint32_t ref_count;
     int active;
-    char pad[0x1f0 /* TASK_BSDINFO */ - sizeof(int) - sizeof(uint32_t) - (3 * sizeof(uintptr_t))];
+    char pad[0x200 /* TASK_BSDINFO */ - sizeof(int) - sizeof(uint32_t) - (3 * sizeof(uintptr_t))];
     uintptr_t bsd_info;
 } ktask32_t;
 

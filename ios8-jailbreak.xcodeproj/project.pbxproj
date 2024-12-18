@@ -25,6 +25,7 @@
 		886668A52D0D2C6300C3F554 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 886668A42D0D2C6300C3F554 /* main.m */; };
 		8876A19F2D0D72E90087BA13 /* untether.tar in Resources */ = {isa = PBXBuildFile; fileRef = 8876A19D2D0D72E90087BA13 /* untether.tar */; };
 		8876A1A02D0D72E90087BA13 /* bootstrap.tar in Resources */ = {isa = PBXBuildFile; fileRef = 8876A19E2D0D72E90087BA13 /* bootstrap.tar */; };
+		8885644F2D1264F600569ED4 /* offsets.m in Sources */ = {isa = PBXBuildFile; fileRef = 8885644E2D1264F600569ED4 /* offsets.m */; };
 		88EF89AF2D11717200AC09EE /* openssh.tar in Resources */ = {isa = PBXBuildFile; fileRef = 88EF89AE2D11717200AC09EE /* openssh.tar */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +62,7 @@
 		886668A42D0D2C6300C3F554 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8876A19D2D0D72E90087BA13 /* untether.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = untether.tar; sourceTree = "<group>"; };
 		8876A19E2D0D72E90087BA13 /* bootstrap.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = bootstrap.tar; sourceTree = "<group>"; };
+		8885644E2D1264F600569ED4 /* offsets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = offsets.m; sourceTree = "<group>"; };
 		88EF89AE2D11717200AC09EE /* openssh.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = openssh.tar; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -123,6 +125,7 @@
 				886668A42D0D2C6300C3F554 /* main.m */,
 				8866689B2D0D2C6200C3F554 /* Main.storyboard */,
 				880F0C3A2D0D4C8E00598FA3 /* offsets.h */,
+				8885644E2D1264F600569ED4 /* offsets.m */,
 				88EF89AE2D11717200AC09EE /* openssh.tar */,
 				880F0C332D0D4C8E00598FA3 /* patchfinder8.c */,
 				880F0C3E2D0D4C8F00598FA3 /* patchfinder8.h */,
@@ -215,6 +218,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8885644F2D1264F600569ED4 /* offsets.m in Sources */,
 				880F0C432D0D4C8F00598FA3 /* io_sp.c in Sources */,
 				8866689A2D0D2C6100C3F554 /* ViewController.m in Sources */,
 				886668A52D0D2C6300C3F554 /* main.m in Sources */,
