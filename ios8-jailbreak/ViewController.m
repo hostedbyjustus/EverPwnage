@@ -50,16 +50,25 @@ addr_t self_port_address = 0;
     _deviceinfo_label.text = [NSString stringWithFormat:@"%@ | iOS %@", system_machine, system_version];
     NSLog(@"Running on %@ with iOS %@", system_machine, system_version);
 
+    // iOS 8.0-9.0.2
     if (!([system_version hasPrefix:@"9.0"] || [system_version hasPrefix:@"8"])) {
         _jailbreak_button.enabled = NO;
-        [_jailbreak_button setTitle:@"version not supported" forState:UIControlStateDisabled];
+        [_jailbreak_button setTitle:@"not supported" forState:UIControlStateDisabled];
     }
 
+    // not supported for A5(X) iOS 9.0.x
+    if (isA5orA5X() && [system_version hasPrefix:@"9.0"]) {
+        _jailbreak_button.enabled = NO;
+        [_jailbreak_button setTitle:@"not supported" forState:UIControlStateDisabled];
+    }
+
+    // disable untether toggle if daibutsu detected or device is on 9.0.x
     if (access("/.installed_daibutsu", F_OK) != -1 || [system_version hasPrefix:@"9.0"]) {
         _untether_toggle.enabled = NO;
         [_untether_toggle setOn:NO];
     }
 
+    // disable untether toggle if A5(X) iOS 8.0-8.2
     if (isA5orA5X() && ([system_version hasPrefix:@"8.0"] || [system_version hasPrefix:@"8.1"] || [system_version hasPrefix:@"8.2"])) {
         _untether_toggle.enabled = NO;
         [_untether_toggle setOn:NO];

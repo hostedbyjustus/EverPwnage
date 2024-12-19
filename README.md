@@ -1,35 +1,50 @@
 # EverPwnage
 
-iOS 8.0-9.0.2 32-bit Jailbreak.
+**iOS 8.0-9.0.2 Jailbreak for 32-bit Devices**
 
 ## Usage
 
-Sideload the IPA from the [latest release](https://github.com/LukeZGD/EverPwnage/releases/latest).
+Download and sideload the IPA from the [latest release](https://github.com/LukeZGD/EverPwnage/releases/latest).
 
 ## Supported Devices
 
-- iPhone 4S
-- iPhone 5
-- iPhone 5C
-- iPad 2
-- iPad 3
-- iPad 4
-- iPad mini 1
-- iPod touch 5
+All 32-bit iOS devices that support iOS 8 and 9:
+- **iPhone**: 4S, 5, 5C
+- **iPad**: 2, 3, 4, mini 1
+- **iPod touch**: 5
 
-## Untether
+## iOS 9.0.x Support
 
-The jailbreak offers two modes: semi-untethered or fully untethered, depending on the state of the Install Untether toggle.
+Support for iOS 9.0.x is **experimental and limited**. It is limited to A6(X) devices only (iPhone 5, 5C, iPad 4) due to issues with A5(X) devices.
 
-Enabling the Install Untether toggle installs daibutsu untether on the device. This is compatible with iOS versions 8.0–8.4.1 for A6(X) devices, and iOS 8.3–8.4.1 for A5(X) devices.
+## Jailbreak Modes
 
-For iOS 9.0.x devices and A5(X) devices running iOS 8.0–8.2, the Install Untether toggle cannot be enabled, limiting these devices to a semi-untethered jailbreak.
+EverPwnage has an "Install Untether" toggle, which controls the installation of daibutsu untether:
 
-## Other Jailbreaks
+- The toggle is enabled by default on compatible devices for a fully untethered jailbreak.
+- Users can manually disable the toggle if they prefer to remain semi-untethered.
+- On incompatible devices (iOS 9.0.x devices or A5(X) devices running iOS 8.0-8.2), the toggle is automatically disabled, limiting these devices to a semi-untethered jailbreak.
 
-Users of other iOS 8 jailbreaks, such as EtasonJB, HomeDepot, and openpwnage, can also switch to EverPwnage. By jailbreaking with EverPwnage and enabling the Install Untether toggle, their device will switched to daibutsu untether.
+## Untether Compatibility
 
-This does not apply to the following jailbreaks: Pangu8, Pangu9, TaiG, PPJailbreak, and wtfis. Do not use EverPwnage if you are on one of these jailbreaks, as they are already untethered and/or not for 32-bit devices in the case of wtfis.
+- iOS 8.0-8.4.1: A6(X) devices
+- iOS 8.3-8.4.1: A5(X) devices
+
+For all other configurations, the option to untether is not available.
+
+## Switching from Other Jailbreaks
+
+If you are using other iOS 8 jailbreaks like EtasonJB, HomeDepot, or openpwnage, you can switch to EverPwnage. Jailbreaking with EverPwnage and keeping the "Install Untether" toggle enabled will switch your device to daibutsu untether (if supported).
+
+Do **not** use EverPwnage if your device is already jailbroken with:
+
+- Pangu8
+- Pangu9
+- TaiG
+- PPJailbreak
+- wtfis (not for 32-bit devices)
+
+These jailbreaks are already untethered and/or incompatible with 32-bit devices in the case of wtfis.
 
 ## Building
 

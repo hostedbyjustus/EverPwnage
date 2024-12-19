@@ -48,32 +48,6 @@ static int insn_is_ldr_literal(uint16_t* i)
     return (*i & 0xF800) == 0x4800 || (*i & 0xFF7F) == 0xF85F;
 }
 
-static int insn_is_bl(uint16_t* i)
-{
-    if((*i & 0xf800) == 0xf000 && (*(i + 1) & 0xd000) == 0xd000)
-        return 1;
-    else if((*i & 0xf800) == 0xf000 && (*(i + 1) & 0xd001) == 0xc000)
-        return 1;
-    else
-        return 0;
-}
-
-static uint32_t insn_bl_imm32(uint16_t* i)
-{
-    uint16_t insn0 = *i;
-    uint16_t insn1 = *(i + 1);
-    uint32_t s = (insn0 >> 10) & 1;
-    uint32_t j1 = (insn1 >> 13) & 1;
-    uint32_t j2 = (insn1 >> 11) & 1;
-    uint32_t i1 = ~(j1 ^ s) & 1;
-    uint32_t i2 = ~(j2 ^ s) & 1;
-    uint32_t imm10 = insn0 & 0x3ff;
-    uint32_t imm11 = insn1 & 0x7ff;
-    uint32_t imm32 = (imm11 << 1) | (imm10 << 12) | (i2 << 22) | (i1 << 23) | (s ? 0xff000000 : 0);
-    return imm32;
-}
-
-
 static int insn_ldr_literal_rt(uint16_t* i)
 {
     if((*i & 0xF800) == 0x4800)
