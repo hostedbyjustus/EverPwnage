@@ -15,7 +15,7 @@ All 32-bit iOS devices that support iOS 8 and 9:
 
 ## iOS 9.0.x Support
 
-Support for iOS 9.0.x is **experimental and limited**. It is limited to A6(X) devices only (iPhone 5, 5C, iPad 4) due to issues with A5(X) devices.
+Support for iOS 9.0.x is **experimental and limited**. It is restricted to A6(X) devices only (iPhone 5, 5C, iPad 4) due to issues with A5(X) devices.
 
 ## Jailbreak Modes
 
@@ -36,13 +36,7 @@ For all other configurations, the option to untether is not available.
 
 If you are using other iOS 8 jailbreaks like EtasonJB, HomeDepot, or openpwnage, you can switch to EverPwnage. Jailbreaking with EverPwnage and keeping the "Install Untether" toggle enabled will switch your device to daibutsu untether (if supported).
 
-Do **not** use EverPwnage if your device is already jailbroken with:
-
-- Pangu8
-- Pangu9
-- TaiG
-- PPJailbreak
-- wtfis (not for 32-bit devices)
+Do **not** use EverPwnage if your device is already jailbroken with these: Pangu8, Pangu9, TaiG, PPJailbreak, wtfis (not for 32-bit devices)
 
 These jailbreaks are already untethered and/or incompatible with 32-bit devices in the case of wtfis.
 
@@ -55,5 +49,5 @@ This project is built using Xcode 10.1 and macOS High Sierra 10.13.6.
 - Thanks to [Merculous](https://github.com/Merculous) for testing and feedback
 - exploit: [sock_port_2_legacy](https://github.com/kok3shidoll/sock_port_2_legacy/tree/ios8)
 - untether and patches: [daibutsu untether](https://kok3shidoll.github.io/info/jp.daibutsu.untether841/indexv2.html) ([GitHub repo](https://github.com/kok3shidoll/daibutsu))
-- got the IOKit stuff from: [wtfis](https://github.com/TheRealClarity/wtfis)
+- got IOKit stuff and other learnings from: [wtfis](https://github.com/TheRealClarity/wtfis)
 - base of this jailbreak: [openpwnage](https://github.com/0xilis/openpwnage)
