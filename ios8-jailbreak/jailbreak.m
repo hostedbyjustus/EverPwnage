@@ -13,6 +13,7 @@
 
 #include "jailbreak.h"
 #include "mac_policy_ops.h"
+#include "dsc_override/haxx_override.h"
 
 #import "ViewController.h"
 
@@ -304,7 +305,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_iokit_check_get_property), 0,tfp0);
     olog("nuked sandbox\n");
     olog("let's go for code exec...\n");
-    
+
     uint32_t tfp0_patch = find_tfp0_patch(kernel_base, kdata, ksize);
     uint32_t mapForIO = find_mapForIO(kernel_base, kdata, ksize);
     uint32_t sandbox_call_i_can_has_debugger = find_sandbox_call_i_can_has_debugger8(kernel_base, kdata, ksize);
@@ -328,7 +329,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
 
         olog("patching mount_common at 0x%08x\n", kernel_base + mount_common);
         kwrite_uint8(kernel_base + mount_common + 1, 0xe7, tfp0);
-        
+
         olog("patching cs_enforcement_disable_amfi - 1\n");
         kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 1, 1, tfp0);
 
@@ -344,7 +345,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
 
         olog("patching mount_common at 0x%08x\n", kernel_base + mount_common);
         kwrite_uint8(kernel_base + mount_common + 1, 0xe0, tfp0);
-        
+
         olog("patching cs_enforcement_disable_amfi - 4\n");
         kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 4, 1, tfp0);
 
@@ -360,13 +361,13 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
 
     olog("patching cs_enforcement_disable_amfi at 0x%08x\n", kernel_base + cs_enforcement_disable_amfi - 1);
     kwrite_uint8(kernel_base + cs_enforcement_disable_amfi, 1, tfp0);
-    
+
     olog("patching PE_i_can_has_debugger_1 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_1);
     kwrite_uint32(kernel_base + PE_i_can_has_debugger_1, 1, tfp0);
-    
+
     olog("patching PE_i_can_has_debugger_2 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_2);
     kwrite_uint32(kernel_base + PE_i_can_has_debugger_2, 1, tfp0);
-    
+
     olog("patching sandbox_call_i_can_has_debugger at 0x%08x\n", kernel_base + sandbox_call_i_can_has_debugger);
     kwrite_uint32(kernel_base + sandbox_call_i_can_has_debugger, 0xbf00bf00, tfp0);
 
@@ -394,8 +395,28 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
         olog("remount = %d\n",mntr);
         usleep(100000);
     }
-
     sync();
+
+    if ([system_version hasPrefix:@"9.0"] && !(access("/.installed_everpwnage_haxx", F_OK) != -1)) {
+        int haxx_ret = -1;
+
+        if (isA5orA5X())
+            haxx_ret = haxx("/System/Library/Caches/com.apple.dyld/dyld_shared_cache_armv7");
+        else
+            haxx_ret = haxx("/System/Library/Caches/com.apple.dyld/dyld_shared_cache_armv7s");
+
+        olog("sync...\n");
+        sync();
+        sync();
+        sync();
+
+        if (haxx_ret != 0)
+            olog("Error occurred in haxx. cannot continue.\n");
+        else
+            olog("haxx successful? try rebooting now.\n");
+
+        exit(1);
+    }
 
     NSString *untetherPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/untether.tar"];
     char *untether_path = [untetherPathObj UTF8String];

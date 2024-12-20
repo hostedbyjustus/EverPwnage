@@ -25,6 +25,8 @@
 		887ACFA62D1533F000CE3A4A /* kernel_sp.c in Sources */ = {isa = PBXBuildFile; fileRef = 887ACF9F2D1533F000CE3A4A /* kernel_sp.c */; };
 		887ACFA72D1533F000CE3A4A /* offsets.m in Sources */ = {isa = PBXBuildFile; fileRef = 887ACFA12D1533F000CE3A4A /* offsets.m */; };
 		887ACFA82D1533F000CE3A4A /* sockpuppet.c in Sources */ = {isa = PBXBuildFile; fileRef = 887ACFA32D1533F000CE3A4A /* sockpuppet.c */; };
+		887ACFAF2D154A9200CE3A4A /* export_stuff.c in Sources */ = {isa = PBXBuildFile; fileRef = 887ACFAA2D154A9200CE3A4A /* export_stuff.c */; };
+		887ACFB02D154A9200CE3A4A /* haxx_override.c in Sources */ = {isa = PBXBuildFile; fileRef = 887ACFAC2D154A9200CE3A4A /* haxx_override.c */; };
 		88EF89AF2D11717200AC09EE /* openssh.tar in Resources */ = {isa = PBXBuildFile; fileRef = 88EF89AE2D11717200AC09EE /* openssh.tar */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +64,11 @@
 		887ACFA22D1533F000CE3A4A /* plog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plog.h; sourceTree = "<group>"; };
 		887ACFA32D1533F000CE3A4A /* sockpuppet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sockpuppet.c; sourceTree = "<group>"; };
 		887ACFA42D1533F000CE3A4A /* sockpuppet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sockpuppet.h; sourceTree = "<group>"; };
+		887ACFAA2D154A9200CE3A4A /* export_stuff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = export_stuff.c; sourceTree = "<group>"; };
+		887ACFAB2D154A9200CE3A4A /* export_stuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = export_stuff.h; sourceTree = "<group>"; };
+		887ACFAC2D154A9200CE3A4A /* haxx_override.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = haxx_override.c; sourceTree = "<group>"; };
+		887ACFAD2D154A9200CE3A4A /* haxx_override.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = haxx_override.h; sourceTree = "<group>"; };
+		887ACFAE2D154A9200CE3A4A /* plog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plog.h; sourceTree = "<group>"; };
 		88EF89AE2D11717200AC09EE /* openssh.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = openssh.tar; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -109,6 +116,7 @@
 				886668962D0D2C6100C3F554 /* AppDelegate.m */,
 				8866689E2D0D2C6300C3F554 /* Assets.xcassets */,
 				8876A19E2D0D72E90087BA13 /* bootstrap.tar */,
+				887ACFA92D154A9200CE3A4A /* dsc_override */,
 				886668A32D0D2C6300C3F554 /* Info.plist */,
 				880F0C2E2D0D4C8D00598FA3 /* IOKit */,
 				880F0C312D0D4C8D00598FA3 /* jailbreak.h */,
@@ -147,6 +155,18 @@
 				887ACFA42D1533F000CE3A4A /* sockpuppet.h */,
 			);
 			path = sock_port_2_legacy;
+			sourceTree = "<group>";
+		};
+		887ACFA92D154A9200CE3A4A /* dsc_override */ = {
+			isa = PBXGroup;
+			children = (
+				887ACFAA2D154A9200CE3A4A /* export_stuff.c */,
+				887ACFAB2D154A9200CE3A4A /* export_stuff.h */,
+				887ACFAC2D154A9200CE3A4A /* haxx_override.c */,
+				887ACFAD2D154A9200CE3A4A /* haxx_override.h */,
+				887ACFAE2D154A9200CE3A4A /* plog.h */,
+			);
+			path = dsc_override;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -224,6 +244,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				887ACFB02D154A9200CE3A4A /* haxx_override.c in Sources */,
+				887ACFAF2D154A9200CE3A4A /* export_stuff.c in Sources */,
 				8866689A2D0D2C6100C3F554 /* ViewController.m in Sources */,
 				886668A52D0D2C6300C3F554 /* main.m in Sources */,
 				880614512D113F7F00798E6F /* SettingsViewController.m in Sources */,
