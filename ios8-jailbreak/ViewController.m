@@ -13,7 +13,7 @@
 #include <sys/types.h>
 
 #import "jailbreak.h"
-#import "sockpuppet.h"
+#import "sock_port_2_legacy/sockpuppet.h"
 
 @interface ViewController ()
 

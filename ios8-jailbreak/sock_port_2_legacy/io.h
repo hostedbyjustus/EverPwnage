@@ -1,7 +1,7 @@
 #ifndef IO_H
 #define IO_H
 
-#include "IOKit/IOKitLib.h"
+#include "../IOKit/IOKitLib.h"
 
 extern uint32_t kslide32;
 

@@ -1,4 +1,4 @@
-#include "IOKit/IOKitLib.h"
+#include "../IOKit/IOKitLib.h"
 #include <mach/mach.h>
 #include <stdlib.h>
 
@@ -6,7 +6,7 @@
 #include "common.h"
 #include "io.h"
 
-#include "IOKit/iokitUser.c"
+#include "../IOKit/iokitUser.c"
 
 static mach_port_t get_io_master_port(void)
 {
