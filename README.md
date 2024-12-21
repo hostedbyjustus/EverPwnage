@@ -8,29 +8,25 @@ Download and sideload the IPA from the [latest release](https://github.com/LukeZ
 
 ## Supported Devices
 
-All 32-bit iOS devices that support iOS 8 and 9:
-- **iPhone**: 4S, 5, 5C
-- **iPad**: 2, 3, 4, mini 1
-- **iPod touch**: 5
+- **A5(X) devices:** iPhone 4S; iPad 2, 3, mini 1; iPod touch 5
+- **A6(X) devices:** iPhone 5, 5C; iPad 4
 
-## iOS 9.0.x Support
+## Supported Versions
 
-Support for iOS 9.0.x is **experimental and limited**. It is restricted to A6(X) devices only (iPhone 5, 5C, iPad 4) due to issues with A5(X) devices.
+| Device    | iOS 8.0-8.2     | iOS 8.3-8.4.1 | iOS 9.0-9.0.2   |
+|-----------|-----------------|---------------|-----------------|
+| **A5(X)** | Semi-untethered | Untethered    | Not supported   |
+| **A6(X)** | Untethered      | Untethered    | Semi-untethered |
+
+- Support for iOS 9.0.x is **experimental and limited**. It is restricted to A6(X) devices only due to issues with A5(X) devices.
 
 ## Jailbreak Modes
 
-EverPwnage has an "Install Untether" toggle, which controls the installation of daibutsu untether:
+EverPwnage has an **"Install Untether" toggle**, which controls the installation of **daibutsu untether**:
 
-- The toggle is enabled by default on compatible devices for a fully untethered jailbreak.
+- The toggle is **enabled by default** on compatible devices for a fully untethered jailbreak.
 - Users can manually disable the toggle if they prefer to remain semi-untethered.
 - On incompatible devices (iOS 9.0.x devices or A5(X) devices running iOS 8.0-8.2), the toggle is automatically disabled, limiting these devices to a semi-untethered jailbreak.
-
-## Untether Compatibility
-
-- iOS 8.0-8.4.1: A6(X) devices
-- iOS 8.3-8.4.1: A5(X) devices
-
-For all other configurations, the option to untether is not available.
 
 ## Switching from Other Jailbreaks
 

@@ -13,10 +13,12 @@
 
 #include "jailbreak.h"
 #include "mac_policy_ops.h"
+#include "patchfinder8.h"
 
 #import "ViewController.h"
 
-#define UNSLID_BASE 0x80001000
+uint32_t pmaps[TTB_SIZE];
+int pmapscnt = 0;
 
 void olog(char *format, ...) {
     char msg[1000];
@@ -83,19 +85,6 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     olog("using offset 0x%08x for pmap\n",pmap_addr);
     return pmap_addr + kernel_base;
 }
-
-#define TTB_SIZE            4096
-#define L1_SECT_S_BIT       (1 << 16)
-#define L1_SECT_PROTO       (1 << 1) /* 0b10 */
-#define L1_SECT_AP_URW      (1 << 10) | (1 << 11)
-#define L1_SECT_APX         (1 << 15)
-#define L1_SECT_DEFPROT     (L1_SECT_AP_URW | L1_SECT_APX)
-#define L1_SECT_SORDER      (0) /* 0b00, not cacheable, strongly ordered. */
-#define L1_SECT_DEFCACHE    (L1_SECT_SORDER)
-#define L1_PROTO_TTE(entry) (entry | L1_SECT_S_BIT | L1_SECT_DEFPROT | L1_SECT_DEFCACHE)
-
-uint32_t pmaps[TTB_SIZE];
-int pmapscnt = 0;
 
 void patch_kernel_pmap(task_t tfp0, uintptr_t kernel_base) {
     uint32_t kernel_pmap        = find_kernel_pmap(kernel_base);
@@ -180,10 +169,6 @@ bool is_pmap_patch_success(task_t tfp0, uintptr_t kernel_base) {
     return true;
 }
 
-#include "patchfinder8.h"
-
-extern char **environ;
-
 void run_cmd(char *cmd, ...) {
     pid_t pid;
     va_list ap;
@@ -196,7 +181,7 @@ void run_cmd(char *cmd, ...) {
 
     int status;
     olog("Run command: %s\n", cmd_);
-    status = posix_spawn(&pid, "/bin/sh", NULL, NULL, argv, environ);
+    status = posix_spawn(&pid, "/bin/sh", NULL, NULL, argv, NULL);
     if (status == 0) {
         olog("Child pid: %i\n", pid);
         do {
@@ -223,7 +208,7 @@ void run_tar(char *cmd, ...) {
 
     int status;
     olog("Run command: %s\n", cmd_);
-    status = posix_spawn(&pid, "/bin/tar", NULL, NULL, argv, environ);
+    status = posix_spawn(&pid, "/bin/tar", NULL, NULL, argv, NULL);
     if (status == 0) {
         olog("Child pid: %i\n", pid);
         do {
@@ -238,8 +223,6 @@ void run_tar(char *cmd, ...) {
         exit(1);
     }
 }
-
-#define CHUNK_SIZE 0x800
 
 void dump_kernel_8(mach_port_t tfp0, vm_address_t kernel_base, uint8_t *dest, size_t ksize) {
     for (vm_address_t addr = kernel_base, e = 0; addr < kernel_base + ksize; addr += CHUNK_SIZE, e += CHUNK_SIZE) {
