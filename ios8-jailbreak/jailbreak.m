@@ -3,6 +3,7 @@
 #import <Foundation/Foundation.h>
 #include <mach/mach.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <sys/utsname.h>
 #include <UIKit/UIKit.h>
 #include <sys/mount.h>
@@ -387,13 +388,15 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
 
     sync();
 
+    //NSString *everuntetherPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/everuntether.tar"];
+    //char *everuntether_path = [everuntetherPathObj UTF8String];
+    //olog("everuntether path: %s\n",everuntether_path);
     NSString *untetherPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/untether.tar"];
     char *untether_path = [untetherPathObj UTF8String];
-    olog("untether path: %s\n",untether_path);
-    
+    //olog("daibutsu untether path: %s\n",untether_path);
     NSString *opensshPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/openssh.tar"];
     char *openssh_path = [opensshPathObj UTF8String];
-    olog("openssh path: %s\n",openssh_path);
+    //olog("openssh path: %s\n",openssh_path);
     
     bool InstallBootstrap = false;
     if (!((access("/.installed-openpwnage", F_OK) != -1) || (access("/.installed_everpwnage", F_OK) != -1) ||
@@ -456,27 +459,38 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     olog("restarting cfprefs\n");
     run_cmd("/usr/bin/killall -9 cfprefsd &");
     
-    if (InstallBootstrap){
-        olog("running uicache\n");
-        run_cmd("su -c uicache mobile &");
-    }
-    
     if (install_openssh) {
         olog("extracting openssh\n");
         run_tar("%s", openssh_path);
     }
 
-    if (untether_on) {
-        olog("extracting untether\n");
-        run_tar("%s", untether_path);
-
-        olog("running postinst\n");
-        run_cmd("/bin/bash /private/var/tmp/postinst configure");
-    }
-    
     olog("loading launch daemons\n");
     run_cmd("/bin/launchctl load /Library/LaunchDaemons/*");
     run_cmd("/etc/rc.d/*");
+    
+    if (InstallBootstrap) {
+        olog("running uicache\n");
+        run_cmd("su -c uicache mobile");
+    }
+
+    if (untether_on) {
+        if (isA5orA5X() && [kernv containsString:@"2783"]) {
+            olog("extracting everuntether\n");
+            //run_tar("%s", everuntether_path);
+            unlink("/.installed_everpwnage");
+            unlink("/.cydia_no_stash");
+            sync();
+            sync();
+            sync();
+            olog("done. rebooting now...");
+            reboot(0);
+        } else {
+            olog("extracting daibutsu untether\n");
+            run_tar("%s", untether_path);
+            olog("running postinst\n");
+            run_cmd("/bin/bash /private/var/tmp/postinst configure"); // pretty much same as daibutsu migrator
+        }
+    }
         
     olog("respringing\n");
     run_cmd("(killall -9 backboardd) &");
