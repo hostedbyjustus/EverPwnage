@@ -24,6 +24,7 @@ bool isA5orA5X(void);
 
 extern NSString *system_machine;
 extern NSString *system_version;
+extern NSString *kernv;
 extern bool install_openssh;
 extern bool reinstall_strap;
 

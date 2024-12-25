@@ -31,12 +31,12 @@ void olog(char *format, ...) {
 }
 
 bool isA5orA5X(void) {
-    struct utsname systemInfo;
-    uname(&systemInfo);
-    NSArray *A5orA5X = [NSArray arrayWithObjects:@"iPad2,1",@"iPad2,2",@"iPad2,3",@"iPad2,4",@"iPad2,5",@"iPad2,6",@"iPad2,7",@"iPad3,1",@"iPad3,2",@"iPad3,3",@"iPhone4,1",@"iPod5,1", nil];
-    if([A5orA5X containsObject:[NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding]]) {
+    //NSLog(@"%@", kernv);
+    if([kernv containsString:@"S5L894"]) {
+        printf("A5(X) device\n");
         return true;
     }
+    printf("A6(X) device\n");
     return false;
 }
 
@@ -59,27 +59,36 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     uint32_t pmap_addr;
     if(isA5orA5X()) {
         //A5 or A5X
-        if ([system_version hasPrefix:@"9.0"]) { //9.0-9.0.2
+        if ([kernv containsString:@"3248"]) { //9.0-9.0.2
+            printf("9.0-9.0.2\n", kernv);
             pmap_addr = 0x3f7444;
-        } else if ([system_version hasPrefix:@"8.2"]){ //8.2
-            pmap_addr = 0x39411c;
-        } else if ([system_version hasPrefix:@"8.1.3"]){ //8.1.3
-            pmap_addr = 0x39211c;
-        } else if ([system_version hasPrefix:@"8.1"] || [system_version hasPrefix:@"8.0"]){ //8.0-8.1.2
-            pmap_addr = 0x39111c;
-        } else { //8.3-8.4.1
+        } else if ([kernv containsString:@"2784"]) { //8.3-8.4.1
+            printf("8.3-8.4.1\n", kernv);
             pmap_addr = 0x3a211c;
+        } else if ([kernv containsString:@"2783.5"]) { //8.2
+            printf("8.2\n", kernv);
+            pmap_addr = 0x39411c;
+        } else if ([kernv containsString:@"2783.3.26"]) { //8.1.3
+            printf("8.1.3\n", kernv);
+            pmap_addr = 0x39211c;
+        } else { //8.0-8.1.2
+            printf("8.0-8.1.2\n", kernv);
+            pmap_addr = 0x39111c;
         }
     } else {
         //A6 or A6X
-        if ([system_version hasPrefix:@"9.0"]) { //9.0-9.0.2
+        if ([kernv containsString:@"3248"]) { //9.0-9.0.2
+            printf("9.0-9.0.2\n", kernv);
             pmap_addr = 0x3fd444;
-        } else if ([system_version hasPrefix:@"8.2"]){ //8.2
-            pmap_addr = 0x39a11c;
-        } else if ([system_version hasPrefix:@"8.1"] || [system_version hasPrefix:@"8.0"]){ //8.0-8.1.3
-            pmap_addr = 0x39711c;
-        } else { //8.3-8.4.1
+        } else if ([kernv containsString:@"2784"]) { //8.3-8.4.1
+            printf("8.3-8.4.1\n", kernv);
             pmap_addr = 0x3a711c;
+        } else if ([kernv containsString:@"2783.5"]) { //8.2
+            printf("8.2\n", kernv);
+            pmap_addr = 0x39a11c;
+        } else { //8.0-8.1.3
+            printf("8.0-8.1.3\n", kernv);
+            pmap_addr = 0x39711c;
         }
     }
     olog("using offset 0x%08x for pmap\n",pmap_addr);
@@ -87,8 +96,8 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
 }
 
 void patch_kernel_pmap(task_t tfp0, uintptr_t kernel_base) {
-    uint32_t kernel_pmap        = find_kernel_pmap(kernel_base);
-    uint32_t kernel_pmap_store    = kread_uint32(kernel_pmap,tfp0);
+    uint32_t kernel_pmap         = find_kernel_pmap(kernel_base);
+    uint32_t kernel_pmap_store   = kread_uint32(kernel_pmap,tfp0);
     uint32_t tte_virt            = kread_uint32(kernel_pmap_store,tfp0);
     uint32_t tte_phys            = kread_uint32(kernel_pmap_store+4,tfp0);
 
@@ -240,8 +249,6 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     
     uint8_t* kdata = NULL;
     size_t ksize = 0xFFE000;
-    if ([system_version hasPrefix:@"9.0"])
-        ksize = 0xF00000;
     kdata = malloc(ksize);
     dump_kernel_8(tfp0, kernel_base, kdata, ksize);
     if (!kdata) {
@@ -302,7 +309,7 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     uint32_t PE_i_can_has_debugger_1;
     uint32_t PE_i_can_has_debugger_2;
 
-    if ([system_version hasPrefix:@"9.0"]) {
+    if ([kernv containsString:@"3248"]) {
         mount_common = find_mount_90(kernel_base, kdata, ksize);
         PE_i_can_has_debugger_1 = find_i_can_has_debugger_1_90(kernel_base, kdata, ksize);
         PE_i_can_has_debugger_2 = find_i_can_has_debugger_2_90(kernel_base, kdata, ksize);

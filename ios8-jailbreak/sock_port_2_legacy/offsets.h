@@ -1,5 +1,7 @@
 // offsets.h from wtfis
 
+#include <stdbool.h>
+
 enum kstruct_offset {
     /* struct task */
     TASK_VM_MAP,

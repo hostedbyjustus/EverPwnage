@@ -6,7 +6,7 @@
 #include "common.h"
 #include "io.h"
 
-#include "../IOKit/iokitUser.c"
+kern_return_t io_service_open_extended(mach_port_t service, task_t owningTask, uint32_t connect_type, NDR_record_t ndr, io_buf_ptr_t properties, mach_msg_type_number_t propertiesCnt, kern_return_t *result, mach_port_t *connection);
 
 static mach_port_t get_io_master_port(void)
 {
