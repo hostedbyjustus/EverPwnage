@@ -59,7 +59,7 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     uint32_t pmap_addr;
     if(isA5orA5X()) {
         //A5 or A5X
-        if ([nkernv containsString:@"3248"]) { //9.0-9.0.2
+        if ([nkernv containsString:@"3248"] || [nkernv containsString:@"3247.1.88"]) { //9.0-9.0.2
             printf("9.0-9.0.2\n");
             pmap_addr = 0x3f7444;
         } else if ([nkernv containsString:@"3247.1.56"]) { //9.0b4
@@ -117,6 +117,51 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     }
     printf("using offset 0x%08x for pmap\n",pmap_addr);
     return pmap_addr + kernel_base;
+}
+
+uint32_t find_PE_i_can_has_debugger_1(void) {
+    uint32_t PE_i_can_has_debugger_1;
+    if ([nkernv containsString:@"3248"]) { //9.0-9.0.2
+        printf("9.0-9.0.2\n");
+        PE_i_can_has_debugger_1 = 0x3a8fc4;
+    } else if ([nkernv containsString:@"3247.1.88"]) { //9.0b5
+        printf("9.0b5\n");
+        PE_i_can_has_debugger_1 = 0x3a8f44;
+    } else if ([nkernv containsString:@"3247.1.56"]) { //9.0b4
+        printf("9.0b4\n");
+        PE_i_can_has_debugger_1 = 0x3a7394;
+    } else if ([nkernv containsString:@"3247.1.36"]) { //9.0b3
+        printf("9.0b3\n");
+        PE_i_can_has_debugger_1 = 0x3a8444;
+    } else if ([nkernv containsString:@"3247.1.6"]) { //9.0b2
+        printf("9.0b2\n");
+        PE_i_can_has_debugger_1 = 0x3ad524;
+    } else if ([nkernv containsString:@"3216"]) { //9.0b1
+        printf("9.0b1\n");
+        PE_i_can_has_debugger_1 = 0x45ad20;
+    }
+    return PE_i_can_has_debugger_1;
+}
+
+uint32_t find_PE_i_can_has_debugger_2(void) {
+    uint32_t PE_i_can_has_debugger_2;
+    if ([nkernv containsString:@"3248"] || [nkernv containsString:@"3247.1.88"]) { //9.0-9.0.2
+        printf("9.0-9.0.2\n");
+        PE_i_can_has_debugger_2 = 0x3af014;
+    } else if ([nkernv containsString:@"3247.1.56"]) { //9.0b4
+        printf("9.0b4\n");
+        PE_i_can_has_debugger_2 = 0x3ae364;
+    } else if ([nkernv containsString:@"3247.1.36"]) { //9.0b3
+        printf("9.0b3\n");
+        PE_i_can_has_debugger_2 = 0x3b01a4;
+    } else if ([nkernv containsString:@"3247.1.6"]) { //9.0b2
+        printf("9.0b2\n");
+        PE_i_can_has_debugger_2 = 0x3b4b94;
+    } else if ([nkernv containsString:@"3216"]) { //9.0b1
+        printf("9.0b1\n");
+        PE_i_can_has_debugger_2 = 0x461e40;
+    }
+    return PE_i_can_has_debugger_2;
 }
 
 void patch_kernel_pmap(task_t tfp0, uintptr_t kernel_base) {
@@ -325,7 +370,7 @@ void patch_kernel(mach_port_t tfp0, uint32_t kernel_base) {
     uint32_t proc_enforce8 = find_proc_enforce8(kernel_base, kdata, ksize);
     //uint32_t vm_fault_enter = find_vm_fault_enter_patch_84(kernel_base, kdata, ksize);
     uint32_t vm_map_enter8 = find_vm_map_enter_patch8(kernel_base, kdata, ksize);
-    uint32_t vm_map_protect8 = find_vm_map_protect_patch8(kernel_base, kdata, ksize);
+    uint32_t vm_map_protect8 = find_vm_map_protect_patch_84(kernel_base, kdata, ksize);
     uint32_t csops8 = find_csops8(kernel_base, kdata, ksize);
     uint32_t cs_enforcement_disable_amfi = find_cs_enforcement_disable_amfi8(kernel_base, kdata, ksize);
     uint32_t mount_common = find_mount8(kernel_base, kdata, ksize);
@@ -485,12 +530,10 @@ void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
     printf("[*] running patchfinder\n");
     uint32_t proc_enforce = kbase + find_proc_enforce8(kbase, kdata, ksize);
     uint32_t cs_enforcement_disable_amfi = kbase + find_cs_enforcement_disable_amfi8(kbase, kdata, ksize);
-    uint32_t PE_i_can_has_debugger_1 = kbase + find_i_can_has_debugger_1_90(kbase, kdata, ksize);
-    uint32_t PE_i_can_has_debugger_2 = kbase + find_i_can_has_debugger_2_90(kbase, kdata, ksize);
     uint32_t p_bootargs = kbase + find_p_bootargs_generic(kbase, kdata, ksize);
     uint32_t vm_fault_enter = kbase + find_vm_fault_enter_patch(kbase, kdata, ksize);
     uint32_t vm_map_enter = kbase + find_vm_map_enter_patch8(kbase, kdata, ksize);
-    uint32_t vm_map_protect = kbase + find_vm_map_protect_patch8(kbase, kdata, ksize);
+    uint32_t vm_map_protect = kbase + find_vm_map_protect_patch(kbase, kdata, ksize);
     uint32_t mount_patch = kbase + find_mount_90(kbase, kdata, ksize) + 1;
     uint32_t mapForIO = kbase + find_mapForIO(kbase, kdata, ksize);
     uint32_t sandbox_call_i_can_has_debugger = kbase + find_sandbox_call_i_can_has_debugger8(kbase, kdata, ksize);
@@ -499,6 +542,16 @@ void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
     uint32_t vn_getpath = find_vn_getpath8(kbase, kdata, ksize);
     uint32_t csops_addr = kbase + find_csops8(kbase, kdata, ksize);
     uint32_t amfi_file_check_mmap = kbase + find_amfi_file_check_mmap(kbase, kdata, ksize);
+    uint32_t PE_i_can_has_debugger_1;
+    uint32_t PE_i_can_has_debugger_2;
+
+    if (isA5orA5X()) {
+        PE_i_can_has_debugger_1 = kbase + find_PE_i_can_has_debugger_1();
+        PE_i_can_has_debugger_2 = kbase + find_PE_i_can_has_debugger_2();
+    } else {
+        PE_i_can_has_debugger_1 = kbase + find_i_can_has_debugger_1_90(kbase, kdata, ksize);
+        PE_i_can_has_debugger_2 = kbase + find_i_can_has_debugger_2_90(kbase, kdata, ksize);
+    }
 
     printf("[PF] proc_enforce:               %08x\n", proc_enforce);
     printf("[PF] cs_enforcement_disable:     %08x\n", cs_enforcement_disable_amfi);
