@@ -21,19 +21,9 @@
 uint32_t pmaps[TTB_SIZE];
 int pmapscnt = 0;
 
-void olog(char *format, ...) {
-    char msg[1000];
-    va_list aptr;
-
-    va_start(aptr, format);
-    vsprintf(msg, format, aptr);
-    va_end(aptr);
-    printf("%s",msg);
-}
-
 bool isA5orA5X(void) {
-    //NSLog(@"%@", kernv);
-    if([kernv containsString:@"S5L894"]) {
+    //NSLog(@"%@", nkernv);
+    if([nkernv containsString:@"S5L894"]) {
         printf("A5(X) device\n");
         return true;
     }
@@ -60,39 +50,39 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     uint32_t pmap_addr;
     if(isA5orA5X()) {
         //A5 or A5X
-        if ([kernv containsString:@"3248"]) { //9.0-9.0.2
-            printf("9.0-9.0.2\n", kernv);
+        if ([nkernv containsString:@"3248"]) { //9.0-9.0.2
+            printf("9.0-9.0.2\n");
             pmap_addr = 0x3f7444;
-        } else if ([kernv containsString:@"2784"]) { //8.3-8.4.1
-            printf("8.3-8.4.1\n", kernv);
+        } else if ([nkernv containsString:@"2784"]) { //8.3-8.4.1
+            printf("8.3-8.4.1\n");
             pmap_addr = 0x3a211c;
-        } else if ([kernv containsString:@"2783.5"]) { //8.2
-            printf("8.2\n", kernv);
+        } else if ([nkernv containsString:@"2783.5"]) { //8.2
+            printf("8.2\n");
             pmap_addr = 0x39411c;
-        } else if ([kernv containsString:@"2783.3.26"]) { //8.1.3
-            printf("8.1.3\n", kernv);
+        } else if ([nkernv containsString:@"2783.3.26"]) { //8.1.3
+            printf("8.1.3\n");
             pmap_addr = 0x39211c;
         } else { //8.0-8.1.2
-            printf("8.0-8.1.2\n", kernv);
+            printf("8.0-8.1.2\n");
             pmap_addr = 0x39111c;
         }
     } else {
         //A6 or A6X
-        if ([kernv containsString:@"3248"]) { //9.0-9.0.2
-            printf("9.0-9.0.2\n", kernv);
+        if ([nkernv containsString:@"3248"]) { //9.0-9.0.2
+            printf("9.0-9.0.2\n");
             pmap_addr = 0x3fd444;
-        } else if ([kernv containsString:@"2784"]) { //8.3-8.4.1
-            printf("8.3-8.4.1\n", kernv);
+        } else if ([nkernv containsString:@"2784"]) { //8.3-8.4.1
+            printf("8.3-8.4.1\n");
             pmap_addr = 0x3a711c;
-        } else if ([kernv containsString:@"2783.5"]) { //8.2
-            printf("8.2\n", kernv);
+        } else if ([nkernv containsString:@"2783.5"]) { //8.2
+            printf("8.2\n");
             pmap_addr = 0x39a11c;
         } else { //8.0-8.1.3
-            printf("8.0-8.1.3\n", kernv);
+            printf("8.0-8.1.3\n");
             pmap_addr = 0x39711c;
         }
     }
-    olog("using offset 0x%08x for pmap\n",pmap_addr);
+    printf("using offset 0x%08x for pmap\n",pmap_addr);
     return pmap_addr + kernel_base;
 }
 
@@ -102,9 +92,9 @@ void patch_kernel_pmap(task_t tfp0, uintptr_t kernel_base) {
     uint32_t tte_virt            = kread_uint32(kernel_pmap_store,tfp0);
     uint32_t tte_phys            = kread_uint32(kernel_pmap_store+4,tfp0);
 
-    olog("kernel pmap store @ 0x%08x\n",
+    printf("kernel pmap store @ 0x%08x\n",
             kernel_pmap_store);
-    olog("kernel pmap tte is at VA 0x%08x PA 0x%08x\n",
+    printf("kernel pmap tte is at VA 0x%08x PA 0x%08x\n",
             tte_virt,
             tte_phys);
 
@@ -153,7 +143,7 @@ void patch_kernel_pmap(task_t tfp0, uintptr_t kernel_base) {
         }
     }
 
-    olog("every page is actually writable\n");
+    printf("every page is actually writable\n");
     usleep(100000);
 }
 
@@ -163,7 +153,7 @@ bool is_pmap_patch_success(task_t tfp0, uintptr_t kernel_base) {
     uint32_t before = -1;
     uint32_t after = -1;
 
-    olog("check pmap patch\n");
+    printf("check pmap patch\n");
 
     before = kread_uint32(kernel_base, tfp0);
     kwrite_uint32(kernel_base, 0x41414141, tfp0);
@@ -171,9 +161,9 @@ bool is_pmap_patch_success(task_t tfp0, uintptr_t kernel_base) {
     kwrite_uint32(kernel_base, before, tfp0);
 
     if ((before != after) && (after == 0x41414141)) {
-        olog("pmap patched!\n");
+        printf("pmap patched!\n");
     } else {
-        olog("pmap patch failed\n");
+        printf("pmap patch failed\n");
         return false;
     }
     return true;
@@ -190,19 +180,19 @@ void run_cmd(char *cmd, ...) {
     char *argv[] = {"sh", "-c", cmd_, NULL};
 
     int status;
-    olog("Run command: %s\n", cmd_);
+    printf("Run command: %s\n", cmd_);
     status = posix_spawn(&pid, "/bin/sh", NULL, NULL, argv, NULL);
     if (status == 0) {
-        olog("Child pid: %i\n", pid);
+        printf("Child pid: %i\n", pid);
         do {
             if (waitpid(pid, &status, 0) != -1) {
-                olog("Child status %d\n", WEXITSTATUS(status));
+                printf("Child status %d\n", WEXITSTATUS(status));
             } else {
                 perror("waitpid");
             }
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     } else {
-        olog("posix_spawn: %s\n", strerror(status));
+        printf("posix_spawn: %s\n", strerror(status));
     }
 }
 
@@ -217,19 +207,19 @@ void run_tar(char *cmd, ...) {
     char *argv[] = {"/bin/tar", "-xf", cmd_, "-C", "/", "--preserve-permissions", NULL};
 
     int status;
-    olog("Run command: %s\n", cmd_);
+    printf("Run command: %s\n", cmd_);
     status = posix_spawn(&pid, "/bin/tar", NULL, NULL, argv, NULL);
     if (status == 0) {
-        olog("Child pid: %i\n", pid);
+        printf("Child pid: %i\n", pid);
         do {
             if (waitpid(pid, &status, 0) != -1) {
-                olog("Child status %d\n", WEXITSTATUS(status));
+                printf("Child status %d\n", WEXITSTATUS(status));
             } else {
                 perror("waitpid");
             }
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     } else {
-        olog("posix_spawn: %s\n", strerror(status));
+        printf("posix_spawn: %s\n", strerror(status));
         exit(1);
     }
 }
@@ -245,22 +235,22 @@ void dump_kernel_8(mach_port_t tfp0, vm_address_t kernel_base, uint8_t *dest, si
     }
 }
 
-bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
-    olog("unsandboxing...\n");
+int patch_kernel(mach_port_t tfp0, uint32_t kernel_base) {
+    printf("unsandboxing...\n");
     
     uint8_t* kdata = NULL;
     size_t ksize = 0xFFE000;
     kdata = malloc(ksize);
     dump_kernel_8(tfp0, kernel_base, kdata, ksize);
     if (!kdata) {
-        olog("fuck\n");
+        printf("fuck\n");
         exit(1);
     }
-    olog("now...\n");
+    printf("now...\n");
     
     uint32_t sbopsoffset = find_sbops(kernel_base, kdata, ksize);
 
-    olog("nuking sandbox at 0x%08lx\n", kernel_base + sbopsoffset);
+    printf("nuking sandbox at 0x%08lx\n", kernel_base + sbopsoffset);
     kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_ioctl), 0,tfp0);
     kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_access), 0,tfp0);
     kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_create), 0,tfp0);
@@ -293,8 +283,8 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_truncate), 0,tfp0);
     kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getattr), 0,tfp0);
     kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_iokit_check_get_property), 0,tfp0);
-    olog("nuked sandbox\n");
-    olog("let's go for code exec...\n");
+    printf("nuked sandbox\n");
+    printf("let's go for code exec...\n");
     
     uint32_t tfp0_patch = find_tfp0_patch(kernel_base, kdata, ksize);
     uint32_t mapForIO = find_mapForIO(kernel_base, kdata, ksize);
@@ -310,20 +300,20 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
     uint32_t PE_i_can_has_debugger_1;
     uint32_t PE_i_can_has_debugger_2;
 
-    if ([kernv containsString:@"3248"]) {
+    if ([nkernv containsString:@"3248"]) {
         mount_common = find_mount_90(kernel_base, kdata, ksize);
         PE_i_can_has_debugger_1 = find_i_can_has_debugger_1_90(kernel_base, kdata, ksize);
         PE_i_can_has_debugger_2 = find_i_can_has_debugger_2_90(kernel_base, kdata, ksize);
 
         uint32_t amfi_file_check_mmap = find_amfi_file_check_mmap(kernel_base, kdata, ksize);
 
-        olog("patching mount_common at 0x%08x\n", kernel_base + mount_common);
+        printf("patching mount_common at 0x%08x\n", kernel_base + mount_common);
         kwrite_uint8(kernel_base + mount_common + 1, 0xe7, tfp0);
         
-        olog("patching cs_enforcement_disable_amfi - 1\n");
+        printf("patching cs_enforcement_disable_amfi - 1\n");
         kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 1, 1, tfp0);
 
-        olog("patching amfi_file_check_mmap at 0x%08x\n", kernel_base + amfi_file_check_mmap);
+        printf("patching amfi_file_check_mmap at 0x%08x\n", kernel_base + amfi_file_check_mmap);
         kwrite_uint32(kernel_base + amfi_file_check_mmap, 0xbf00bf00, tfp0);
 
     } else {
@@ -333,101 +323,91 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
 
         uint32_t csops2 = find_csops2(kernel_base, kdata, ksize);
 
-        olog("patching mount_common at 0x%08x\n", kernel_base + mount_common);
+        printf("patching mount_common at 0x%08x\n", kernel_base + mount_common);
         kwrite_uint8(kernel_base + mount_common + 1, 0xe0, tfp0);
         
-        olog("patching cs_enforcement_disable_amfi - 4\n");
+        printf("patching cs_enforcement_disable_amfi - 4\n");
         kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 4, 1, tfp0);
 
-        olog("patching csops2 at 0x%08x\n", kernel_base + csops2);
+        printf("patching csops2 at 0x%08x\n", kernel_base + csops2);
         kwrite_uint8(kernel_base + csops2, 0x20, tfp0);
     }
 
-    olog("patching tfp0 at 0x%08x\n", kernel_base + tfp0_patch);
+    printf("patching tfp0 at 0x%08x\n", kernel_base + tfp0_patch);
     kwrite_uint32(kernel_base + tfp0_patch, 0xbf00bf00, tfp0);
 
-    olog("patching mapForIO at 0x%08x\n", kernel_base + mapForIO);
+    printf("patching mapForIO at 0x%08x\n", kernel_base + mapForIO);
     kwrite_uint32(kernel_base + mapForIO, 0xbf00bf00,tfp0);
 
-    olog("patching cs_enforcement_disable_amfi at 0x%08x\n", kernel_base + cs_enforcement_disable_amfi - 1);
+    printf("patching cs_enforcement_disable_amfi at 0x%08x\n", kernel_base + cs_enforcement_disable_amfi - 1);
     kwrite_uint8(kernel_base + cs_enforcement_disable_amfi, 1, tfp0);
     
-    olog("patching PE_i_can_has_debugger_1 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_1);
+    printf("patching PE_i_can_has_debugger_1 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_1);
     kwrite_uint32(kernel_base + PE_i_can_has_debugger_1, 1, tfp0);
     
-    olog("patching PE_i_can_has_debugger_2 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_2);
+    printf("patching PE_i_can_has_debugger_2 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_2);
     kwrite_uint32(kernel_base + PE_i_can_has_debugger_2, 1, tfp0);
     
-    olog("patching sandbox_call_i_can_has_debugger at 0x%08x\n", kernel_base + sandbox_call_i_can_has_debugger);
+    printf("patching sandbox_call_i_can_has_debugger at 0x%08x\n", kernel_base + sandbox_call_i_can_has_debugger);
     kwrite_uint32(kernel_base + sandbox_call_i_can_has_debugger, 0xbf00bf00, tfp0);
 
-    olog("patching proc_enforce at 0x%08x\n", kernel_base + proc_enforce8);
+    printf("patching proc_enforce at 0x%08x\n", kernel_base + proc_enforce8);
     kwrite_uint8(kernel_base + proc_enforce8, 0, tfp0);
 
-    //olog("patching vm_fault_enter at 0x%08x\n", kernel_base + vm_fault_enter);
+    //printf("patching vm_fault_enter at 0x%08x\n", kernel_base + vm_fault_enter);
     //kwrite_uint32(kernel_base + vm_fault_enter, 0x2201bf00, tfp0);
 
-    olog("patching vm_map_enter at 0x%08x\n", kernel_base + vm_map_enter8);
+    printf("patching vm_map_enter at 0x%08x\n", kernel_base + vm_map_enter8);
     kwrite_uint32(kernel_base + vm_map_enter8, 0x4280bf00, tfp0);
 
-    olog("patching vm_map_protect at 0x%08x\n", kernel_base + vm_map_protect8);
+    printf("patching vm_map_protect at 0x%08x\n", kernel_base + vm_map_protect8);
     kwrite_uint32(kernel_base + vm_map_protect8, 0xbf00bf00, tfp0);
 
-    olog("patching csops at 0x%08x\n", kernel_base + csops8);
+    printf("patching csops at 0x%08x\n", kernel_base + csops8);
     kwrite_uint32(kernel_base + csops8, 0xbf00bf00, tfp0);
 
-    olog("[*] remounting rootfs\n");
+    return 0;
+}
+
+char *getFilePath(const char *fileName) {
+    NSString *filePathObj = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:[NSString stringWithUTF8String:fileName]];
+    return [filePathObj UTF8String];
+}
+
+int postjailbreak(bool untether_on) {
+    printf("[*] remounting rootfs\n");
     char* nmr = strdup("/dev/disk0s1s1");
     int mntr = mount("hfs", "/", MNT_UPDATE, &nmr);
-    olog("remount = %d\n",mntr);
+    printf("remount = %d\n",mntr);
     while (mntr != 0) {
         mntr = mount("hfs", "/", MNT_UPDATE, &nmr);
-        olog("remount = %d\n",mntr);
+        printf("remount = %d\n",mntr);
         usleep(100000);
     }
-
     sync();
 
-    //NSString *everuntetherPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/everuntether.tar"];
-    //char *everuntether_path = [everuntetherPathObj UTF8String];
-    //olog("everuntether path: %s\n",everuntether_path);
-    NSString *untetherPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/untether.tar"];
-    char *untether_path = [untetherPathObj UTF8String];
-    //olog("daibutsu untether path: %s\n",untether_path);
-    NSString *opensshPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/openssh.tar"];
-    char *openssh_path = [opensshPathObj UTF8String];
-    //olog("openssh path: %s\n",openssh_path);
-    
     bool InstallBootstrap = false;
     if (!((access("/.installed-openpwnage", F_OK) != -1) || (access("/.installed_everpwnage", F_OK) != -1) ||
-          (access("/.installed_home_depot", F_OK) != -1) || (access("/untether", F_OK) != -1) ) || reinstall_strap) {
-        olog("installing bootstrap...\n");
-        
-        NSString *tarPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/tar"];
-        char *tar_path = [tarPathObj UTF8String];
-        olog("tar path: %s\n",tar_path);
-        NSString *basebinsPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/bootstrap.tar"];
-        char *basebins_path = [basebinsPathObj UTF8String];
-        olog("bootstrap path: %s\n",basebins_path);
-        NSString *launchctlPathObj = [[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/launchctl"];
-        const char *launchctl_path = [launchctlPathObj UTF8String];
-        olog("launchctl path: %s\n",launchctl_path);
-        
-        olog("copying tar\n");
-        copyfile([[[NSBundle mainBundle] resourcePath]stringByAppendingString:@"/tar"].UTF8String, "/bin/tar", NULL, COPYFILE_ALL);
-        
-        chmod("/bin/tar", 0755);
-        olog("chmod'd tar_path\n");
-        olog("extracting bootstrap\n");
-        run_tar("%s", basebins_path);
-        
-        olog("disabling stashing\n");
-        run_cmd("/bin/touch /.cydia_no_stash");
-        
-        olog("copying launchctl\n");
-        run_cmd("/bin/cp -p %s /bin/launchctl", launchctl_path);
+          (access("/.installed_home_depot", F_OK) != -1) || (access("/untether/untether", F_OK) != -1) ||
+          (access("/.installed_daibutsu", F_OK) != -1)) || reinstall_strap) {
+        printf("installing bootstrap...\n");
 
-        olog("fixing perms...\n");
+        printf("copying tar\n");
+        copyfile(getFilePath("tar"), "/bin/tar", NULL, COPYFILE_ALL);
+
+        chmod("/bin/tar", 0755);
+        printf("chmod'd tar_path\n");
+
+        printf("extracting bootstrap\n");
+        run_tar("%s", getFilePath("bootstrap.tar"));
+
+        printf("disabling stashing\n");
+        run_cmd("/bin/touch /.cydia_no_stash");
+
+        printf("copying launchctl\n");
+        run_cmd("/bin/cp -p %s /bin/launchctl", getFilePath("launchctl"));
+
+        printf("fixing perms...\n");
         chmod("/bin/tar", 0755);
         chmod("/bin/launchctl", 0755);
         chmod("/private", 0777);
@@ -442,58 +422,55 @@ bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on) {
         fp = fopen("/.installed_everpwnage", "w");
         fprintf(fp, "do **NOT** delete this file, it's important. it's how we detect if the bootstrap was installed.\n");
         fclose(fp);
-        
+
         sync();
-        
-        olog("bootstrap installed\n");
+
+        printf("bootstrap installed\n");
         InstallBootstrap = true;
     } else {
-        olog("bootstrap already installed\n");
+        printf("bootstrap already installed\n");
     }
-    
-    olog("allowing jailbreak apps to be shown\n");
+
+    printf("allowing jailbreak apps to be shown\n");
     NSMutableDictionary *md = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.apple.springboard.plist"];
     [md setObject:[NSNumber numberWithBool:YES] forKey:@"SBShowNonDefaultSystemApps"];
     [md writeToFile:@"/var/mobile/Library/Preferences/com.apple.springboard.plist" atomically:YES];
-        
-    olog("restarting cfprefs\n");
+
+    printf("restarting cfprefs\n");
     run_cmd("/usr/bin/killall -9 cfprefsd &");
-    
+
     if (install_openssh) {
-        olog("extracting openssh\n");
-        run_tar("%s", openssh_path);
+        printf("extracting openssh\n");
+        run_tar("%s", getFilePath("openssh.tar"));
     }
 
-    olog("loading launch daemons\n");
+    printf("loading launch daemons\n");
     run_cmd("/bin/launchctl load /Library/LaunchDaemons/*");
     run_cmd("/etc/rc.d/*");
-    
+
     if (InstallBootstrap) {
-        olog("running uicache\n");
+        printf("running uicache\n");
         run_cmd("su -c uicache mobile");
     }
 
     if (untether_on) {
-        if (isA5orA5X() && [kernv containsString:@"2783"]) {
-            olog("extracting everuntether\n");
-            //run_tar("%s", everuntether_path);
-            unlink("/.installed_everpwnage");
-            unlink("/.cydia_no_stash");
-            sync();
-            sync();
-            sync();
-            olog("done. rebooting now...");
-            reboot(0);
+        if ([nkernv containsString:@"3248"] || (isA5orA5X() && [nkernv containsString:@"2783"])) {
+            // all 9.0.x and a5(x) 8.0-8.2
+            printf("extracting everuntether\n");
+            run_tar(getFilePath("everuntether.tar"));
         } else {
-            olog("extracting daibutsu untether\n");
-            run_tar("%s", untether_path);
-            olog("running postinst\n");
-            run_cmd("/bin/bash /private/var/tmp/postinst configure"); // pretty much same as daibutsu migrator
+            // a6(x) 8.x and a5(x) 8.3-8.4.1
+            printf("extracting daibutsu untether\n");
+            run_tar("%s", getFilePath("untether.tar"));
         }
+        printf("running postinst\n");
+        run_cmd("/bin/bash /private/var/tmp/postinst configure");
+        printf("done.");
+        return 0;
     }
-        
-    olog("respringing\n");
+
+    printf("respringing\n");
     run_cmd("(killall -9 backboardd) &");
 
-    return true;
+    return 0;
 }

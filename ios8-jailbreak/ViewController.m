@@ -11,6 +11,7 @@
 #import <sys/utsname.h>
 #include <sys/sysctl.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #import "jailbreak.h"
 #import "sock_port_2_legacy/sockpuppet.h"
@@ -29,9 +30,10 @@
 
 NSString *system_machine;
 NSString *system_version;
-NSString *kernv;
+NSString *nkernv;
 bool install_openssh = false;
 bool reinstall_strap = false;
+bool ios9 = false;
 
 addr_t self_port_address = 0;
 
@@ -40,39 +42,31 @@ addr_t self_port_address = 0;
     // Do any additional setup after loading the view, typically from a nib.
     
     _title_label.text = @"EverPwnage";
-    _version_label.text = @"v1.0";
+    _version_label.text = @"v1.1";
 
     struct utsname systemInfo;
     uname(&systemInfo);
 
     system_machine = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
     system_version = [[UIDevice currentDevice] systemVersion];
-    kernv = [NSString stringWithCString:systemInfo.version encoding:NSUTF8StringEncoding];
+    nkernv = [NSString stringWithCString:systemInfo.version encoding:NSUTF8StringEncoding];
 
-    NSLog(@"%@", kernv);
+    NSLog(@"%@", nkernv);
     _deviceinfo_label.text = [NSString stringWithFormat:@"%@ | iOS %@", system_machine, system_version];
     NSLog(@"Running on %@ with iOS %@", system_machine, system_version);
 
+    // iOS 9.0.x
+    if ([nkernv containsString:@"3248"] || [nkernv containsString:@"3247"] || [nkernv containsString:@"3216"])
+        ios9 = true;
+
     // iOS 8.0-9.0.2
-    if (!([kernv containsString:@"3248"] || [kernv containsString:@"278"])) {
+    if (!(ios9 || [nkernv containsString:@"2784"] || [nkernv containsString:@"2783"])) {
         _jailbreak_button.enabled = NO;
         [_jailbreak_button setTitle:@"not supported" forState:UIControlStateDisabled];
     }
 
-    // not supported for A5(X) iOS 9.0.x
-    if (isA5orA5X() && [kernv containsString:@"3248"]) {
-        _jailbreak_button.enabled = NO;
-        [_jailbreak_button setTitle:@"not supported" forState:UIControlStateDisabled];
-    }
-
-    // disable untether toggle if daibutsu detected or device is on 9.0.x
-    if (access("/.installed_daibutsu", F_OK) != -1 || [kernv containsString:@"3248"]) {
-        _untether_toggle.enabled = NO;
-        [_untether_toggle setOn:NO];
-    }
-
-    // disable untether toggle if A5(X) iOS 8.0-8.2
-    if (isA5orA5X() && [kernv containsString:@"2783"]) {
+    // disable untether toggle if daibutsu detected (everuntether is also detected as daibutsu)
+    if (access("/.installed_daibutsu", F_OK) != -1) {
         _untether_toggle.enabled = NO;
         [_untether_toggle setOn:NO];
     }
@@ -116,8 +110,30 @@ addr_t self_port_address = 0;
         exit(1);
     }
 
-    printf("time for unsandbox...\n");
-    unsandbox8(tfp0, kernel_base, _untether_toggle.isOn);
+    printf("patching kernel...\n");
+    patch_kernel(tfp0, kernel_base);
+
+    printf("time for postjailbreak...\n");
+    postjailbreak(_untether_toggle.isOn);
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self showCompletionAlert];
+    });
+}
+
+// Show an alert after successful jailbreak
+- (void)showCompletionAlert {
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Success"
+                                                                   message:@"Jailbreak/untether is now done. Rebooting your device."
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
+                                                       style:UIAlertActionStyleDefault
+                                                     handler:^(UIAlertAction *action) {
+                                                         reboot(0);
+                                                     }];
+    [alert addAction:okAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 - (IBAction)showSettingsViewController:(id)sender {

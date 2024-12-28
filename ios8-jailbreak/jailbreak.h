@@ -15,16 +15,16 @@
 #define L1_SECT_DEFCACHE    (L1_SECT_SORDER)
 #define L1_PROTO_TTE(entry) (entry | L1_SECT_S_BIT | L1_SECT_DEFPROT | L1_SECT_DEFCACHE)
 
-#define UNSLID_BASE 0x80001000
 #define CHUNK_SIZE 0x800
 
-bool unsandbox8(mach_port_t tfp0, uint32_t kernel_base, bool untether_on);
+int patch_kernel(mach_port_t tfp0, uint32_t kernel_base);
+int postjailbreak(bool untether_on);
 bool is_pmap_patch_success(task_t tfp0, uintptr_t kernel_base);
 bool isA5orA5X(void);
 
 extern NSString *system_machine;
 extern NSString *system_version;
-extern NSString *kernv;
+extern NSString *nkernv;
 extern bool install_openssh;
 extern bool reinstall_strap;
 
