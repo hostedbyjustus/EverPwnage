@@ -328,43 +328,19 @@ void patch_kernel(mach_port_t tfp0, uint32_t kernel_base) {
     uint32_t vm_map_protect8 = find_vm_map_protect_patch8(kernel_base, kdata, ksize);
     uint32_t csops8 = find_csops8(kernel_base, kdata, ksize);
     uint32_t cs_enforcement_disable_amfi = find_cs_enforcement_disable_amfi8(kernel_base, kdata, ksize);
+    uint32_t mount_common = find_mount8(kernel_base, kdata, ksize);
+    uint32_t PE_i_can_has_debugger_1 = find_i_can_has_debugger_1(kernel_base, kdata, ksize);
+    uint32_t PE_i_can_has_debugger_2 = find_i_can_has_debugger_2(kernel_base, kdata, ksize);
+    uint32_t csops2 = find_csops2(kernel_base, kdata, ksize);
 
-    uint32_t mount_common;
-    uint32_t PE_i_can_has_debugger_1;
-    uint32_t PE_i_can_has_debugger_2;
-
-    if ([nkernv containsString:@"3248"]) {
-        mount_common = find_mount_90(kernel_base, kdata, ksize);
-        PE_i_can_has_debugger_1 = find_i_can_has_debugger_1_90(kernel_base, kdata, ksize);
-        PE_i_can_has_debugger_2 = find_i_can_has_debugger_2_90(kernel_base, kdata, ksize);
-
-        uint32_t amfi_file_check_mmap = find_amfi_file_check_mmap(kernel_base, kdata, ksize);
-
-        printf("patching mount_common at 0x%08x\n", kernel_base + mount_common);
-        wk8(kernel_base + mount_common + 1, 0xe7, tfp0);
+    printf("patching mount_common at 0x%08x\n", kernel_base + mount_common);
+    wk8(kernel_base + mount_common + 1, 0xe0, tfp0);
         
-        printf("patching cs_enforcement_disable_amfi - 1\n");
-        wk8(kernel_base + cs_enforcement_disable_amfi - 1, 1, tfp0);
+    printf("patching cs_enforcement_disable_amfi - 4\n");
+    wk8(kernel_base + cs_enforcement_disable_amfi - 4, 1, tfp0);
 
-        printf("patching amfi_file_check_mmap at 0x%08x\n", kernel_base + amfi_file_check_mmap);
-        wk32(kernel_base + amfi_file_check_mmap, 0xbf00bf00, tfp0);
-
-    } else {
-        mount_common = find_mount8(kernel_base, kdata, ksize);
-        PE_i_can_has_debugger_1 = find_i_can_has_debugger_1(kernel_base, kdata, ksize);
-        PE_i_can_has_debugger_2 = find_i_can_has_debugger_2(kernel_base, kdata, ksize);
-
-        uint32_t csops2 = find_csops2(kernel_base, kdata, ksize);
-
-        printf("patching mount_common at 0x%08x\n", kernel_base + mount_common);
-        wk8(kernel_base + mount_common + 1, 0xe0, tfp0);
-        
-        printf("patching cs_enforcement_disable_amfi - 4\n");
-        wk8(kernel_base + cs_enforcement_disable_amfi - 4, 1, tfp0);
-
-        printf("patching csops2 at 0x%08x\n", kernel_base + csops2);
-        wk8(kernel_base + csops2, 0x20, tfp0);
-    }
+    printf("patching csops2 at 0x%08x\n", kernel_base + csops2);
+    wk8(kernel_base + csops2, 0x20, tfp0);
 
     printf("patching tfp0 at 0x%08x\n", kernel_base + tfp0_patch);
     wk32(kernel_base + tfp0_patch, 0xbf00bf00, tfp0);
@@ -523,7 +499,6 @@ void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
     uint32_t vn_getpath = find_vn_getpath8(kbase, kdata, ksize);
     uint32_t csops_addr = kbase + find_csops8(kbase, kdata, ksize);
     uint32_t amfi_file_check_mmap = kbase + find_amfi_file_check_mmap(kbase, kdata, ksize);
-    //uint32_t kernel_pmap = find_kernel_pmap(kbase);
 
     printf("[PF] proc_enforce:               %08x\n", proc_enforce);
     printf("[PF] cs_enforcement_disable:     %08x\n", cs_enforcement_disable_amfi);
@@ -541,16 +516,6 @@ void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
     printf("[PF] vn_getpath:                 %08x\n", vn_getpath);
     printf("[PF] csops:                      %08x\n", csops_addr);
     printf("[PF] amfi_file_check_mmap:       %08x\n", amfi_file_check_mmap);
-    /*
-    printf("[PF] kernel_pmap:                %08x\n", kernel_pmap);
-
-    printf("[*] get kernel_pmap_store, tte_virt, tte_phys\n");
-    uint32_t kernel_pmap_store = rk32(kernel_pmap);
-    tte_virt = rk32(kernel_pmap_store);
-    tte_phys = rk32(kernel_pmap_store+4);
-    printf("[*] kernel pmap store @ 0x%08x\n", kernel_pmap_store);
-    printf("[*] kernel pmap tte is at VA 0x%08x PA 0x%08x\n", tte_virt, tte_phys);
-    */
 
     printf("[*] running kernelpatcher\n");
 
@@ -569,49 +534,39 @@ void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
 
     /* debug_enabled -> 1 */
     printf("[*] debug_enabled\n");
-    //patch_page_table(tte_virt, tte_phys, (PE_i_can_has_debugger_1 & ~0xFFF));
     wk32(PE_i_can_has_debugger_1, 1, tfp0);
-    //patch_page_table(tte_virt, tte_phys, (PE_i_can_has_debugger_2 & ~0xFFF));
     wk32(PE_i_can_has_debugger_2, 1, tfp0);
 
     /* vm_fault_enter */
     printf("[*] vm_fault_enter\n");
-    //patch_page_table(tte_virt, tte_phys, (vm_fault_enter & ~0xFFF));
     wk16(vm_fault_enter, 0x2201, tfp0);
 
     /* vm_map_enter */
     printf("[*] vm_map_enter\n");
-    //patch_page_table(tte_virt, tte_phys, (vm_map_enter & ~0xFFF));
     wk32(vm_map_enter, 0xbf00bf00, tfp0);
 
     /* vm_map_protect: set NOP */
     printf("[*] vm_map_protect\n");
-    //patch_page_table(tte_virt, tte_phys, (vm_map_protect & ~0xFFF));
     wk32(vm_map_protect, 0xbf00bf00, tfp0);
 
     /* mount patch */
     printf("[*] mount patch\n");
-    //patch_page_table(tte_virt, tte_phys, (mount_patch & ~0xFFF));
     wk8(mount_patch, 0xe7, tfp0);
 
     /* mapForIO: prevent kIOReturnLockedWrite error */
     printf("[*] mapForIO\n");
-    //patch_page_table(tte_virt, tte_phys, (mapForIO & ~0xFFF));
     wk32(mapForIO, 0xbf00bf00, tfp0);
 
     /* csops */
     printf("[*] csops\n");
-    //patch_page_table(tte_virt, tte_phys, (csops_addr & ~0xFFF));
     wk32(csops_addr, 0xbf00bf00, tfp0);
 
     /* amfi_file_check_mmap */
     printf("[*] amfi_file_check_mmap\n");
-    //patch_page_table(tte_virt, tte_phys, (amfi_file_check_mmap & ~0xFFF));
     wk32(amfi_file_check_mmap, 0xbf00bf00, tfp0);
 
     /* sandbox */
     printf("[*] sandbox\n");
-    //patch_page_table(tte_virt, tte_phys, (sandbox_call_i_can_has_debugger & ~0xFFF));
     wk32(sandbox_call_i_can_has_debugger, 0xbf00bf00, tfp0);
 
     /* sb_evaluate */
@@ -665,19 +620,15 @@ void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
 
     // hook sb_evaluate
     printf("[*] sb_evaluate\n");
-    //patch_page_table(tte_virt, tte_phys, ((kbase + payload_base) & ~0xFFF));
     copyout((kbase + payload_base), sandbox_payload, payload_len, tfp0);
-    //vm_write(tfp0,(kbase + payload_base),(vm_offset_t)&sandbox_payload,payload_len);
 
     printf("[*] sb_evaluate_hook\n");
     uint32_t sb_evaluate_hook = make_b_w((sb_patch-kbase), payload_base);
-    //patch_page_table(tte_virt, tte_phys, (sb_patch & ~0xFFF));
     wk32(sb_patch, sb_evaluate_hook, tfp0);
 
     printf("[*] patch tfp0\n");
     uint32_t tfp0_patch = kbase + find_tfp0_patch(kbase, kdata, ksize);
     printf("[PF] tfp0_patch: %08x\n", tfp0_patch);
-    //patch_page_table(tte_virt, tte_phys, (tfp0_patch & ~0xFFF));
     wk32(tfp0_patch, 0xbf00bf00, tfp0);
 
     printf("enable patched.\n");
