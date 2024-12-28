@@ -17,8 +17,9 @@
 
 #define CHUNK_SIZE 0x800
 
-int patch_kernel(mach_port_t tfp0, uint32_t kernel_base);
-int postjailbreak(bool untether_on);
+void patch_kernel(mach_port_t tfp0, uint32_t kernel_base);
+void patch_kernel_90(mach_port_t tfp0, uint32_t kernel_base);
+void postjailbreak(bool untether_on);
 bool is_pmap_patch_success(task_t tfp0, uintptr_t kernel_base);
 bool isA5orA5X(void);
 

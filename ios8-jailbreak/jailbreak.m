@@ -31,18 +31,22 @@ bool isA5orA5X(void) {
     return false;
 }
 
-uint32_t kread_uint32(uint32_t addr, task_t tfp0) {
+uint32_t rk32(uint32_t addr, task_t tfp0) {
     vm_size_t bytesRead=0;
     uint32_t ret = 0;
     vm_read_overwrite(tfp0,addr,4,(vm_address_t)&ret,&bytesRead);
     return ret;
 }
 
-void kwrite_uint32(uint32_t addr, uint32_t value, task_t tfp0) {
+void wk32(uint32_t addr, uint32_t value, task_t tfp0) {
     vm_write(tfp0,addr,(vm_offset_t)&value,4);
 }
 
-void kwrite_uint8(uint32_t addr, uint8_t value, task_t tfp0) {
+void wk16(uint32_t addr, uint32_t value, task_t tfp0) {
+    vm_write(tfp0,addr,(vm_offset_t)&value,2);
+}
+
+void wk8(uint32_t addr, uint8_t value, task_t tfp0) {
     vm_write(tfp0,addr,(vm_offset_t)&value,1);
 }
 
@@ -53,6 +57,18 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
         if ([nkernv containsString:@"3248"]) { //9.0-9.0.2
             printf("9.0-9.0.2\n");
             pmap_addr = 0x3f7444;
+        } else if ([nkernv containsString:@"3247.1.56"]) { //9.0b4
+            printf("9.0b4\n");
+            pmap_addr = 0x3f5448;
+        } else if ([nkernv containsString:@"3247.1.36"]) { //9.0b3
+            printf("9.0b3\n");
+            pmap_addr = 0x3f6448;
+        } else if ([nkernv containsString:@"3247.1.6"]) { //9.0b2
+            printf("9.0b2\n");
+            pmap_addr = 0x3fb45c;
+        } else if ([nkernv containsString:@"3216"]) { //9.0b1
+            printf("9.0b1\n");
+            pmap_addr = 0x3f8454;
         } else if ([nkernv containsString:@"2784"]) { //8.3-8.4.1
             printf("8.3-8.4.1\n");
             pmap_addr = 0x3a211c;
@@ -71,6 +87,18 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
         if ([nkernv containsString:@"3248"]) { //9.0-9.0.2
             printf("9.0-9.0.2\n");
             pmap_addr = 0x3fd444;
+        } else if ([nkernv containsString:@"3247.1.56"]) { //9.0b4
+            printf("9.0b4\n");
+            pmap_addr = 0x3fc448;
+        } else if ([nkernv containsString:@"3247.1.36"]) { //9.0b3
+            printf("9.0b3\n");
+            pmap_addr = 0x3fe448;
+        } else if ([nkernv containsString:@"3247.1.6"]) { //9.0b2
+            printf("9.0b2\n");
+            pmap_addr = 0x40345c;
+        } else if ([nkernv containsString:@"3216"]) { //9.0b1
+            printf("9.0b1\n");
+            pmap_addr = 0x3ff454;
         } else if ([nkernv containsString:@"2784"]) { //8.3-8.4.1
             printf("8.3-8.4.1\n");
             pmap_addr = 0x3a711c;
@@ -88,9 +116,9 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
 
 void patch_kernel_pmap(task_t tfp0, uintptr_t kernel_base) {
     uint32_t kernel_pmap         = find_kernel_pmap(kernel_base);
-    uint32_t kernel_pmap_store   = kread_uint32(kernel_pmap,tfp0);
-    uint32_t tte_virt            = kread_uint32(kernel_pmap_store,tfp0);
-    uint32_t tte_phys            = kread_uint32(kernel_pmap_store+4,tfp0);
+    uint32_t kernel_pmap_store   = rk32(kernel_pmap,tfp0);
+    uint32_t tte_virt            = rk32(kernel_pmap_store,tfp0);
+    uint32_t tte_phys            = rk32(kernel_pmap_store+4,tfp0);
 
     printf("kernel pmap store @ 0x%08x\n",
             kernel_pmap_store);
@@ -104,7 +132,7 @@ void patch_kernel_pmap(task_t tfp0, uintptr_t kernel_base) {
     uint32_t i;
     for (i = 0; i < TTB_SIZE; i++) {
         uint32_t addr   = tte_virt + (i << 2);
-        uint32_t entry  = kread_uint32(addr,tfp0);
+        uint32_t entry  = rk32(addr,tfp0);
         if (entry == 0) continue;
         if ((entry & 0x3) == 1) {
             /*
@@ -119,7 +147,7 @@ void patch_kernel_pmap(task_t tfp0, uintptr_t kernel_base) {
                  *  of them
                  */
                 uint32_t sladdr  = second_level_page_addr+(i<<2);
-                uint32_t slentry = kread_uint32(sladdr,tfp0);
+                uint32_t slentry = rk32(sladdr,tfp0);
 
                 if (slentry == 0)
                     continue;
@@ -129,7 +157,7 @@ void patch_kernel_pmap(task_t tfp0, uintptr_t kernel_base) {
                  */
                 uint32_t new_entry = slentry & (~0x200);
                 if (slentry != new_entry) {
-                    kwrite_uint32(sladdr, new_entry,tfp0);
+                    wk32(sladdr, new_entry,tfp0);
                     pmaps[pmapscnt++] = sladdr;
                 }
             }
@@ -139,7 +167,7 @@ void patch_kernel_pmap(task_t tfp0, uintptr_t kernel_base) {
         if ((entry & L1_SECT_PROTO) == 2) {
             uint32_t new_entry  =  L1_PROTO_TTE(entry);
             new_entry           &= ~L1_SECT_APX;
-            kwrite_uint32(addr, new_entry,tfp0);
+            wk32(addr, new_entry,tfp0);
         }
     }
 
@@ -155,10 +183,10 @@ bool is_pmap_patch_success(task_t tfp0, uintptr_t kernel_base) {
 
     printf("check pmap patch\n");
 
-    before = kread_uint32(kernel_base, tfp0);
-    kwrite_uint32(kernel_base, 0x41414141, tfp0);
-    after = kread_uint32(kernel_base, tfp0);
-    kwrite_uint32(kernel_base, before, tfp0);
+    before = rk32(kernel_base, tfp0);
+    wk32(kernel_base, 0x41414141, tfp0);
+    after = rk32(kernel_base, tfp0);
+    wk32(kernel_base, before, tfp0);
 
     if ((before != after) && (after == 0x41414141)) {
         printf("pmap patched!\n");
@@ -224,7 +252,7 @@ void run_tar(char *cmd, ...) {
     }
 }
 
-void dump_kernel_8(mach_port_t tfp0, vm_address_t kernel_base, uint8_t *dest, size_t ksize) {
+void dump_kernel(mach_port_t tfp0, vm_address_t kernel_base, uint8_t *dest, size_t ksize) {
     for (vm_address_t addr = kernel_base, e = 0; addr < kernel_base + ksize; addr += CHUNK_SIZE, e += CHUNK_SIZE) {
         pointer_t buf = 0;
         vm_address_t sz = 0;
@@ -235,13 +263,13 @@ void dump_kernel_8(mach_port_t tfp0, vm_address_t kernel_base, uint8_t *dest, si
     }
 }
 
-int patch_kernel(mach_port_t tfp0, uint32_t kernel_base) {
+void patch_kernel(mach_port_t tfp0, uint32_t kernel_base) {
     printf("unsandboxing...\n");
     
     uint8_t* kdata = NULL;
     size_t ksize = 0xFFE000;
     kdata = malloc(ksize);
-    dump_kernel_8(tfp0, kernel_base, kdata, ksize);
+    dump_kernel(tfp0, kernel_base, kdata, ksize);
     if (!kdata) {
         printf("fuck\n");
         exit(1);
@@ -251,38 +279,38 @@ int patch_kernel(mach_port_t tfp0, uint32_t kernel_base) {
     uint32_t sbopsoffset = find_sbops(kernel_base, kdata, ksize);
 
     printf("nuking sandbox at 0x%08lx\n", kernel_base + sbopsoffset);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_ioctl), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_access), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_create), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_chroot), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_exchangedata), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_deleteextattr), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_notify_create), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_listextattr), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_open), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setattrlist), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_link), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_exec), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_stat), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_unlink), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getattrlist), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getextattr), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_rename), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_file_check_mmap), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_cred_label_update_execve), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_mount_check_stat), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_proc_check_fork), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_readlink), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setutimes), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setextattr), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setflags), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_fsgetpath), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setmode), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setowner), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setutimes), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_truncate), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getattr), 0,tfp0);
-    kwrite_uint32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_iokit_check_get_property), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_ioctl), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_access), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_create), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_chroot), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_exchangedata), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_deleteextattr), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_notify_create), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_listextattr), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_open), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setattrlist), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_link), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_exec), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_stat), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_unlink), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getattrlist), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getextattr), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_rename), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_file_check_mmap), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_cred_label_update_execve), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_mount_check_stat), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_proc_check_fork), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_readlink), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setutimes), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setextattr), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setflags), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_fsgetpath), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setmode), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setowner), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_setutimes), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_truncate), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_vnode_check_getattr), 0,tfp0);
+    wk32(kernel_base + sbopsoffset + offsetof(struct mac_policy_ops, mpo_iokit_check_get_property), 0,tfp0);
     printf("nuked sandbox\n");
     printf("let's go for code exec...\n");
     
@@ -308,13 +336,13 @@ int patch_kernel(mach_port_t tfp0, uint32_t kernel_base) {
         uint32_t amfi_file_check_mmap = find_amfi_file_check_mmap(kernel_base, kdata, ksize);
 
         printf("patching mount_common at 0x%08x\n", kernel_base + mount_common);
-        kwrite_uint8(kernel_base + mount_common + 1, 0xe7, tfp0);
+        wk8(kernel_base + mount_common + 1, 0xe7, tfp0);
         
         printf("patching cs_enforcement_disable_amfi - 1\n");
-        kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 1, 1, tfp0);
+        wk8(kernel_base + cs_enforcement_disable_amfi - 1, 1, tfp0);
 
         printf("patching amfi_file_check_mmap at 0x%08x\n", kernel_base + amfi_file_check_mmap);
-        kwrite_uint32(kernel_base + amfi_file_check_mmap, 0xbf00bf00, tfp0);
+        wk32(kernel_base + amfi_file_check_mmap, 0xbf00bf00, tfp0);
 
     } else {
         mount_common = find_mount8(kernel_base, kdata, ksize);
@@ -324,49 +352,310 @@ int patch_kernel(mach_port_t tfp0, uint32_t kernel_base) {
         uint32_t csops2 = find_csops2(kernel_base, kdata, ksize);
 
         printf("patching mount_common at 0x%08x\n", kernel_base + mount_common);
-        kwrite_uint8(kernel_base + mount_common + 1, 0xe0, tfp0);
+        wk8(kernel_base + mount_common + 1, 0xe0, tfp0);
         
         printf("patching cs_enforcement_disable_amfi - 4\n");
-        kwrite_uint8(kernel_base + cs_enforcement_disable_amfi - 4, 1, tfp0);
+        wk8(kernel_base + cs_enforcement_disable_amfi - 4, 1, tfp0);
 
         printf("patching csops2 at 0x%08x\n", kernel_base + csops2);
-        kwrite_uint8(kernel_base + csops2, 0x20, tfp0);
+        wk8(kernel_base + csops2, 0x20, tfp0);
     }
 
     printf("patching tfp0 at 0x%08x\n", kernel_base + tfp0_patch);
-    kwrite_uint32(kernel_base + tfp0_patch, 0xbf00bf00, tfp0);
+    wk32(kernel_base + tfp0_patch, 0xbf00bf00, tfp0);
 
     printf("patching mapForIO at 0x%08x\n", kernel_base + mapForIO);
-    kwrite_uint32(kernel_base + mapForIO, 0xbf00bf00,tfp0);
+    wk32(kernel_base + mapForIO, 0xbf00bf00,tfp0);
 
     printf("patching cs_enforcement_disable_amfi at 0x%08x\n", kernel_base + cs_enforcement_disable_amfi - 1);
-    kwrite_uint8(kernel_base + cs_enforcement_disable_amfi, 1, tfp0);
+    wk8(kernel_base + cs_enforcement_disable_amfi, 1, tfp0);
     
     printf("patching PE_i_can_has_debugger_1 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_1);
-    kwrite_uint32(kernel_base + PE_i_can_has_debugger_1, 1, tfp0);
+    wk32(kernel_base + PE_i_can_has_debugger_1, 1, tfp0);
     
     printf("patching PE_i_can_has_debugger_2 at 0x%08x\n", kernel_base + PE_i_can_has_debugger_2);
-    kwrite_uint32(kernel_base + PE_i_can_has_debugger_2, 1, tfp0);
+    wk32(kernel_base + PE_i_can_has_debugger_2, 1, tfp0);
     
     printf("patching sandbox_call_i_can_has_debugger at 0x%08x\n", kernel_base + sandbox_call_i_can_has_debugger);
-    kwrite_uint32(kernel_base + sandbox_call_i_can_has_debugger, 0xbf00bf00, tfp0);
+    wk32(kernel_base + sandbox_call_i_can_has_debugger, 0xbf00bf00, tfp0);
 
     printf("patching proc_enforce at 0x%08x\n", kernel_base + proc_enforce8);
-    kwrite_uint8(kernel_base + proc_enforce8, 0, tfp0);
+    wk8(kernel_base + proc_enforce8, 0, tfp0);
 
     //printf("patching vm_fault_enter at 0x%08x\n", kernel_base + vm_fault_enter);
-    //kwrite_uint32(kernel_base + vm_fault_enter, 0x2201bf00, tfp0);
+    //wk32(kernel_base + vm_fault_enter, 0x2201bf00, tfp0);
 
     printf("patching vm_map_enter at 0x%08x\n", kernel_base + vm_map_enter8);
-    kwrite_uint32(kernel_base + vm_map_enter8, 0x4280bf00, tfp0);
+    wk32(kernel_base + vm_map_enter8, 0x4280bf00, tfp0);
 
     printf("patching vm_map_protect at 0x%08x\n", kernel_base + vm_map_protect8);
-    kwrite_uint32(kernel_base + vm_map_protect8, 0xbf00bf00, tfp0);
+    wk32(kernel_base + vm_map_protect8, 0xbf00bf00, tfp0);
 
     printf("patching csops at 0x%08x\n", kernel_base + csops8);
-    kwrite_uint32(kernel_base + csops8, 0xbf00bf00, tfp0);
+    wk32(kernel_base + csops8, 0xbf00bf00, tfp0);
+}
 
-    return 0;
+// sandbox stuff
+// by xerub's iloader
+unsigned int
+make_b_w(int pos, int tgt)
+{
+    int delta;
+    unsigned int i;
+    unsigned short pfx;
+    unsigned short sfx;
+
+    unsigned int omask_1k = 0xB800;
+    unsigned int omask_2k = 0xB000;
+    unsigned int omask_3k = 0x9800;
+    unsigned int omask_4k = 0x9000;
+
+    unsigned int amask = 0x7FF;
+    int range;
+
+    range = 0x400000;
+
+    delta = tgt - pos - 4; /* range: 0x400000 */
+    i = 0;
+    if(tgt > pos) i = tgt - pos - 4;
+    if(tgt < pos) i = pos - tgt - 4;
+
+    if (i < range){
+        pfx = 0xF000 | ((delta >> 12) & 0x7FF);
+        sfx =  omask_1k | ((delta >>  1) & amask);
+
+        return (unsigned int)pfx | ((unsigned int)sfx << 16);
+    }
+
+    if (range < i && i < range*2){ // range: 0x400000-0x800000
+        delta -= range;
+        pfx = 0xF000 | ((delta >> 12) & 0x7FF);
+        sfx =  omask_2k | ((delta >>  1) & amask);
+
+        return (unsigned int)pfx | ((unsigned int)sfx << 16);
+    }
+
+    if (range*2 < i && i < range*3){ // range: 0x800000-0xc000000
+        delta -= range*2;
+        pfx = 0xF000 | ((delta >> 12) & 0x7FF);
+        sfx =  omask_3k | ((delta >>  1) & amask);
+
+        return (unsigned int)pfx | ((unsigned int)sfx << 16);
+    }
+
+    if (range*3 < i && i < range*4){ // range: 0xc00000-0x10000000
+        delta -= range*3;
+        pfx = 0xF000 | ((delta >> 12) & 0x7FF);
+        sfx =  omask_4k | ((delta >>  1) & amask);
+        return (unsigned int)pfx | ((unsigned int)sfx << 16);
+    }
+
+    return -1;
+}
+
+unsigned int
+make_bl(int pos, int tgt)
+{
+    int delta;
+    unsigned short pfx;
+    unsigned short sfx;
+
+    unsigned int omask = 0xF800;
+    unsigned int amask = 0x07FF;
+
+    delta = tgt - pos - 4; /* range: 0x400000 */
+    pfx = 0xF000 | ((delta >> 12) & 0x7FF);
+    sfx =  omask | ((delta >>  1) & amask);
+
+    return (unsigned int)pfx | ((unsigned int)sfx << 16);
+}
+
+// unjail9 from daibutsu
+void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
+    printf("[*] jailbreaking...\n");
+
+    printf("[*] running kdumper\n");
+    size_t ksize = 0xF00000;
+    void *kdata = malloc(ksize);
+    dump_kernel(kbase, kdata, ksize, tfp0);
+
+    /* patchfinder */
+    printf("[*] running patchfinder\n");
+    uint32_t proc_enforce = kbase + find_proc_enforce8(kbase, kdata, ksize);
+    uint32_t cs_enforcement_disable_amfi = kbase + find_cs_enforcement_disable_amfi8(kbase, kdata, ksize);
+    uint32_t PE_i_can_has_debugger_1 = kbase + find_i_can_has_debugger_1_90(kbase, kdata, ksize);
+    uint32_t PE_i_can_has_debugger_2 = kbase + find_i_can_has_debugger_2_90(kbase, kdata, ksize);
+    //uint32_t p_bootargs = kbase + find_p_bootargs_generic(kbase, kdata, ksize);
+    uint32_t vm_fault_enter = kbase + find_vm_fault_enter_patch(kbase, kdata, ksize);
+    uint32_t vm_map_enter = kbase + find_vm_map_enter_patch8(kbase, kdata, ksize);
+    uint32_t vm_map_protect = kbase + find_vm_map_protect_patch8(kbase, kdata, ksize);
+    uint32_t mount_patch = kbase + find_mount_90(kbase, kdata, ksize) + 1;
+    uint32_t mapForIO = kbase + find_mapForIO(kbase, kdata, ksize);
+    uint32_t sandbox_call_i_can_has_debugger = kbase + find_sandbox_call_i_can_has_debugger8(kbase, kdata, ksize);
+    uint32_t sb_patch = kbase + find_sb_evaluate_90(kbase, kdata, ksize);
+    uint32_t memcmp_addr = find_memcmp8(kbase, kdata, ksize);
+    uint32_t vn_getpath = find_vn_getpath8(kbase, kdata, ksize);
+    uint32_t csops_addr = kbase + find_csops8(kbase, kdata, ksize);
+    uint32_t amfi_file_check_mmap = kbase + find_amfi_file_check_mmap(kbase, kdata, ksize);
+    //uint32_t kernel_pmap = find_kernel_pmap(kbase);
+
+    printf("[PF] proc_enforce:               %08x\n", proc_enforce);
+    printf("[PF] cs_enforcement_disable:     %08x\n", cs_enforcement_disable_amfi);
+    printf("[PF] PE_i_can_has_debugger_1:    %08x\n", PE_i_can_has_debugger_1);
+    printf("[PF] PE_i_can_has_debugger_2:    %08x\n", PE_i_can_has_debugger_2);
+    //printf("[PF] p_bootargs:                 %08x\n", p_bootargs);
+    printf("[PF] vm_fault_enter:             %08x\n", vm_fault_enter);
+    printf("[PF] vm_map_enter:               %08x\n", vm_map_enter);
+    printf("[PF] vm_map_protect:             %08x\n", vm_map_protect);
+    printf("[PF] mount_patch:                %08x\n", mount_patch);
+    printf("[PF] mapForIO:                   %08x\n", mapForIO);
+    printf("[PF] sb_call_i_can_has_debugger: %08x\n", sandbox_call_i_can_has_debugger);
+    printf("[PF] sb_evaluate:                %08x\n", sb_patch);
+    printf("[PF] memcmp:                     %08x\n", memcmp_addr);
+    printf("[PF] vn_getpath:                 %08x\n", vn_getpath);
+    printf("[PF] csops:                      %08x\n", csops_addr);
+    printf("[PF] amfi_file_check_mmap:       %08x\n", amfi_file_check_mmap);
+    /*
+    printf("[PF] kernel_pmap:                %08x\n", kernel_pmap);
+
+    printf("[*] get kernel_pmap_store, tte_virt, tte_phys\n");
+    uint32_t kernel_pmap_store = rk32(kernel_pmap);
+    tte_virt = rk32(kernel_pmap_store);
+    tte_phys = rk32(kernel_pmap_store+4);
+    printf("[*] kernel pmap store @ 0x%08x\n", kernel_pmap_store);
+    printf("[*] kernel pmap tte is at VA 0x%08x PA 0x%08x\n", tte_virt, tte_phys);
+    */
+
+    printf("[*] running kernelpatcher\n");
+
+    /* proc_enforce: -> 0 */
+    printf("[*] proc_enforce\n");
+    wk32(proc_enforce, 0, tfp0);
+
+    /* cs_enforcement_disable = 1 && amfi_get_out_of_my_way = 1 */
+    printf("[*] cs_enforcement_disable_amfi\n");
+    wk8(cs_enforcement_disable_amfi, 1, tfp0);
+    wk8(cs_enforcement_disable_amfi-1, 1, tfp0);
+
+    /* bootArgs
+    printf("[*] bootargs\n");
+    patch_bootargs(p_bootargs);
+    */
+
+    /* debug_enabled -> 1 */
+    printf("[*] debug_enabled\n");
+    //patch_page_table(tte_virt, tte_phys, (PE_i_can_has_debugger_1 & ~0xFFF));
+    wk32(PE_i_can_has_debugger_1, 1, tfp0);
+    //patch_page_table(tte_virt, tte_phys, (PE_i_can_has_debugger_2 & ~0xFFF));
+    wk32(PE_i_can_has_debugger_2, 1, tfp0);
+
+    /* vm_fault_enter */
+    printf("[*] vm_fault_enter\n");
+    //patch_page_table(tte_virt, tte_phys, (vm_fault_enter & ~0xFFF));
+    wk16(vm_fault_enter, 0x2201, tfp0);
+
+    /* vm_map_enter */
+    printf("[*] vm_map_enter\n");
+    //patch_page_table(tte_virt, tte_phys, (vm_map_enter & ~0xFFF));
+    wk32(vm_map_enter, 0xbf00bf00, tfp0);
+
+    /* vm_map_protect: set NOP */
+    printf("[*] vm_map_protect\n");
+    //patch_page_table(tte_virt, tte_phys, (vm_map_protect & ~0xFFF));
+    wk32(vm_map_protect, 0xbf00bf00, tfp0);
+
+    /* mount patch */
+    printf("[*] mount patch\n");
+    //patch_page_table(tte_virt, tte_phys, (mount_patch & ~0xFFF));
+    wk8(mount_patch, 0xe7, tfp0);
+
+    /* mapForIO: prevent kIOReturnLockedWrite error */
+    printf("[*] mapForIO\n");
+    //patch_page_table(tte_virt, tte_phys, (mapForIO & ~0xFFF));
+    wk32(mapForIO, 0xbf00bf00, tfp0);
+
+    /* csops */
+    printf("[*] csops\n");
+    //patch_page_table(tte_virt, tte_phys, (csops_addr & ~0xFFF));
+    wk32(csops_addr, 0xbf00bf00, tfp0);
+
+    /* amfi_file_check_mmap */
+    printf("[*] amfi_file_check_mmap\n");
+    //patch_page_table(tte_virt, tte_phys, (amfi_file_check_mmap & ~0xFFF));
+    wk32(amfi_file_check_mmap, 0xbf00bf00, tfp0);
+
+    /* sandbox */
+    printf("[*] sandbox\n");
+    //patch_page_table(tte_virt, tte_phys, (sandbox_call_i_can_has_debugger & ~0xFFF));
+    wk32(sandbox_call_i_can_has_debugger, 0xbf00bf00, tfp0);
+
+    /* sb_evaluate */
+    unsigned char pangu9_payload[] = {
+        0x1f, 0xb5, 0xad, 0xf5, 0x82, 0x6d, 0x1c, 0x6b, 0x01, 0x2c, 0x34, 0xd1,
+        0x5c, 0x6b, 0x00, 0x2c, 0x31, 0xd0, 0x69, 0x46, 0x5f, 0xf4, 0x80, 0x60,
+        0x0d, 0xf5, 0x80, 0x62, 0x10, 0x60, 0x20, 0x46, 0x11, 0x11, 0x11, 0x11,
+        0x1c, 0x28, 0x01, 0xd0, 0x00, 0x28, 0x24, 0xd1, 0x68, 0x46, 0x17, 0xa1,
+        0x10, 0x22, 0x22, 0x22, 0x22, 0x22, 0x00, 0x28, 0x1d, 0xd0, 0x68, 0x46,
+        0x0f, 0xf2, 0x5c, 0x01, 0x13, 0x22, 0x22, 0x22, 0x22, 0x22, 0x00, 0x28,
+        0x0d, 0xd1, 0x68, 0x46, 0x18, 0xa1, 0x31, 0x22, 0x22, 0x22, 0x22, 0x22,
+        0x00, 0x28, 0x0e, 0xd0, 0x68, 0x46, 0x22, 0xa1, 0x27, 0x22, 0x22, 0x22,
+        0x22, 0x22, 0x00, 0x28, 0x07, 0xd1, 0x0d, 0xf5, 0x82, 0x6d, 0x01, 0xbc,
+        0x00, 0x21, 0x01, 0x60, 0x18, 0x21, 0x01, 0x71, 0x1e, 0xbd, 0x0d, 0xf5,
+        0x82, 0x6d, 0x05, 0x98, 0x86, 0x46, 0x1f, 0xbc, 0x01, 0xb0, 0xcc, 0xcc,
+        0xcc, 0xcc, 0xdd, 0xdd, 0xdd, 0xdd, 0x00, 0xbf, 0x2f, 0x70, 0x72, 0x69,
+        0x76, 0x61, 0x74, 0x65, 0x2f, 0x76, 0x61, 0x72, 0x2f, 0x74, 0x6d, 0x70,
+        0x2f, 0x70, 0x72, 0x69, 0x76, 0x61, 0x74, 0x65, 0x2f, 0x76, 0x61, 0x72,
+        0x2f, 0x6d, 0x6f, 0x62, 0x69, 0x6c, 0x65, 0x00, 0x2f, 0x70, 0x72, 0x69,
+        0x76, 0x61, 0x74, 0x65, 0x2f, 0x76, 0x61, 0x72, 0x2f, 0x6d, 0x6f, 0x62,
+        0x69, 0x6c, 0x65, 0x2f, 0x4c, 0x69, 0x62, 0x72, 0x61, 0x72, 0x79, 0x2f,
+        0x50, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x73, 0x2f,
+        0x63, 0x6f, 0x6d, 0x2e, 0x61, 0x70, 0x70, 0x6c, 0x65, 0x00, 0x00, 0xbf,
+        0x2f, 0x70, 0x72, 0x69, 0x76, 0x61, 0x74, 0x65, 0x2f, 0x76, 0x61, 0x72,
+        0x2f, 0x6d, 0x6f, 0x62, 0x69, 0x6c, 0x65, 0x2f, 0x4c, 0x69, 0x62, 0x72,
+        0x61, 0x72, 0x79, 0x2f, 0x50, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65, 0x6e,
+        0x63, 0x65, 0x73, 0x00, 0x02, 0x00, 0x00, 0x00
+    };
+
+    uint32_t payload_base = 0xb00; // taig8
+    size_t payload_len = 0x110;
+
+    uint32_t vn_getpath_bl = make_bl(payload_base+0x20, vn_getpath);
+    uint32_t memcmp_bl_1 = make_bl(payload_base+0x32, memcmp_addr);
+    uint32_t memcmp_bl_2 = make_bl(payload_base+0x42, memcmp_addr);
+    uint32_t memcmp_bl_3 = make_bl(payload_base+0x50, memcmp_addr);
+    uint32_t memcmp_bl_4 = make_bl(payload_base+0x5e, memcmp_addr);
+    uint32_t sb_evaluate_val = rk32(sb_patch, tfp0);
+    uint32_t back_sb_evaluate = make_b_w(payload_base+0x86, (sb_patch+4-kbase));
+
+    *(uint32_t*)(pangu9_payload+0x20) = vn_getpath_bl;
+    *(uint32_t*)(pangu9_payload+0x32) = memcmp_bl_1;
+    *(uint32_t*)(pangu9_payload+0x42) = memcmp_bl_2;
+    *(uint32_t*)(pangu9_payload+0x50) = memcmp_bl_3;
+    *(uint32_t*)(pangu9_payload+0x5e) = memcmp_bl_4;
+    *(uint32_t*)(pangu9_payload+0x82) = sb_evaluate_val;
+    *(uint32_t*)(pangu9_payload+0x86) = back_sb_evaluate;
+
+    void* sandbox_payload = malloc(payload_len);
+    memcpy(sandbox_payload, pangu9_payload, payload_len);
+
+    // hook sb_evaluate
+    printf("[*] sb_evaluate\n");
+    //patch_page_table(tte_virt, tte_phys, ((kbase + payload_base) & ~0xFFF));
+    //copyout((kbase + payload_base), sandbox_payload, payload_len);
+    vm_write(tfp0,(kbase + payload_base),(vm_offset_t)&sandbox_payload,payload_len);
+
+    printf("[*] sb_evaluate_hook\n");
+    uint32_t sb_evaluate_hook = make_b_w((sb_patch-kbase), payload_base);
+    //patch_page_table(tte_virt, tte_phys, (sb_patch & ~0xFFF));
+    wk32(sb_patch, sb_evaluate_hook, tfp0);
+
+    printf("[*] patch tfp0\n");
+    uint32_t tfp0_patch = kbase + find_tfp0_patch(kbase, kdata, ksize);
+    printf("[PF] tfp0_patch: %08x\n", tfp0_patch);
+    //patch_page_table(tte_virt, tte_phys, (tfp0_patch & ~0xFFF));
+    wk32(tfp0_patch, 0xbf00bf00, tfp0);
+
+    printf("enable patched.\n");
 }
 
 char *getFilePath(const char *fileName) {
@@ -374,7 +663,7 @@ char *getFilePath(const char *fileName) {
     return [filePathObj UTF8String];
 }
 
-int postjailbreak(bool untether_on) {
+void postjailbreak(bool untether_on) {
     printf("[*] remounting rootfs\n");
     char* nmr = strdup("/dev/disk0s1s1");
     int mntr = mount("hfs", "/", MNT_UPDATE, &nmr);
@@ -466,11 +755,11 @@ int postjailbreak(bool untether_on) {
         printf("running postinst\n");
         run_cmd("/bin/bash /private/var/tmp/postinst configure");
         printf("done.");
-        return 0;
+        return;
     }
 
     printf("respringing\n");
     run_cmd("(killall -9 backboardd) &");
 
-    return 0;
+    return;
 }

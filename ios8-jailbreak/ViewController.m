@@ -11,7 +11,6 @@
 #import <sys/utsname.h>
 #include <sys/sysctl.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 #import "jailbreak.h"
 #import "sock_port_2_legacy/sockpuppet.h"
@@ -111,7 +110,10 @@ addr_t self_port_address = 0;
     }
 
     printf("patching kernel...\n");
-    patch_kernel(tfp0, kernel_base);
+    if (ios9)
+        patch_kernel_90(tfp0, kernel_base);
+    else
+        patch_kernel(tfp0, kernel_base);
 
     printf("time for postjailbreak...\n");
     postjailbreak(_untether_toggle.isOn);
