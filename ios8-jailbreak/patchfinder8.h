@@ -29,5 +29,6 @@ uint32_t find_i_can_has_debugger_2_90(uint32_t region, uint8_t* kdata, size_t ks
 uint32_t find_vm_fault_enter_patch(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_sb_evaluate_90(uint32_t region, uint8_t* kdata, size_t ksize);
 uint32_t find_memcmp8(uint32_t region, uint8_t* kdata, size_t ksize);
+uint32_t find_p_bootargs_generic(uint32_t region, uint8_t* kdata, size_t ksize);
 
 #endif /* patchfinder8_h */

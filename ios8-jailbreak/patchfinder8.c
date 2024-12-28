@@ -247,6 +247,48 @@ static int insn_is_preamble_push(uint16_t* i)
     return insn_is_push(i) && (insn_push_registers(i) & (1 << 14)) != 0;
 }
 
+static int insn_is_str_imm(uint16_t* i)
+{
+    if((*i & 0xF800) == 0x6000)
+        return 1;
+    else if((*i & 0xF800) == 0x9000)
+        return 1;
+    else if((*i & 0xFFF0) == 0xF8C0)
+        return 1;
+    else if((*i & 0xFFF0) == 0xF840 && (*(i + 1) & 0x0800) == 0x0800)
+        return 1;
+    else
+        return 0;
+}
+
+static int insn_str_imm_postindexed(uint16_t* i)
+{
+    if((*i & 0xF800) == 0x6000)
+        return 1;
+    else if((*i & 0xF800) == 0x9000)
+        return 1;
+    else if((*i & 0xFFF0) == 0xF8C0)
+        return 1;
+    else if((*i & 0xFFF0) == 0xF840 && (*(i + 1) & 0x0800) == 0x0800)
+        return (*(i + 1) >> 10) & 1;
+    else
+        return 0;
+}
+
+static int insn_str_imm_wback(uint16_t* i)
+{
+    if((*i & 0xF800) == 0x6000)
+        return 0;
+    else if((*i & 0xF800) == 0x9000)
+        return 0;
+    else if((*i & 0xFFF0) == 0xF8C0)
+        return 0;
+    else if((*i & 0xFFF0) == 0xF840 && (*(i + 1) & 0x0800) == 0x0800)
+        return (*(i + 1) >> 8) & 1;
+    else
+        return 0;
+}
+
 static int insn_str_imm_imm(uint16_t* i)
 {
     if((*i & 0xF800) == 0x6000)
@@ -638,7 +680,7 @@ uint32_t find_p_bootargs8(uint32_t region, uint8_t* kdata, size_t ksize)
     current_instruction += 2;
     uint32_t str_val = insn_str_imm_imm(current_instruction);
     current_instruction += 2;
-    
+
     // Now find the location of PE_state
     uint32_t pe_state = find_pc_rel_value(region, kdata, ksize, current_instruction, insn_str_imm_rn(current_instruction)) + str_val;
 
@@ -1434,4 +1476,64 @@ uint32_t find_sb_evaluate_90(uint32_t region, uint8_t* kdata, size_t ksize)
     }
 
     return ((uintptr_t)fn_start) - ((uintptr_t)kdata);
+}
+
+uint32_t find_p_bootargs_generic(uint32_t region, uint8_t* kdata, size_t ksize)
+{
+    // Find location of the "BBBBBBBBGGGGGGGGRRRRRRRR" string.
+    uint8_t* pixel_format = memmem(kdata, ksize, "BBBBBBBBGGGGGGGGRRRRRRRR", sizeof("BBBBBBBBGGGGGGGGRRRRRRRR"));
+    if(!pixel_format)
+        return 0;
+
+    // Find a reference to the "BBBBBBBBGGGGGGGGRRRRRRRR" string.
+    uint16_t* ref = find_literal_ref(region, kdata, ksize, (uint16_t*) kdata, (uintptr_t)pixel_format - (uintptr_t)kdata);
+    if(!ref)
+        return 0;
+
+    // Find the beginning of the function
+    uint16_t* fn_start = find_last_insn_matching(region, kdata, ksize, ref, insn_is_preamble_push);
+    if(!fn_start)
+        return 0;
+
+    // Find the first MOV Rx, #1. This is to eventually set PE_state as initialized
+    int found = 0;
+    uint16_t* current_instruction = fn_start;
+    while((uintptr_t)current_instruction < (uintptr_t)ref)
+    {
+        if(insn_is_mov_imm(current_instruction) && insn_mov_imm_imm(current_instruction) == 1)
+        {
+            found = 1;
+            break;
+        }
+
+        current_instruction += insn_is_32bit(current_instruction) ? 2 : 1;
+    }
+
+    if(!found)
+        return 0;
+
+    int reg = insn_mov_imm_rd(current_instruction);
+
+    // This finds the STR Rx, [Ry] instrunction following that actually writes the #1. We will use Ry to find PE_state.
+    found = 0;
+    while((uintptr_t)current_instruction < (uintptr_t)ref)
+    {
+        if(insn_is_str_imm(current_instruction) && insn_str_imm_imm(current_instruction) == 0
+            && insn_str_imm_postindexed(current_instruction) == 1 && insn_str_imm_wback(current_instruction) == 0
+            && insn_str_imm_rt(current_instruction) == reg)
+        {
+            found = 1;
+            break;
+        }
+
+        current_instruction += insn_is_32bit(current_instruction) ? 2 : 1;
+    }
+
+    // Now find the location of PE_state
+    uint32_t pe_state = find_pc_rel_value(region, kdata, ksize, current_instruction, insn_str_imm_rn(current_instruction));
+    if(!pe_state)
+        return 0;
+
+    // p_boot_args is 0x70 offset in that struct.
+    return pe_state + 0x70;
 }

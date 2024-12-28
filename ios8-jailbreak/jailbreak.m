@@ -50,6 +50,11 @@ void wk8(uint32_t addr, uint8_t value, task_t tfp0) {
     vm_write(tfp0,addr,(vm_offset_t)&value,1);
 }
 
+kern_return_t mach_vm_write(vm_map_t target_task, mach_vm_address_t address, vm_offset_t data, mach_msg_type_number_t dataCnt);
+void copyout(uint32_t to, void* from, size_t size, task_t tfp0) {
+    mach_vm_write(tfp0, to, (vm_offset_t)from, (mach_msg_type_number_t)size);
+}
+
 uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     uint32_t pmap_addr;
     if(isA5orA5X()) {
@@ -470,14 +475,35 @@ make_bl(int pos, int tgt)
     return (unsigned int)pfx | ((unsigned int)sfx << 16);
 }
 
+void patch_bootargs(uint32_t addr, task_t tfp0){
+    //printf("set bootargs\n");
+    uint32_t bootargs_addr = rk32(addr, tfp0) + 0x38;
+    const char* new_bootargs = "cs_enforcement_disable=1 amfi_get_out_of_my_way=1";
+
+    // evasi0n6
+    size_t new_bootargs_len = strlen(new_bootargs) + 1;
+    size_t bootargs_buf_len = (new_bootargs_len + 3) / 4 * 4;
+    char bootargs_buf[bootargs_buf_len];
+
+    strlcpy(bootargs_buf, new_bootargs, bootargs_buf_len);
+    memset(bootargs_buf + new_bootargs_len, 0, bootargs_buf_len - new_bootargs_len);
+    copyout(bootargs_addr, bootargs_buf, bootargs_buf_len, tfp0);
+}
+
 // unjail9 from daibutsu
 void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
     printf("[*] jailbreaking...\n");
 
     printf("[*] running kdumper\n");
+    uint8_t* kdata = NULL;
     size_t ksize = 0xF00000;
-    void *kdata = malloc(ksize);
-    dump_kernel(kbase, kdata, ksize, tfp0);
+    kdata = malloc(ksize);
+    dump_kernel(tfp0, kbase, kdata, ksize);
+    if (!kdata) {
+        printf("fuck\n");
+        exit(1);
+    }
+    printf("now...\n");
 
     /* patchfinder */
     printf("[*] running patchfinder\n");
@@ -485,7 +511,7 @@ void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
     uint32_t cs_enforcement_disable_amfi = kbase + find_cs_enforcement_disable_amfi8(kbase, kdata, ksize);
     uint32_t PE_i_can_has_debugger_1 = kbase + find_i_can_has_debugger_1_90(kbase, kdata, ksize);
     uint32_t PE_i_can_has_debugger_2 = kbase + find_i_can_has_debugger_2_90(kbase, kdata, ksize);
-    //uint32_t p_bootargs = kbase + find_p_bootargs_generic(kbase, kdata, ksize);
+    uint32_t p_bootargs = kbase + find_p_bootargs_generic(kbase, kdata, ksize);
     uint32_t vm_fault_enter = kbase + find_vm_fault_enter_patch(kbase, kdata, ksize);
     uint32_t vm_map_enter = kbase + find_vm_map_enter_patch8(kbase, kdata, ksize);
     uint32_t vm_map_protect = kbase + find_vm_map_protect_patch8(kbase, kdata, ksize);
@@ -503,7 +529,7 @@ void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
     printf("[PF] cs_enforcement_disable:     %08x\n", cs_enforcement_disable_amfi);
     printf("[PF] PE_i_can_has_debugger_1:    %08x\n", PE_i_can_has_debugger_1);
     printf("[PF] PE_i_can_has_debugger_2:    %08x\n", PE_i_can_has_debugger_2);
-    //printf("[PF] p_bootargs:                 %08x\n", p_bootargs);
+    printf("[PF] p_bootargs:                 %08x\n", p_bootargs);
     printf("[PF] vm_fault_enter:             %08x\n", vm_fault_enter);
     printf("[PF] vm_map_enter:               %08x\n", vm_map_enter);
     printf("[PF] vm_map_protect:             %08x\n", vm_map_protect);
@@ -537,10 +563,9 @@ void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
     wk8(cs_enforcement_disable_amfi, 1, tfp0);
     wk8(cs_enforcement_disable_amfi-1, 1, tfp0);
 
-    /* bootArgs
+    /* bootArgs */
     printf("[*] bootargs\n");
-    patch_bootargs(p_bootargs);
-    */
+    patch_bootargs(p_bootargs, tfp0);
 
     /* debug_enabled -> 1 */
     printf("[*] debug_enabled\n");
@@ -641,8 +666,8 @@ void patch_kernel_90(mach_port_t tfp0, uint32_t kbase){
     // hook sb_evaluate
     printf("[*] sb_evaluate\n");
     //patch_page_table(tte_virt, tte_phys, ((kbase + payload_base) & ~0xFFF));
-    //copyout((kbase + payload_base), sandbox_payload, payload_len);
-    vm_write(tfp0,(kbase + payload_base),(vm_offset_t)&sandbox_payload,payload_len);
+    copyout((kbase + payload_base), sandbox_payload, payload_len, tfp0);
+    //vm_write(tfp0,(kbase + payload_base),(vm_offset_t)&sandbox_payload,payload_len);
 
     printf("[*] sb_evaluate_hook\n");
     uint32_t sb_evaluate_hook = make_b_w((sb_patch-kbase), payload_base);
