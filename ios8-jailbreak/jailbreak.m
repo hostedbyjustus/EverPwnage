@@ -773,7 +773,8 @@ void postjailbreak(bool untether_on) {
     }
 
     if (untether_on) {
-        if ([nkernv containsString:@"3248"] || (isA5orA5X() && [nkernv containsString:@"2783"])) {
+        if ([nkernv containsString:@"3248.1."] || [nkernv containsString:@"3247"] || [nkernv containsString:@"3216"] ||
+            (isA5orA5X() && [nkernv containsString:@"2783"])) {
             // all 9.0.x and a5(x) 8.0-8.2
             printf("extracting everuntether\n");
             run_tar(getFilePath("everuntether.tar"));

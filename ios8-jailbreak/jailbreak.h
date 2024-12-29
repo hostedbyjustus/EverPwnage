@@ -23,8 +23,6 @@ void postjailbreak(bool untether_on);
 bool is_pmap_patch_success(task_t tfp0, uintptr_t kernel_base);
 bool isA5orA5X(void);
 
-extern NSString *system_machine;
-extern NSString *system_version;
 extern NSString *nkernv;
 extern bool install_openssh;
 extern bool reinstall_strap;

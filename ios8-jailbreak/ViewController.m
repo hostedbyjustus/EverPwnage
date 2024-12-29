@@ -56,7 +56,7 @@ addr_t self_port_address = 0;
     NSLog(@"Running on %@ with iOS %@", system_machine, system_version);
 
     // iOS 9.0.x
-    if ([nkernv containsString:@"3248"] || [nkernv containsString:@"3247"] || [nkernv containsString:@"3216"])
+    if ([nkernv containsString:@"3248.1."] || [nkernv containsString:@"3247"] || [nkernv containsString:@"3216"])
         ios9 = true;
 
     // iOS 8.0-9.0.2

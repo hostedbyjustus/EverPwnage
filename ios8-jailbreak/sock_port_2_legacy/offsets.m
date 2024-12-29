@@ -78,11 +78,11 @@ int koffset(enum kstruct_offset offset) {
 }
 
 void offsets_init(void) {
-    if ([system_version hasPrefix:@"9.0"]) {
+    if ([nkernv containsString:@"3248.1."] || [nkernv containsString:@"3247"] || [nkernv containsString:@"3216"]) {
         printf("[i] offsets selected for iOS 9.0.x\n");
         offsets = kstruct_offsets_9_0;
         is_ios9 = true;
-    } else if ([system_version hasPrefix:@"8"]) {
+    } else if ([nkernv containsString:@"2784"] || [nkernv containsString:@"2783"]) {
         printf("[i] offsets selected for iOS 8.x\n");
         offsets = kstruct_offsets_8;
     } else {
