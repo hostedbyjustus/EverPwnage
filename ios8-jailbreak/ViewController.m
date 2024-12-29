@@ -41,7 +41,8 @@ addr_t self_port_address = 0;
     // Do any additional setup after loading the view, typically from a nib.
     
     _title_label.text = @"EverPwnage";
-    _version_label.text = @"v1.1";
+    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    _version_label.text = [NSString stringWithFormat:@"v%@", version];
 
     struct utsname systemInfo;
     uname(&systemInfo);
@@ -61,13 +62,15 @@ addr_t self_port_address = 0;
     // iOS 8.0-9.0.2
     if (!(ios9 || [nkernv containsString:@"2784"] || [nkernv containsString:@"2783"])) {
         _jailbreak_button.enabled = NO;
-        [_jailbreak_button setTitle:@"not supported" forState:UIControlStateDisabled];
+        [_jailbreak_button setTitle:@"Not Supported" forState:UIControlStateDisabled];
     }
 
-    // disable untether toggle if daibutsu detected (everuntether is also detected as daibutsu)
-    if (access("/.installed_daibutsu", F_OK) != -1) {
+    // disable button and toggle if jailbroken/daibutsu detected (everuntether is also detected as daibutsu)
+    if (access("/.installed_daibutsu", F_OK) != -1 || access("/tmp/.jailbroken", F_OK) != -1) {
         _untether_toggle.enabled = NO;
         [_untether_toggle setOn:NO];
+        _jailbreak_button.enabled = NO;
+        [_jailbreak_button setTitle:@"Jailbroken" forState:UIControlStateDisabled];
     }
 }
 

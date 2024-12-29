@@ -119,7 +119,7 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     return pmap_addr + kernel_base;
 }
 
-// debugger 1 and 2 for a5(x)
+// debugger 1 and 2 for a5(x) 9.0.x
 uint32_t find_PE_i_can_has_debugger_1(void) {
     uint32_t PE_i_can_has_debugger_1;
     if ([nkernv containsString:@"3247.1.88"]) { //9.0b5
@@ -369,7 +369,7 @@ void patch_kernel(mach_port_t tfp0, uint32_t kernel_base) {
     uint32_t mapForIO = find_mapForIO(kernel_base, kdata, ksize);
     uint32_t sandbox_call_i_can_has_debugger = find_sandbox_call_i_can_has_debugger8(kernel_base, kdata, ksize);
     uint32_t proc_enforce8 = find_proc_enforce8(kernel_base, kdata, ksize);
-    //uint32_t vm_fault_enter = find_vm_fault_enter_patch_84(kernel_base, kdata, ksize);
+    uint32_t vm_fault_enter = find_vm_fault_enter_patch_84(kernel_base, kdata, ksize);
     uint32_t vm_map_enter8 = find_vm_map_enter_patch8(kernel_base, kdata, ksize);
     uint32_t vm_map_protect8 = find_vm_map_protect_patch_84(kernel_base, kdata, ksize);
     uint32_t csops8 = find_csops8(kernel_base, kdata, ksize);
@@ -409,8 +409,8 @@ void patch_kernel(mach_port_t tfp0, uint32_t kernel_base) {
     printf("patching proc_enforce at 0x%08x\n", kernel_base + proc_enforce8);
     wk8(kernel_base + proc_enforce8, 0, tfp0);
 
-    //printf("patching vm_fault_enter at 0x%08x\n", kernel_base + vm_fault_enter);
-    //wk32(kernel_base + vm_fault_enter, 0x2201bf00, tfp0);
+    printf("patching vm_fault_enter at 0x%08x\n", kernel_base + vm_fault_enter);
+    wk32(kernel_base + vm_fault_enter, 0x2201bf00, tfp0);
 
     printf("patching vm_map_enter at 0x%08x\n", kernel_base + vm_map_enter8);
     wk32(kernel_base + vm_map_enter8, 0x4280bf00, tfp0);
@@ -787,6 +787,10 @@ void postjailbreak(bool untether_on) {
         printf("done.");
         return;
     }
+
+    FILE* fp = fopen("/tmp/.jailbroken", "w");
+    fprintf(fp, "jailbroken.\n");
+    fclose(fp);
 
     printf("respringing\n");
     run_cmd("(killall -9 backboardd) &");
