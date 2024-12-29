@@ -13,9 +13,9 @@ Download and sideload the IPA from the [latest release](https://github.com/LukeZ
 
 ## Jailbreak Modes
 
-EverPwnage has an **"Install Untether" toggle**, which controls the installation of **daibutsu untether**:
+EverPwnage has an **"Install Untether" toggle**, which controls the installation of **daibutsu untether** or **EverUntether**, depending on the device and iOS version:
 
-- The toggle is **enabled by default** on compatible devices for a fully untethered jailbreak.
+- The toggle is **enabled by default** for a fully untethered jailbreak.
 - Users can manually disable the toggle if they prefer to remain semi-untethered.
 
 ## Untether
