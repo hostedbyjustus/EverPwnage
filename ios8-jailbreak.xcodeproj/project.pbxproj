@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		880614512D113F7F00798E6F /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 880614502D113F7F00798E6F /* SettingsViewController.m */; };
-		880F0C402D0D4C8F00598FA3 /* tar in Resources */ = {isa = PBXBuildFile; fileRef = 880F0C2F2D0D4C8D00598FA3 /* tar */; };
 		880F0C422D0D4C8F00598FA3 /* patchfinder8.c in Sources */ = {isa = PBXBuildFile; fileRef = 880F0C332D0D4C8E00598FA3 /* patchfinder8.c */; };
 		880F0C442D0D4C8F00598FA3 /* jailbreak.m in Sources */ = {isa = PBXBuildFile; fileRef = 880F0C382D0D4C8E00598FA3 /* jailbreak.m */; };
 		880F0C452D0D4C8F00598FA3 /* launchctl in Resources */ = {isa = PBXBuildFile; fileRef = 880F0C3B2D0D4C8F00598FA3 /* launchctl */; };
@@ -19,6 +18,7 @@
 		8866689F2D0D2C6300C3F554 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8866689E2D0D2C6300C3F554 /* Assets.xcassets */; };
 		886668A22D0D2C6300C3F554 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 886668A02D0D2C6300C3F554 /* LaunchScreen.storyboard */; };
 		886668A52D0D2C6300C3F554 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 886668A42D0D2C6300C3F554 /* main.m */; };
+		886CD9A62D1FDD4400E9BB2A /* everuntether.tar in Resources */ = {isa = PBXBuildFile; fileRef = 886CD9A52D1FDD4400E9BB2A /* everuntether.tar */; };
 		8876A19F2D0D72E90087BA13 /* untether.tar in Resources */ = {isa = PBXBuildFile; fileRef = 8876A19D2D0D72E90087BA13 /* untether.tar */; };
 		8876A1A02D0D72E90087BA13 /* bootstrap.tar in Resources */ = {isa = PBXBuildFile; fileRef = 8876A19E2D0D72E90087BA13 /* bootstrap.tar */; };
 		887ACFA52D1533F000CE3A4A /* io_sp.c in Sources */ = {isa = PBXBuildFile; fileRef = 887ACF9D2D1533F000CE3A4A /* io_sp.c */; };
@@ -32,7 +32,6 @@
 		8806144F2D113F7F00798E6F /* SettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		880614502D113F7F00798E6F /* SettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		880F0C2E2D0D4C8D00598FA3 /* IOKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = IOKit; sourceTree = "<group>"; };
-		880F0C2F2D0D4C8D00598FA3 /* tar */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = tar; sourceTree = "<group>"; };
 		880F0C312D0D4C8D00598FA3 /* jailbreak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jailbreak.h; sourceTree = "<group>"; };
 		880F0C332D0D4C8E00598FA3 /* patchfinder8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = patchfinder8.c; sourceTree = "<group>"; };
 		880F0C362D0D4C8E00598FA3 /* mac_policy_ops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mac_policy_ops.h; sourceTree = "<group>"; };
@@ -40,6 +39,7 @@
 		880F0C3B2D0D4C8F00598FA3 /* launchctl */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = launchctl; sourceTree = "<group>"; };
 		880F0C3E2D0D4C8F00598FA3 /* patchfinder8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = patchfinder8.h; sourceTree = "<group>"; };
 		880F0C482D0D4CAF00598FA3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = DEVELOPER_DIR; };
+		8836D42D2D21C1CB00A905AB /* tar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tar.h; sourceTree = "<group>"; };
 		886668922D0D2C6100C3F554 /* ios8-jailbreak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios8-jailbreak.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		886668952D0D2C6100C3F554 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		886668962D0D2C6100C3F554 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -50,6 +50,7 @@
 		886668A12D0D2C6300C3F554 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		886668A32D0D2C6300C3F554 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		886668A42D0D2C6300C3F554 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		886CD9A52D1FDD4400E9BB2A /* everuntether.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = everuntether.tar; sourceTree = "<group>"; };
 		8876A19D2D0D72E90087BA13 /* untether.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = untether.tar; sourceTree = "<group>"; };
 		8876A19E2D0D72E90087BA13 /* bootstrap.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = bootstrap.tar; sourceTree = "<group>"; };
 		887ACF9B2D1533F000CE3A4A /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
@@ -109,6 +110,7 @@
 				886668962D0D2C6100C3F554 /* AppDelegate.m */,
 				8866689E2D0D2C6300C3F554 /* Assets.xcassets */,
 				8876A19E2D0D72E90087BA13 /* bootstrap.tar */,
+				886CD9A52D1FDD4400E9BB2A /* everuntether.tar */,
 				886668A32D0D2C6300C3F554 /* Info.plist */,
 				880F0C2E2D0D4C8D00598FA3 /* IOKit */,
 				880F0C312D0D4C8D00598FA3 /* jailbreak.h */,
@@ -124,7 +126,7 @@
 				8806144F2D113F7F00798E6F /* SettingsViewController.h */,
 				880614502D113F7F00798E6F /* SettingsViewController.m */,
 				887ACF9A2D1533F000CE3A4A /* sock_port_2_legacy */,
-				880F0C2F2D0D4C8D00598FA3 /* tar */,
+				8836D42D2D21C1CB00A905AB /* tar.h */,
 				8876A19D2D0D72E90087BA13 /* untether.tar */,
 				886668982D0D2C6100C3F554 /* ViewController.h */,
 				886668992D0D2C6100C3F554 /* ViewController.m */,
@@ -209,10 +211,10 @@
 				88EF89AF2D11717200AC09EE /* openssh.tar in Resources */,
 				8876A1A02D0D72E90087BA13 /* bootstrap.tar in Resources */,
 				886668A22D0D2C6300C3F554 /* LaunchScreen.storyboard in Resources */,
+				886CD9A62D1FDD4400E9BB2A /* everuntether.tar in Resources */,
 				8866689F2D0D2C6300C3F554 /* Assets.xcassets in Resources */,
 				8866689D2D0D2C6200C3F554 /* Main.storyboard in Resources */,
 				8876A19F2D0D72E90087BA13 /* untether.tar in Resources */,
-				880F0C402D0D4C8F00598FA3 /* tar in Resources */,
 				880F0C452D0D4C8F00598FA3 /* launchctl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -376,7 +378,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 88NB6Y54DK;
+				DEVELOPMENT_TEAM = 3932R844T9;
 				INFOPLIST_FILE = "ios8-jailbreak/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -394,7 +396,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 88NB6Y54DK;
+				DEVELOPMENT_TEAM = 3932R844T9;
 				INFOPLIST_FILE = "ios8-jailbreak/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (

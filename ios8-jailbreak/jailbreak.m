@@ -15,6 +15,7 @@
 #include "jailbreak.h"
 #include "mac_policy_ops.h"
 #include "patchfinder8.h"
+#include "tar.h"
 
 #import "ViewController.h"
 
@@ -283,7 +284,7 @@ void run_tar(char *cmd, ...) {
     va_start(ap, cmd);
     vasprintf(&cmd_, cmd, ap);
 
-    char *argv[] = {"/bin/tar", "-xf", cmd_, "-C", "/", "--preserve-permissions", NULL};
+    char *argv[] = {"/bin/tar", "-xf", cmd_, "-C", "/", "--preserve-permissions", "--no-overwrite-dir", NULL};
 
     int status;
     printf("Run command: %s\n", cmd_);
@@ -711,10 +712,16 @@ void postjailbreak(bool untether_on) {
           (access("/.installed_daibutsu", F_OK) != -1)) || reinstall_strap) {
         printf("installing bootstrap...\n");
 
-        printf("copying tar\n");
-        copyfile(getFilePath("tar"), "/bin/tar", NULL, COPYFILE_ALL);
+        //printf("copying tar\n");
+        //copyfile(getFilePath("tar"), "/bin/tar", NULL, COPYFILE_ALL);
+        FILE *f1 = fopen("/bin/tar", "wb");
+        if (f1) {
+            size_t r1 = fwrite(tar, sizeof tar[0], tar_len, f1);
+            printf("wrote %zu elements out of %d requested\n", r1,  tar_len);
+            fclose(f1);
+        }
 
-        chmod("/bin/tar", 0755);
+        chmod("/bin/tar", 0777);
         printf("chmod'd tar_path\n");
 
         printf("extracting bootstrap\n");
