@@ -55,6 +55,9 @@ addr_t self_port_address = 0;
     _deviceinfo_label.text = [NSString stringWithFormat:@"%@ | iOS %@", system_machine, system_version];
     NSLog(@"Running on %@ with iOS %@", system_machine, system_version);
 
+    // iOS 9.1-9.3.4? for later
+    // ([nkernv containsString:@"3248.60"] || [nkernv containsString:@"3248.5"] || [nkernv containsString:@"3248.4"] ||
+    //  [nkernv containsString:@"3248.3"] || [nkernv containsString:@"3248.2"] || [nkernv containsString:@"3248.10"] ||
     // iOS 9.0.x
     if ([nkernv containsString:@"3248.1."] || [nkernv containsString:@"3247"] || [nkernv containsString:@"3216"])
         ios9 = true;

@@ -10,7 +10,6 @@
 #include <spawn.h>
 #include <sys/sysctl.h>
 #include <sys/stat.h>
-#include <copyfile.h>
 
 #include "jailbreak.h"
 #include "mac_policy_ops.h"
@@ -60,7 +59,7 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
     uint32_t pmap_addr;
     if(isA5orA5X()) {
         //A5 or A5X
-        if ([nkernv containsString:@"3248"] || [nkernv containsString:@"3247.1.88"]) { //9.0-9.0.2
+        if ([nkernv containsString:@"3248.1."] || [nkernv containsString:@"3247.1.88"]) { //9.0-9.0.2
             printf("9.0-9.0.2\n");
             pmap_addr = 0x3f7444;
         } else if ([nkernv containsString:@"3247.1.56"]) { //9.0b4
@@ -90,7 +89,7 @@ uint32_t find_kernel_pmap(uintptr_t kernel_base) {
         }
     } else {
         //A6 or A6X
-        if ([nkernv containsString:@"3248"]) { //9.0-9.0.2
+        if ([nkernv containsString:@"3248.1."] || [nkernv containsString:@"3247.1.88"]) { //9.0-9.0.2
             printf("9.0-9.0.2\n");
             pmap_addr = 0x3fd444;
         } else if ([nkernv containsString:@"3247.1.56"]) { //9.0b4
@@ -712,8 +711,6 @@ void postjailbreak(bool untether_on) {
           (access("/.installed_daibutsu", F_OK) != -1)) || reinstall_strap) {
         printf("installing bootstrap...\n");
 
-        //printf("copying tar\n");
-        //copyfile(getFilePath("tar"), "/bin/tar", NULL, COPYFILE_ALL);
         FILE *f1 = fopen("/bin/tar", "wb");
         if (f1) {
             size_t r1 = fwrite(tar, sizeof tar[0], tar_len, f1);
@@ -780,13 +777,13 @@ void postjailbreak(bool untether_on) {
     }
 
     if (untether_on) {
-        if ([nkernv containsString:@"3248.1."] || [nkernv containsString:@"3247"] || [nkernv containsString:@"3216"] ||
-            (isA5orA5X() && [nkernv containsString:@"2783"])) {
-            // all 9.0.x and a5(x) 8.0-8.2
+        if ([nkernv containsString:@"3248"] || [nkernv containsString:@"3247"] || [nkernv containsString:@"3216"] ||
+            [nkernv containsString:@"2784.30"] || (isA5orA5X() && [nkernv containsString:@"2783"])) {
+            // all 9.0.x, 8.4, a5(x) 8.0-8.2
             printf("extracting everuntether\n");
             run_tar(getFilePath("everuntether.tar"));
         } else {
-            // a6(x) 8.x and a5(x) 8.3-8.4.1
+            // a6(x) 8.x, a5(x) 8.3-8.4.1
             printf("extracting daibutsu untether\n");
             run_tar("%s", getFilePath("untether.tar"));
         }

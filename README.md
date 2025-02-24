@@ -20,9 +20,9 @@ EverPwnage has an **"Install Untether" toggle**, which controls the installation
 
 ## Untether
 
-- **A6(X) devices (iOS 8.0–8.4.1)** and **A5(X) devices (iOS 8.3–8.4.1)** use **daibutsu untether**
+- **A6(X) devices (iOS 8.0-8.4.1)** and **A5(X) devices (iOS 8.3-8.4.1)** use **daibutsu untether**
   - daibutsu untether utilizes dyld_shared_cache patch for bypassing codesigning and sock_port_2_legacy for the untether executable, developed by kok3shidoll (v2.0.3)
-- **A5(X) devices (iOS 8.0–8.2)** and **all devices on iOS 9.0-9.0.2** use **EverUntether**, which combines:
+- **A5(X) devices (iOS 8.0-8.2)** and **all devices on iOS 9.0-9.0.2** use **EverUntether**, which combines:
   - [jsc_untether](https://github.com/staturnzz/jsc_untether) by staturnz (thanks to their work and assistance)
   - A [forked version](https://github.com/LukeZGD/daibutsu) of daibutsu untether (based on v1.2.3), updated to replace Trident with sock_port_2_legacy, and some fixes for 9.0.x support
 
